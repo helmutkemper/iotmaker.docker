@@ -54,6 +54,7 @@ func (el *NetworkStt) GetLogConfig() container.LogConfig {
 
 /*
  pt-br: modo de rede do container
+
  en: network mode to use for the containerStt
 */
 func (el *NetworkStt) GetNetworkMode() container.NetworkMode {
@@ -62,6 +63,7 @@ func (el *NetworkStt) GetNetworkMode() container.NetworkMode {
 
 /*
  pt-br: mapa de portas entre o container e o host
+
  en: port mapping between the exposed port (containerStt) and the host
 */
 func (el *NetworkStt) GetPortBindings() nat.PortMap {
@@ -70,6 +72,7 @@ func (el *NetworkStt) GetPortBindings() nat.PortMap {
 
 /*
  pt-br: política de reinício do container
+
  en: restart policy to be used for the containerStt
 */
 func (el *NetworkStt) GetRestartPolicy() container.RestartPolicy {
@@ -78,6 +81,7 @@ func (el *NetworkStt) GetRestartPolicy() container.RestartPolicy {
 
 /*
  pt-br: remoção automática do container quando finalizado
+
  en: automatically remove containerStt when it exits
 */
 func (el *NetworkStt) GetAutoRemove() bool {
@@ -86,6 +90,7 @@ func (el *NetworkStt) GetAutoRemove() bool {
 
 /*
  pt-br: nome do driver usado para montar os discos
+
  en: name of the volume driver used to mount volumes
 */
 func (el *NetworkStt) GetVolumeDriver() string {
@@ -98,6 +103,7 @@ func (el *NetworkStt) GetVolumesFrom() []string {
 
 /*
  pt-br: devolve o nome da rede
+
  en: Bridge is the Bridge name the network uses(e.g. `docker0`)
 */
 func (el *NetworkStt) GetBridge() string {
@@ -106,6 +112,7 @@ func (el *NetworkStt) GetBridge() string {
 
 /*
  pt-br: SandboxID representa a pilha de rede do container
+
  en: SandboxID uniquely represents a containerStt's network stack
 */
 func (el *NetworkStt) GetSandboxID() string {
