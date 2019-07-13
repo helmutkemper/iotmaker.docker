@@ -9,6 +9,7 @@ import (
 
 /*
  pt-br: cria um novo struct para rede do container
+
  en: create a new container network struct
 */
 func NewContainerNetwork() networkStt {
