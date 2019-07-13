@@ -11,8 +11,8 @@ import (
 
 // pt-br: cria um novo struct para containers
 // en: create a new container struct
-func NewContainer() (error, Container) {
-	var c = Container{}
+func NewContainer() (error, containerStt) {
+	var c = containerStt{}
 	var err = c.Init()
 
 	return err, c
@@ -20,7 +20,7 @@ func NewContainer() (error, Container) {
 
 // pt-br: construct do container
 // en: construct of container
-type Container struct {
+type containerStt struct {
 	context    context.Context
 	client     *client.Client
 	awaysList  bool
@@ -31,7 +31,7 @@ type Container struct {
 
 // pt-br: inicializa todas as funções críticas
 // en: start all critical functions
-func (el *Container) Init() error {
+func (el *containerStt) Init() error {
 	el.context = GetContext()
 	el.client, el.Error = GetClient()
 	if el.Error != nil {
@@ -45,13 +45,13 @@ func (el *Container) Init() error {
 
 // pt-br: força a atualização da lista de containers
 // en: force of the updating of the list of containers
-func (el *Container) SetAwaysList(value bool) {
+func (el *containerStt) SetAwaysList(value bool) {
 	el.awaysList = value
 }
 
 // pt-br: lista todos os containers
 // en: list all containers
-func (el *Container) GetList() (error, []types.Container) {
+func (el *containerStt) GetList() (error, []types.Container) {
 	if len(el.list) == 0 || el.awaysList {
 		_, _ = el.ListAll()
 	}
@@ -61,7 +61,7 @@ func (el *Container) GetList() (error, []types.Container) {
 
 // pr-br: para o container por id
 // en: stop the container by id
-func (el *Container) StopById(id string, timeOut time.Duration) error {
+func (el *containerStt) StopById(id string, timeOut time.Duration) error {
 	if timeOut == 0 {
 		timeOut = kTimeOut
 	}
@@ -80,7 +80,7 @@ func (el *Container) StopById(id string, timeOut time.Duration) error {
 
 // pt-br: para todos os containers rodando
 // en: stop all running containers
-func (el *Container) StopAll(timeOut time.Duration) error {
+func (el *containerStt) StopAll(timeOut time.Duration) error {
 	if timeOut == 0 {
 		timeOut = kTimeOut
 	}
@@ -111,7 +111,7 @@ func (el *Container) StopAll(timeOut time.Duration) error {
 
 // pt-br: lista todos os containers
 // en: list all containers
-func (el *Container) ListAll() (error, []types.Container) {
+func (el *containerStt) ListAll() (error, []types.Container) {
 	el.list = make([]types.Container, 0)
 
 	if !el.hasStarted {
@@ -131,7 +131,7 @@ func (el *Container) ListAll() (error, []types.Container) {
 
 // pt-br: Inspeciona o container por by
 // en: inspect a container by id
-func (el *Container) InspectById(id string) (error, types.ContainerJSON) {
+func (el *containerStt) InspectById(id string) (error, types.ContainerJSON) {
 	var inspect = types.ContainerJSON{}
 
 	if !el.hasStarted {
@@ -148,7 +148,7 @@ func (el *Container) InspectById(id string) (error, types.ContainerJSON) {
 
 // pt-br: retorna uma lista de ids em função do nome da imagem passada
 // en: returns a list of ids by the name of the image
-func (el *Container) ContainerGetIdByImageName(name string) (error, []string) {
+func (el *containerStt) ContainerGetIdByImageName(name string) (error, []string) {
 	var ret = make([]string, 0)
 	_, err := el.ListAll()
 	if err != nil {
@@ -166,7 +166,7 @@ func (el *Container) ContainerGetIdByImageName(name string) (error, []string) {
 
 // pt-br: inicializa um container por id
 // en: start a container by id
-func (el *Container) ContainerStartById(id string, checkpointDir, checkpointID string) error {
+func (el *containerStt) ContainerStartById(id string, checkpointDir, checkpointID string) error {
 	if !el.hasStarted {
 		_ = el.Init()
 		if el.Error != nil {
@@ -181,7 +181,7 @@ func (el *Container) ContainerStartById(id string, checkpointDir, checkpointID s
 
 // pt-br: cria um container
 // en: create a container
-func (el *Container) ContainerCreate(config *container.Config, hostConfig *container.HostConfig, networkingConfig *network.NetworkingConfig, name string) (container.ContainerCreateCreatedBody, error) {
+func (el *containerStt) ContainerCreate(config *container.Config, hostConfig *container.HostConfig, networkingConfig *network.NetworkingConfig, name string) (container.ContainerCreateCreatedBody, error) {
 	createdBody := container.ContainerCreateCreatedBody{}
 	if !el.hasStarted {
 		_ = el.Init()
@@ -197,7 +197,7 @@ func (el *Container) ContainerCreate(config *container.Config, hostConfig *conta
 
 // pt-br: remove um container por id
 // en: removes a container by id
-func (el *Container) ContainerRemoveById(id string) error {
+func (el *containerStt) ContainerRemoveById(id string) error {
 	if !el.hasStarted {
 		_ = el.Init()
 		if el.Error != nil {
