@@ -11,7 +11,7 @@ import (
 
 // pt-br: cria um novo struct para containers
 // en: create a new container struct
-func NewContainer() (error, containerStt) {
+func NewContainerStt() (error, containerStt) {
 	var c = containerStt{}
 	var err = c.Init()
 
