@@ -59,7 +59,6 @@ func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart
 			Mounts:    mountVolumes,
 		},
 		net,
-		nil,
 		containerName,
 	)
 	if err != nil {

@@ -24,7 +24,7 @@ func ExampleDockerSystem_ContainerCreate() {
 	var currentPortList []nat.Port
 	var newPortList []nat.Port
 	var networkUtil util.NetworkGenerator
-	var imageList []types.ImageSummary
+	var imageListBeforeTest []types.ImageSummary
 
 	var networkName = "network_test"
 	var relativeMongoDBConfigFilePathToGenerateAndSave = "./config.conf"
@@ -78,8 +78,12 @@ func ExampleDockerSystem_ContainerCreate() {
 	}
 
 	// example: dockerSys.ImageList()
-	err, imageList = dockerSys.ImageList()
-	_ = imageList
+	err, imageListBeforeTest = dockerSys.ImageList()
+	if err != nil {
+		panic(nil)
+	}
+
+	_ = imageListBeforeTest
 
 	// image pull and wait (true)
 	err = dockerSys.ImagePull(imageName, false)
