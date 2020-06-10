@@ -12,7 +12,7 @@ func (el *DockerSystem) ContainerStatsOneShot(id string) (error, types.Stats) {
 	var body []byte
 	var ret types.Stats
 
-	stats, err = el.cli.ContainerStatsOneShot(el.ctx, id)
+	stats, err = el.cli.ContainerStats(el.ctx, id, true)
 	if err != nil {
 		return err, ret
 	}

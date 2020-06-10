@@ -1,6 +1,7 @@
 package iotmaker_docker
 
 import (
+	"fmt"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
@@ -68,4 +69,14 @@ func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart
 	el.container[resp.ID] = resp
 
 	return nil, resp.ID
+}
+
+func (el *DockerSystem) ContainerWait(id string) {
+	wOk, wErr := el.cli.ContainerWait(el.ctx, id, "not-running")
+	select {
+	case <-wOk:
+		fmt.Println()
+	case <-wErr:
+		fmt.Println()
+	}
 }

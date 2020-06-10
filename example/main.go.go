@@ -1,6 +1,10 @@
-package test
+// this example show how to use this project, downloading a mongodb container,
+// installing it, testing and removing container
+package main
 
 import (
+	"context"
+	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
@@ -9,11 +13,34 @@ import (
 	iotmakerDocker "github.com/helmutkemper/iotmaker.docker"
 	factoryDocker "github.com/helmutkemper/iotmaker.docker/factoryDocker"
 	"github.com/helmutkemper/iotmaker.docker/util"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"io/ioutil"
+	"log"
 	"os"
+	"time"
 )
 
-func ExampleDockerSystem_ContainerCreate() {
+var pullStatusChannel = factoryDocker.NewImagePullStatusChannel()
+
+func prepareThreadToPrintImagePullStatus() {
+	go func(c chan iotmakerDocker.ContainerPullStatusSendToChannel) {
+
+		for {
+			select {
+			case status := <-c:
+				fmt.Printf("image pull status: %+v\n", status)
+
+				if status.Closed == true {
+					fmt.Println("image pull complete!")
+				}
+			}
+		}
+
+	}(pullStatusChannel)
+}
+
+func main() {
 	var err error
 	var id string
 	var file []byte
@@ -25,7 +52,11 @@ func ExampleDockerSystem_ContainerCreate() {
 	var newPortList []nat.Port
 	var networkUtil util.NetworkGenerator
 	var imageListBeforeTest []types.ImageSummary
+	var listOfExposedPortsByName, listOfExposedPortsById []string
+	var imageID, imageNAME, imageIdFindByName string
+	var client *mongo.Client
 
+	var mongoDbURL = "mongo://localhost:27017"
 	var networkName = "network_test"
 	var relativeMongoDBConfigFilePathToGenerateAndSave = "./config.conf"
 	var imageName = "mongo:latest"
@@ -85,13 +116,25 @@ func ExampleDockerSystem_ContainerCreate() {
 
 	_ = imageListBeforeTest
 
-	// image pull and wait (true)
-	err = dockerSys.ImagePull(imageName, false)
+	prepareThreadToPrintImagePullStatus()
+	err, imageID, imageNAME = dockerSys.ImagePull(imageName, pullStatusChannel)
 	if err != nil {
 		panic(nil)
 	}
 
-	//dockerSys.ImageFindIdByName("mongo:latest")
+	_ = imageID
+	_ = imageNAME
+
+	//sha256:be8d903a68997dd63f64479004a7eeb4f0674dde7ab3cbd1145e5658da3a817b
+	//sha256:66c68b650ad44f7a95c256ad2df5c40fbc3b13001f36ac7b7cd25f5f9a09be7d
+
+	err, imageIdFindByName = dockerSys.ImageFindIdByName(imageName)
+
+	err, listOfExposedPortsByName = dockerSys.ImageListExposedPortsByName(imageName)
+	err, listOfExposedPortsById = dockerSys.ImageListExposedPorts(imageIdFindByName)
+
+	_ = listOfExposedPortsByName
+	_ = listOfExposedPortsById
 
 	// define an external MongoDB config file path
 	err, mountList = factoryDocker.NewVolumeMount(
@@ -121,6 +164,18 @@ func ExampleDockerSystem_ContainerCreate() {
 		currentPortList,
 		newPortList,
 	)
+
+	time.Sleep(time.Second * 5)
+	client, err = mongo.NewClient(options.Client().ApplyURI(mongoDbURL))
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
 
 	err = dockerSys.ContainerStop(id)
 
