@@ -3,9 +3,33 @@ package iotmaker_docker
 import (
 	"encoding/json"
 	"github.com/docker/docker/api/types"
+	"github.com/helmutkemper/iotmaker.docker/util"
 	"io"
+	"math"
 	"strings"
 )
+
+func (el *DockerSystem) ImageRemoveByName(name string) error {
+	var err error
+	var id string
+
+	err, id = el.ImageFindIdByName(name)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = el.cli.ImageRemove(el.ctx, id, types.ImageRemoveOptions{})
+
+	return err
+}
+
+func (el *DockerSystem) ImageRemove(id string) error {
+	var err error
+	_, err = el.cli.ImageRemove(el.ctx, id, types.ImageRemoveOptions{})
+
+	return err
+}
 
 func (el *DockerSystem) imagePullWriteChannel(progressChannel *chan ContainerPullStatusSendToChannel, data ContainerPullStatusSendToChannel) {
 	if progressChannel == nil {
@@ -51,6 +75,7 @@ func (el *DockerSystem) ImagePull(name string, channel chan ContainerPullStatusS
 				err = nil
 
 				//>>>>> send to channel
+				toChannel.calcPercentage()
 				toChannel.ImageName = imageName
 				toChannel.ImageID = imageId
 				toChannel.Closed = true
@@ -125,6 +150,7 @@ func (el *DockerSystem) ImagePull(name string, channel chan ContainerPullStatusS
 				}
 			}
 
+			toChannel.calcPercentage()
 			toChannel.ImageName = imageName
 			toChannel.ImageID = imageId
 
@@ -140,6 +166,7 @@ type ContainerPullStatusSendToChannelCount struct {
 	Count   int
 	Current int
 	Total   int
+	Percent float64
 }
 
 type ContainerPullStatusSendToChannel struct {
@@ -152,6 +179,22 @@ type ContainerPullStatusSendToChannel struct {
 	ImageName         string
 	ImageID           string
 	Closed            bool
+}
+
+func (el *ContainerPullStatusSendToChannel) calcPercentage() {
+	var percent = float64(el.Downloading.Current) / float64(el.Downloading.Total) * 100.0
+	if math.IsNaN(percent) == true {
+		percent = 0.0
+	}
+	percent = util.Round(percent, 0.5, 2.0)
+	el.Downloading.Percent = percent
+
+	percent = float64(el.Extracting.Current) / float64(el.Extracting.Total) * 100.0
+	if math.IsNaN(percent) == true {
+		percent = 0.0
+	}
+	percent = util.Round(percent, 0.5, 2.0)
+	el.Extracting.Percent = percent
 }
 
 type ContainerPullProgressDetail struct {

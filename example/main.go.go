@@ -45,6 +45,8 @@ func main() {
 	var id string
 	var file []byte
 	var mountList []mount.Mount
+	var volumesList []types.Volume
+	var networkInitialList []types.NetworkResource
 	var nextNetworkConfig *network.NetworkingConfig
 	var currentPort nat.Port
 	var newPort nat.Port
@@ -56,7 +58,7 @@ func main() {
 	var imageID, imageNAME, imageIdFindByName string
 	var client *mongo.Client
 
-	var mongoDbURL = "mongo://localhost:27017"
+	var mongoDbURL = "mongodb://localhost:27017"
 	var networkName = "network_test"
 	var relativeMongoDBConfigFilePathToGenerateAndSave = "./config.conf"
 	var imageName = "mongo:latest"
@@ -64,6 +66,25 @@ func main() {
 	var mongoDBDefaultPort = "27017"
 	var mongoDBOutputPort = "27017"
 	var mongoDbConnectionProtocol = "tcp"
+
+	// init docker
+	var dockerSys = iotmakerDocker.DockerSystem{}
+	err = dockerSys.Init()
+	if err != nil {
+		panic(nil)
+	}
+
+	err, networkInitialList = dockerSys.NetworkList()
+	if err != nil {
+		panic(nil)
+	}
+	_ = networkInitialList
+
+	err, volumesList = dockerSys.VolumeList()
+	if err != nil {
+		panic(nil)
+	}
+	_ = volumesList
 
 	err, networkUtil = factoryDocker.NewContainerNetworkGenerator(networkName, 10, 0, 0, 1)
 	if err != nil {
@@ -101,13 +122,6 @@ func main() {
 		panic(nil)
 	}
 
-	// init docker
-	var dockerSys = iotmakerDocker.DockerSystem{}
-	err = dockerSys.Init()
-	if err != nil {
-		panic(nil)
-	}
-
 	// example: dockerSys.ImageList()
 	err, imageListBeforeTest = dockerSys.ImageList()
 	if err != nil {
@@ -124,9 +138,6 @@ func main() {
 
 	_ = imageID
 	_ = imageNAME
-
-	//sha256:be8d903a68997dd63f64479004a7eeb4f0674dde7ab3cbd1145e5658da3a817b
-	//sha256:66c68b650ad44f7a95c256ad2df5c40fbc3b13001f36ac7b7cd25f5f9a09be7d
 
 	err, imageIdFindByName = dockerSys.ImageFindIdByName(imageName)
 
@@ -175,7 +186,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer client.Disconnect(ctx)
+
+	err = client.Ping(context.Background(), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client.Disconnect(ctx)
 
 	err = dockerSys.ContainerStop(id)
 
