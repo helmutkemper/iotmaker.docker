@@ -3,7 +3,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/mount"
@@ -13,12 +12,9 @@ import (
 	iotmakerDocker "github.com/helmutkemper/iotmaker.docker"
 	factoryDocker "github.com/helmutkemper/iotmaker.docker/factoryDocker"
 	"github.com/helmutkemper/iotmaker.docker/util"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"io/ioutil"
 	"log"
 	"os"
-	"time"
 )
 
 var pullStatusChannel = factoryDocker.NewImagePullStatusChannel()
@@ -45,8 +41,10 @@ func main() {
 	var id string
 	var file []byte
 	var mountList []mount.Mount
-	var volumesList []types.Volume
+	var volumesInitialList []types.Volume
 	var networkInitialList []types.NetworkResource
+	var imagesInitialList []types.ImageSummary
+	var imagesFinalList []types.ImageSummary
 	var nextNetworkConfig *network.NetworkingConfig
 	var currentPort nat.Port
 	var newPort nat.Port
@@ -56,9 +54,9 @@ func main() {
 	var imageListBeforeTest []types.ImageSummary
 	var listOfExposedPortsByName, listOfExposedPortsById []string
 	var imageID, imageNAME, imageIdFindByName string
-	var client *mongo.Client
+	//var client *mongo.Client
 
-	var mongoDbURL = "mongodb://localhost:27017"
+	//var mongoDbURL = "mongodb://localhost:27017"
 	var networkName = "network_test"
 	var relativeMongoDBConfigFilePathToGenerateAndSave = "./config.conf"
 	var imageName = "mongo:latest"
@@ -80,11 +78,17 @@ func main() {
 	}
 	_ = networkInitialList
 
-	err, volumesList = dockerSys.VolumeList()
+	err, volumesInitialList = dockerSys.VolumeList()
 	if err != nil {
 		panic(nil)
 	}
-	_ = volumesList
+	_ = volumesInitialList
+
+	err, imagesInitialList = dockerSys.ImageList()
+	if err != nil {
+		panic(nil)
+	}
+	_ = imagesInitialList
 
 	err, networkUtil = factoryDocker.NewContainerNetworkGenerator(networkName, 10, 0, 0, 1)
 	if err != nil {
@@ -175,26 +179,65 @@ func main() {
 		currentPortList,
 		newPortList,
 	)
+	if err != nil {
+		panic(err)
+	}
+	/*
+	  // wait MongoDB start time inside container
+		time.Sleep(time.Second * 60)
+		client, err = mongo.NewClient(options.Client().ApplyURI(mongoDbURL))
+		if err != nil {
+			log.Fatal(err)
+		}
+		ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+		err = client.Connect(ctx)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	time.Sleep(time.Second * 5)
-	client, err = mongo.NewClient(options.Client().ApplyURI(mongoDbURL))
+		err = client.Ping(context.Background(), nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	  err = client.Disconnect(ctx)
+	  if err != nil {
+	    log.Fatal(err)
+	  }
+	*/
+	err = dockerSys.ContainerStopAndRemove(id, true, true, true)
 	if err != nil {
 		log.Fatal(err)
 	}
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	err = client.Connect(ctx)
+
+	err = dockerSys.NetworkRemoveByName(networkName)
 	if err != nil {
-		log.Fatal(err)
+		panic(nil)
 	}
 
-	err = client.Ping(context.Background(), nil)
+	// Remove todas as imagens que não estiverem na lista inicial
+	err, imagesFinalList = dockerSys.ImageList()
 	if err != nil {
-		log.Fatal(err)
+		panic(nil)
+	}
+	for _, imgInicial := range imagesInitialList {
+		var pass = false
+		for _, imgFinal := range imagesFinalList {
+			if imgInicial.ID == imgFinal.ID {
+				pass = true
+				break
+			}
+		}
+
+		if pass == true {
+			err = dockerSys.ImageRemove(imgInicial.ID)
+			if err != nil {
+				panic(nil)
+			}
+		}
 	}
 
-	client.Disconnect(ctx)
-
-	err = dockerSys.ContainerStop(id)
+	fmt.Println("test pass!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 	// Output:
 	//

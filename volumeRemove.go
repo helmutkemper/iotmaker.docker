@@ -1,7 +1,7 @@
 package iotmaker_docker
 
-func (el *DockerSystem) VolumeRemove(id string) (err error) {
-	err = el.cli.VolumeRemove(el.ctx, id, false)
+func (el *DockerSystem) VolumeRemove(name string) (err error) {
+	err = el.cli.VolumeRemove(el.ctx, name, false)
 
 	return
 }
