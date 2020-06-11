@@ -1,4 +1,4 @@
-package iotmaker_docker
+package iotmakerDocker
 
 import (
 	"github.com/docker/docker/api/types"

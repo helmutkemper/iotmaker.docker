@@ -1,1 +1,1 @@
-package iotmaker_docker
+package iotmakerDocker

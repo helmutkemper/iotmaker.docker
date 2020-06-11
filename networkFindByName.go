@@ -1,4 +1,4 @@
-package iotmaker_docker
+package iotmakerDocker
 
 func (el *DockerSystem) NetworkFindByName(name string) (err error, id string) {
 	err, list := el.NetworkList()

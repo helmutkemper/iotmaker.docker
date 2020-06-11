@@ -1,4 +1,4 @@
-package iotmaker_docker
+package iotmakerDocker
 
 // list image exposed ports by name
 func (el *DockerSystem) ImageListExposedPortsByName(name string) (error, []string) {

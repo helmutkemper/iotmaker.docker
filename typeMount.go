@@ -1,4 +1,4 @@
-package iotmaker_docker
+package iotmakerDocker
 
 //  mountType:
 //     KVolumeMountTypeBind - TypeBind is the type for mounting host dir

@@ -1,4 +1,4 @@
-package iotmaker_docker
+package iotmakerDocker
 
 import "path/filepath"
 

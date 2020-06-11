@@ -1,4 +1,4 @@
-package iotmaker_docker
+package iotmakerDocker
 
 type RestartPolicy int
 
