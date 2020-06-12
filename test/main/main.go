@@ -56,8 +56,10 @@ func main() {
 		Remove:     true,
 		PullParent: true,
 		//Context:        dockerFileTarReader,
-		RemoteContext: "https://github.com/helmutkemper/lixo.git",
-	}
+		//RemoteContext: "git@github.com:helmutkemper/lixo.git",
+		//RemoteContext: "https://github.com/helmutkemper/lixo.git",
+		RemoteContext: "https://x-access-token:bf98ec92704f3ee461ec274eeda8e82cb7cee32b@github.com/helmutkemper/lixo.git",
+	} //a5596205290ccac09003b3b8b3c2378eac135c53
 
 	err, imageBuildResponse := dockerSys.ImageBuild(nil, t)
 	if err != nil {
