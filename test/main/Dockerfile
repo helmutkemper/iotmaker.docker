@@ -1,7 +1,7 @@
 FROM golang:latest
 
 #RUN apt-get update && apt-get install -y ca-certificates git-core ssh
-#RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y git
 #RUN apt-get update
 
 #ADD keys/my_key_rsa /root/.ssh/id_rsa
@@ -12,23 +12,15 @@ FROM golang:latest
 RUN mkdir /app
 RUN chmod 700 /app
 
-RUN mkdir /app/lixo
-RUN chmod 700 /app/lixo
-
-ADD ./ /app
+COPY . /app
 
 WORKDIR /app
-
-#RUN go get -u
-#RUN go build -o ./main ./main.go
 
 #RUN adduser -S -D -H -h /app appuser
 #USER appuser
 
-#EXPOSE 8080
+EXPOSE 8080
 
-RUN echo 'ping localhost &' > /bootstrap.sh
-RUN echo 'sleep infinity' >> /bootstrap.sh
-RUN chmod +x /bootstrap.sh
+RUN go build -o ./main ./main.go
 
-CMD ["/bootstrap.sh"]
+CMD ["./main"]

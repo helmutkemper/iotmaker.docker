@@ -1,4 +1,4 @@
-package factoryWhaleAquarium
+package factoryDocker
 
 import (
 	whaleAquarium "github.com/helmutkemper/iotmaker.docker"

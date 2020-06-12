@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"github.com/docker/docker/api/types"
 	iotmakerDocker "github.com/helmutkemper/iotmaker.docker"
+	"github.com/helmutkemper/iotmaker.docker/factoryDocker"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,6 +15,56 @@ import (
 )
 
 func main() {
+	err, dockerSys := factoryDocker.NewClient()
+	if err != nil {
+		panic(err)
+	}
+
+	dockerSys.ImageMountContext("./lixo")
+}
+
+func _NotOk() {
+
+	err, dockerSys := factoryDocker.NewClient()
+	if err != nil {
+		panic(err)
+	}
+
+	dockerBuildContext, err := os.Open("./lixo.tar")
+	if err != nil {
+		panic(err)
+	}
+	defer dockerBuildContext.Close()
+
+	t := types.ImageBuildOptions{
+		Tags: []string{
+			"kemper:latest",
+		},
+		Remove:     true,
+		PullParent: true,
+		//Context:        dockerBuildContext,
+	}
+
+	err, imageBuildResponse := dockerSys.ImageBuild(dockerBuildContext, t)
+	if err != nil {
+		panic(err)
+	}
+
+	defer imageBuildResponse.Body.Close()
+	_, err = io.Copy(os.Stdout, imageBuildResponse.Body)
+	if err != nil {
+		log.Fatal(err, " :unable to read image build response")
+	}
+
+	err, c := dockerSys.ContainerBuild()
+	if err != nil {
+		panic(err)
+	}
+
+	_ = c.ID
+}
+
+func ok() {
 	buf := new(bytes.Buffer)
 	tw := tar.NewWriter(buf)
 	defer tw.Close()
