@@ -8,7 +8,10 @@ import (
 func (el *DockerSystem) clientCreate() error {
 	var err error
 
-	el.cli, err = client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	el.cli, err = client.NewClientWithOpts(
+		client.FromEnv,
+		client.WithAPIVersionNegotiation(),
+	)
 
 	return err
 }
