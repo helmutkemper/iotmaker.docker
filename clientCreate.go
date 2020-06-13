@@ -4,7 +4,7 @@ import (
 	"github.com/docker/docker/client"
 )
 
-// en: Create a new client from docker
+// English: Create a new client from docker
 //
 //     Example:
 //       dockerSys = &iotmakerDocker.DockerSystem{}
@@ -20,6 +20,24 @@ import (
 //         panic(err)
 //       }
 //       dockerSys.ContainerCreateChangeExposedPortAndStart(...)
+//
+// Português: Cria um novo cliente para o docker
+//
+//     Exemplo:
+//       dockerSys = &iotmakerDocker.DockerSystem{}
+//	     dockerSys.ContextCreate()
+//	     err := dockerSys.ClientCreate()
+//       if err != nil {
+//         panic(err)
+//       }
+//
+//     Por favor, use:
+//       err, dockerSys := factoryDocker.NewClient()
+//       if err != nil {
+//         panic(err)
+//       }
+//       dockerSys.ContainerCreateChangeExposedPortAndStart(...)
+//
 func (el *DockerSystem) ClientCreate() error {
 	var err error
 
