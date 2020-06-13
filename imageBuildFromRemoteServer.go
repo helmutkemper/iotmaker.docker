@@ -1,16 +1,24 @@
 package iotmakerDocker
 
 import (
-	"github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/go-connections/nat"
+	"github.com/docker/docker/api/types"
 )
 
 // en: Make a image from folder path content
 //     Please note: dockerfile name must be "Dockerfile" inside root folder
 //
+//     For get a github token
+//     settings > Developer settings > Personal access tokens > Generate new token
+//     Mark [x]repo - Full control of private repositories
+//
 //     Example:
 //       err, dockerSys := factoryDocker.NewClient()
+//       if err != nil {
+//         panic(err)
+//       }
+//       server := "https://github.com/__USER__/__PROJECT__.git"
+//       server := "https://x-access-token:__TOKEN__@github.com/__USER__/__PROJECT__.git"
+//       err = dockerSys.ImageBuildFromRemoteServer(server, []string{"server:latest"})
 //       if err != nil {
 //         panic(err)
 //       }
@@ -31,7 +39,7 @@ import (
 //         panic(err)
 //       }
 //
-//       ./folder
+//       git server content
 //          Dockerfile
 //            FROM golang:latest
 //            RUN mkdir /app
@@ -55,12 +63,16 @@ import (
 //            	http.HandleFunc("/hello", hello)
 //            	http.ListenAndServe(":8080", nil)
 //            }
-func (el *DockerSystem) ContainerCreateChangeExposedPortAndStart(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig, currentPort, changeToPort []nat.Port) (error, string) {
-	err, id := el.ContainerCreateAndChangeExposedPort(imageName, containerName, restart, mountVolumes, net, currentPort, changeToPort)
-	if err != nil {
-		return err, ""
+func (el *DockerSystem) ImageBuildFromRemoteServer(server string, tags []string) (err error) {
+	var imageBuildOptions types.ImageBuildOptions
+
+	imageBuildOptions = types.ImageBuildOptions{
+		Tags:          tags,
+		Remove:        true,
+		RemoteContext: server,
 	}
 
-	err = el.ContainerStart(id)
-	return err, id
+	err = el.imageBuild(nil, imageBuildOptions)
+
+	return
 }

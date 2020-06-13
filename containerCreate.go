@@ -8,7 +8,8 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-// Create a container
+//
+// en: creates a container and automatically exposes the ports listed in the image
 //   imageName: image name for download and pull
 //   containerName: unique container name
 //   RestartPolicy:
@@ -26,6 +27,22 @@ import (
 //   mountVolumes: please use a factoryWhaleAquarium.NewVolumeMount()
 //      for a complete list of volumes exposed by image, use
 //      ImageListExposedVolumes(id) and ImageListExposedVolumesByName(name)
+//
+//     Example:
+//       err, dockerSys := factoryDocker.NewClient()
+//       if err != nil {
+//         panic(err)
+//       }
+//       err, id := dockerSys.ContainerCreate(
+//       		"server:latest",
+//       		"server",
+//       		dockerSys.KRestartPolicyUnlessStopped,
+//       		[]mount.Mount{},
+//       		nil,
+//       )
+//       if err != nil {
+//         panic(err)
+//       }
 func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig) (error, string) {
 	var err error
 	var imageId string

@@ -8,24 +8,7 @@ import (
 	"strings"
 )
 
-func (el DockerSystem) ImageMountContext(dirPath string) (err error, file []byte) {
-	var buf bytes.Buffer
-	var tarWriter *tar.Writer
-	tarWriter = tar.NewWriter(&buf)
-
-	err = el.imageMountContextSupport(dirPath, &buf, tarWriter)
-
-	err = tarWriter.Close()
-	if err != nil {
-		return
-	}
-
-	file = buf.Bytes()
-
-	return
-}
-
-func (el DockerSystem) imageMountContextSupport(dirPath string, buf *bytes.Buffer, tarWriter *tar.Writer) (err error) {
+func (el DockerSystem) imageBuildPrepareFolderContextSupport(dirPath, toRemoveInsideTarFilePathList string, buf *bytes.Buffer, tarWriter *tar.Writer) (err error) {
 	var dirContent []os.FileInfo
 	var tarHeader *tar.Header
 	var fileData []byte
@@ -44,7 +27,7 @@ func (el DockerSystem) imageMountContextSupport(dirPath string, buf *bytes.Buffe
 		filePath = dirPath + folderItem.Name()
 
 		if folderItem.IsDir() == true {
-			err = el.imageMountContextSupport(filePath, buf, tarWriter)
+			err = el.imageBuildPrepareFolderContextSupport(filePath, toRemoveInsideTarFilePathList, buf, tarWriter)
 			if err != nil {
 				return
 			}
@@ -54,8 +37,11 @@ func (el DockerSystem) imageMountContextSupport(dirPath string, buf *bytes.Buffe
 				return
 			}
 
+			xxx := strings.Replace(filePath, toRemoveInsideTarFilePathList, "", 1)
+			_ = xxx
+
 			tarHeader = &tar.Header{
-				Name: filePath,
+				Name: strings.Replace(filePath, toRemoveInsideTarFilePathList, "", 1),
 				Mode: 0600,
 				Size: folderItem.Size(),
 			}

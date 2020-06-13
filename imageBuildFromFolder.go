@@ -1,9 +1,8 @@
 package iotmakerDocker
 
 import (
-	"github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/go-connections/nat"
+	"bytes"
+	"github.com/docker/docker/api/types"
 )
 
 // en: Make a image from folder path content
@@ -11,6 +10,10 @@ import (
 //
 //     Example:
 //       err, dockerSys := factoryDocker.NewClient()
+//       if err != nil {
+//         panic(err)
+//       }
+//       err = dockerSys.ImageBuildFromFolder("./folder", []string{"server:latest"})
 //       if err != nil {
 //         panic(err)
 //       }
@@ -55,12 +58,21 @@ import (
 //            	http.HandleFunc("/hello", hello)
 //            	http.ListenAndServe(":8080", nil)
 //            }
-func (el *DockerSystem) ContainerCreateChangeExposedPortAndStart(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig, currentPort, changeToPort []nat.Port) (error, string) {
-	err, id := el.ContainerCreateAndChangeExposedPort(imageName, containerName, restart, mountVolumes, net, currentPort, changeToPort)
-	if err != nil {
-		return err, ""
+func (el *DockerSystem) ImageBuildFromFolder(folderPath string, tags []string) (err error) {
+	var tarFileReader *bytes.Reader
+	var imageBuildOptions types.ImageBuildOptions
+
+	err, tarFileReader = el.imageBuildPrepareFolderContext(folderPath)
+	if err != err {
+		return
 	}
 
-	err = el.ContainerStart(id)
-	return err, id
+	imageBuildOptions = types.ImageBuildOptions{
+		Tags:   tags,
+		Remove: true,
+	}
+
+	err = el.imageBuild(tarFileReader, imageBuildOptions)
+
+	return
 }
