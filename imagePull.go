@@ -32,7 +32,7 @@ func (el *DockerSystem) ImageRemove(id string) error {
 }
 
 func (el *DockerSystem) imagePullWriteChannel(progressChannel *chan ContainerPullStatusSendToChannel, data ContainerPullStatusSendToChannel) {
-	if progressChannel == nil {
+	if *progressChannel == nil {
 		return
 	}
 
