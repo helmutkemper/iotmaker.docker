@@ -17,3 +17,5 @@ func NewClient() (err error, dockerSystem *iotmakerDocker.DockerSystem) {
 
 	return
 }
+
+//
