@@ -14,7 +14,7 @@ import (
 //         panic(err)
 //       }
 //
-//     Please, use:
+// Please, use:
 //       err, dockerSys := factoryDocker.NewClient()
 //       if err != nil {
 //         panic(err)
@@ -31,7 +31,7 @@ import (
 //         panic(err)
 //       }
 //
-//     Por favor, use:
+// Por favor, use:
 //       err, dockerSys := factoryDocker.NewClient()
 //       if err != nil {
 //         panic(err)
