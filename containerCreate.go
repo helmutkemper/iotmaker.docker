@@ -35,6 +35,14 @@ import (
 //       if err != nil {
 //         panic(err)
 //       }
+func (el *DockerSystem) convertPort(in nat.PortMap) (out nat.PortSet) {
+	out = make(map[nat.Port]struct{})
+	for k := range in {
+		out[k] = struct{}{}
+	}
+
+	return
+}
 func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig) (error, string) {
 	var err error
 	var imageId string
@@ -58,7 +66,8 @@ func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart
 	resp, err = el.cli.ContainerCreate(
 		el.ctx,
 		&container.Config{
-			Image: imageName,
+			Image:        imageName,
+			ExposedPorts: el.convertPort(portExposedList),
 		},
 		&container.HostConfig{
 			PortBindings: portExposedList,

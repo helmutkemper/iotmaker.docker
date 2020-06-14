@@ -64,9 +64,21 @@ import (
 //            	http.HandleFunc("/hello", hello)
 //            	http.ListenAndServe(":8080", nil)
 //            }
-func (el *DockerSystem) ImageBuildFromRemoteServer(server string, tags []string, channel *chan ContainerPullStatusSendToChannel) (err error) {
+func (el *DockerSystem) ImageBuildFromRemoteServer(
+	server,
+	imageName string,
+	tags []string,
+	channel *chan ContainerPullStatusSendToChannel,
+) (err error) {
+
 	var imageBuildOptions types.ImageBuildOptions
 	var reader io.Reader
+
+	if len(tags) == 0 {
+		tags = []string{
+			imageName,
+		}
+	}
 
 	imageBuildOptions = types.ImageBuildOptions{
 		Tags:          tags,

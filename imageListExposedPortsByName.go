@@ -1,13 +1,16 @@
 package iotmakerDocker
 
+import "github.com/docker/go-connections/nat"
+
 // list image exposed ports by name
-func (el *DockerSystem) ImageListExposedPortsByName(name string) (error, []string) {
-	var err error
+func (el *DockerSystem) ImageListExposedPortsByName(name string) (err error, portList []nat.Port) {
 	var id string
 	err, id = el.ImageFindIdByName(name)
 	if err != nil {
 		return err, nil
 	}
 
-	return el.ImageListExposedPorts(id)
+	err, portList = el.ImageListExposedPorts(id)
+
+	return
 }

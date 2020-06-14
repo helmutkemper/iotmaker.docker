@@ -7,7 +7,7 @@ import (
 // Mount nat por list by image config
 func (el *DockerSystem) ImageMountNatPortList(imageId string) (error, nat.PortMap) {
 	var err error
-	var portList []string
+	var portList []nat.Port
 	var ret nat.PortMap = make(map[nat.Port][]nat.PortBinding)
 
 	err, portList = el.ImageListExposedPorts(imageId)
@@ -16,9 +16,9 @@ func (el *DockerSystem) ImageMountNatPortList(imageId string) (error, nat.PortMa
 	}
 
 	for _, port := range portList {
-		ret[nat.Port(port)] = []nat.PortBinding{
+		ret[port] = []nat.PortBinding{
 			{
-				HostPort: port,
+				HostPort: port.Port() + "/" + port.Proto(),
 			},
 		}
 	}

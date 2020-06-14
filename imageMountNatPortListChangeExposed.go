@@ -7,7 +7,7 @@ import (
 // Mount nat por list by image config
 func (el *DockerSystem) ImageMountNatPortListChangeExposed(imageId string, currentPortList, changeToPortList []nat.Port) (error, nat.PortMap) {
 	var err error
-	var portList []string
+	var portList []nat.Port
 	var ret nat.PortMap = make(map[nat.Port][]nat.PortBinding)
 
 	err, portList = el.ImageListExposedPorts(imageId)
@@ -16,9 +16,9 @@ func (el *DockerSystem) ImageMountNatPortListChangeExposed(imageId string, curre
 	}
 
 	for _, port := range portList {
-		inPort := port
+		inPort := ""
 		for k, currPort := range currentPortList {
-			if currPort.Port()+"/"+currPort.Proto() == port {
+			if currPort.Port() == port.Port() && currPort.Proto() == port.Proto() {
 				inPort = changeToPortList[k].Port() + "/" + changeToPortList[k].Proto()
 				break
 			}
