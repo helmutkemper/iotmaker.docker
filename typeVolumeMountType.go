@@ -3,7 +3,7 @@ package iotmakerDocker
 type VolumeMountType int
 
 const (
-	// TypeBind is the type for mounting host dir
+	// TypeBind is the type for mounting host dir (real folder inside computer where this code work)
 	KVolumeMountTypeBind VolumeMountType = iota
 
 	// TypeVolume is the type for remote storage volumes

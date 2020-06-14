@@ -2,6 +2,7 @@ package iotmakerDocker
 
 import (
 	"github.com/docker/docker/api/types"
+	"io"
 )
 
 // en: Make a image from folder path content
@@ -63,8 +64,9 @@ import (
 //            	http.HandleFunc("/hello", hello)
 //            	http.ListenAndServe(":8080", nil)
 //            }
-func (el *DockerSystem) ImageBuildFromRemoteServer(server string, tags []string) (err error) {
+func (el *DockerSystem) ImageBuildFromRemoteServer(server string, tags []string, channel *chan ContainerPullStatusSendToChannel) (err error) {
 	var imageBuildOptions types.ImageBuildOptions
+	var reader io.Reader
 
 	imageBuildOptions = types.ImageBuildOptions{
 		Tags:          tags,
@@ -72,7 +74,8 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(server string, tags []string)
 		RemoteContext: server,
 	}
 
-	err = el.imageBuild(nil, imageBuildOptions)
+	err, reader = el.imageBuild(nil, imageBuildOptions)
+	el.processBuildAndPullReaders(&reader, channel)
 
 	return
 }

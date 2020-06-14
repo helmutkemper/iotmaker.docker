@@ -3,6 +3,7 @@ package iotmakerDocker
 import (
 	"bytes"
 	"github.com/docker/docker/api/types"
+	"io"
 )
 
 // en: Make a image from folder path content
@@ -58,9 +59,10 @@ import (
 //            	http.HandleFunc("/hello", hello)
 //            	http.ListenAndServe(":8080", nil)
 //            }
-func (el *DockerSystem) ImageBuildFromFolder(folderPath string, tags []string) (err error) {
+func (el *DockerSystem) ImageBuildFromFolder(folderPath string, tags []string, channel *chan ContainerPullStatusSendToChannel) (err error) {
 	var tarFileReader *bytes.Reader
 	var imageBuildOptions types.ImageBuildOptions
+	var reader io.Reader
 
 	err, tarFileReader = el.imageBuildPrepareFolderContext(folderPath)
 	if err != err {
@@ -72,7 +74,8 @@ func (el *DockerSystem) ImageBuildFromFolder(folderPath string, tags []string) (
 		Remove: true,
 	}
 
-	err = el.imageBuild(tarFileReader, imageBuildOptions)
+	err, reader = el.imageBuild(tarFileReader, imageBuildOptions)
+	el.processBuildAndPullReaders(&reader, channel)
 
 	return
 }
