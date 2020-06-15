@@ -5,29 +5,15 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-func (el *DockerSystem) ContainerInspectByName(name string) (error, types.ContainerJSON) {
-	var err error
-	var list []types.Container
-	var inspect types.ContainerJSON
-	var pass bool
+func (el *DockerSystem) ContainerInspectByName(name string) (err error, inspect types.ContainerJSON) {
+	var id string
 
-	err, list = el.ContainerListAll()
+	err, id = el.ContainerFindIdByName(name)
 	if err != nil {
-		return err, inspect
+		return
 	}
 
-	for _, containerData := range list {
-		for _, containerName := range containerData.Names {
-			if containerName == name {
-				pass = true
-				inspect, err = el.cli.ContainerInspect(el.ctx, containerData.ID)
-			}
-		}
-	}
-
-	if pass == false {
-		err = errors.New("container name not found")
-	}
+	inspect, err = el.cli.ContainerInspect(el.ctx, id)
 
 	return err, inspect
 }
