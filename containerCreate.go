@@ -1,7 +1,6 @@
 package iotmakerDocker
 
 import (
-	"fmt"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
@@ -35,14 +34,6 @@ import (
 //       if err != nil {
 //         panic(err)
 //       }
-func (el *DockerSystem) convertPort(in nat.PortMap) (out nat.PortSet) {
-	out = make(map[nat.Port]struct{})
-	for k := range in {
-		out[k] = struct{}{}
-	}
-
-	return
-}
 func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig) (error, string) {
 	var err error
 	var imageId string
@@ -87,14 +78,4 @@ func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart
 	el.container[resp.ID] = resp
 
 	return nil, resp.ID
-}
-
-func (el *DockerSystem) ContainerWait(id string) {
-	wOk, wErr := el.cli.ContainerWait(el.ctx, id, "not-running")
-	select {
-	case <-wOk:
-		fmt.Println()
-	case <-wErr:
-		fmt.Println()
-	}
 }
