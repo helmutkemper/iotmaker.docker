@@ -23,7 +23,7 @@ func (el *DockerSystem) NetworkCreate(
 	scope,
 	subnet,
 	gateway string,
-) (err error, id string, networkGenerator *NextNetworkConfiguration) {
+) (err error, id string, networkGenerator *NextNetworkAutoConfiguration) {
 
 	var resp types.NetworkCreateResponse
 	var gatewayFieldA, gatewayFieldB, gatewayFieldC, gatewayFieldD int

@@ -4,7 +4,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 )
 
-type NextNetworkConfiguration struct {
+type NextNetworkAutoConfiguration struct {
 	ip      IPv4Generator
 	id      string
 	name    string
@@ -14,14 +14,14 @@ type NextNetworkConfiguration struct {
 // init a network for new container
 // nInit("test", 10, 0, 0, 1)
 // before use this function, use whaleAquarium.Docker.NetworkCreate("test")
-func (el *NextNetworkConfiguration) Init(id, name, gateway string, a, b, c, d byte) {
+func (el *NextNetworkAutoConfiguration) Init(id, name, gateway string, a, b, c, d byte) {
 	el.id = id
 	el.name = name
 	el.gateway = gateway
 	el.ip.Init(a, b, c, d)
 }
 
-func (el *NextNetworkConfiguration) GetNext() (error, *network.NetworkingConfig) {
+func (el *NextNetworkAutoConfiguration) GetNext() (error, *network.NetworkingConfig) {
 	var err = el.ip.Inc()
 	newIp := el.ip.String()
 	return err, &network.NetworkingConfig{
