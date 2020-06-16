@@ -8,7 +8,7 @@ import (
 
 const (
 	kGatewayExpressionRegular = `^(?P<fieldA>[0-9]{0,3})\.(?P<fieldB>[0-9]{0,3})\.(?P<fieldC>[0-9]{0,3})\.(?P<fieldD>[0-9]{0,3})$`
-	kSubnetExpressionRegular  = `^(?P<fieldA>[0-9]{0,3})\.(?P<fieldB>[0-9]{0,3})\.(?P<fieldC>[0-9]{0,3})\.(?P<fieldD>[0-9]{0,3})/(?<range>[0-9]{0,3})$`
+	kSubnetExpressionRegular  = `^(?P<fieldA>[0-9]{0,3})\.(?P<fieldB>[0-9]{0,3})\.(?P<fieldC>[0-9]{0,3})\.(?P<fieldD>[0-9]{0,3})/(?P<range>[0-9]{0,3})$`
 )
 
 // create network
@@ -27,6 +27,8 @@ func (el *DockerSystem) NetworkCreate(
 
 	var resp types.NetworkCreateResponse
 	var gatewayFieldA, gatewayFieldB, gatewayFieldC, gatewayFieldD int
+
+	networkGenerator = &NextNetworkAutoConfiguration{}
 
 	_, id = el.NetworkFindIdByName(name)
 	if id != "" {
