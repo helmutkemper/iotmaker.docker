@@ -50,7 +50,7 @@ func main() {
 	var newPort nat.Port
 	var currentPortList []nat.Port
 	var newPortList []nat.Port
-	var networkUtil util.NetworkGenerator
+	var networkUtil util.NextNetworkConfiguration
 	var imageListBeforeTest []types.ImageSummary
 	var listOfExposedPortsByName, listOfExposedPortsById []string
 	var imageID, imageNAME, imageIdFindByName string
@@ -183,27 +183,27 @@ func main() {
 		panic(err)
 	}
 	/*
-	  // wait MongoDB start time inside container
-		time.Sleep(time.Second * 60)
-		client, err = mongo.NewClient(options.Client().ApplyURI(mongoDbURL))
-		if err != nil {
-			log.Fatal(err)
-		}
-		ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-		err = client.Connect(ctx)
-		if err != nil {
-			log.Fatal(err)
-		}
+		  // wait MongoDB start time inside container
+			time.Sleep(time.Second * 60)
+			client, err = mongo.NewClient(options.Client().ApplyURI(mongoDbURL))
+			if err != nil {
+				log.Fatal(err)
+			}
+			ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+			err = client.Connect(ctx)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-		err = client.Ping(context.Background(), nil)
-		if err != nil {
-			log.Fatal(err)
-		}
+			err = client.Ping(context.Background(), nil)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-	  err = client.Disconnect(ctx)
-	  if err != nil {
-	    log.Fatal(err)
-	  }
+		  err = client.Disconnect(ctx)
+		  if err != nil {
+		    log.Fatal(err)
+		  }
 	*/
 	err = dockerSys.ContainerStopAndRemove(id, true, true, true)
 	if err != nil {
