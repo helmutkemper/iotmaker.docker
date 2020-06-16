@@ -40,8 +40,15 @@ import (
 //       if err != nil {
 //         panic(err)
 //       }
-func (el *DockerSystem) ContainerCreateAndStart(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig) (error, string) {
-	err, id := el.ContainerCreate(imageName, containerName, restart, mountVolumes, net)
+func (el *DockerSystem) ContainerCreateAndStart(
+	imageName,
+	containerName string,
+	restart RestartPolicy,
+	mountVolumes []mount.Mount,
+	net *network.NetworkingConfig,
+) (err error, id string) {
+
+	err, id = el.ContainerCreate(imageName, containerName, restart, mountVolumes, net)
 	if err != nil {
 		return err, ""
 	}
