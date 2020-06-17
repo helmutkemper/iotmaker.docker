@@ -5,6 +5,7 @@ import (
 	iotmakerDocker "github.com/helmutkemper/iotmaker.docker"
 )
 
+// create a network with gateway address.0.0.1 and subnet address.0.0.0/subnetMask
 func NewNetworkWithHighAddress(networkName string, address, subnetMask byte) (err error, networkId string, networkAutoConfiguration *iotmakerDocker.NextNetworkAutoConfiguration) {
 	var dockerSys = iotmakerDocker.DockerSystem{}
 	err = dockerSys.Init()
