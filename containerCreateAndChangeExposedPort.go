@@ -47,7 +47,16 @@ import (
 //       if err != nil {
 //         panic(err)
 //       }
-func (el *DockerSystem) ContainerCreateAndChangeExposedPort(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig, currentPort, changeToPort []nat.Port) (error, string) {
+func (el *DockerSystem) ContainerCreateAndChangeExposedPort(
+	imageName,
+	containerName string,
+	restart RestartPolicy,
+	mountVolumes []mount.Mount,
+	net *network.NetworkingConfig,
+	currentPort,
+	changeToPort []nat.Port,
+) (error, string) {
+
 	var err error
 	var imageId string
 	var portExposedList nat.PortMap
