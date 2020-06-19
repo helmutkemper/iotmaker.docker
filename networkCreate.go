@@ -26,12 +26,34 @@ func (el *DockerSystem) NetworkCreate(
 ) (err error, id string, networkGenerator *NextNetworkAutoConfiguration) {
 
 	var resp types.NetworkCreateResponse
+	var insp types.NetworkResource
 	var gatewayFieldA, gatewayFieldB, gatewayFieldC, gatewayFieldD int
 
 	networkGenerator = &NextNetworkAutoConfiguration{}
 
 	_, id = el.NetworkFindIdByName(name)
 	if id != "" {
+
+		insp, err = el.cli.NetworkInspect(
+			el.ctx,
+			id,
+			types.NetworkInspectOptions{
+				Scope:   scope,
+				Verbose: false,
+			},
+		)
+		pass := false
+		for _, v := range insp.IPAM.Config {
+			if v.Gateway == gateway && v.Subnet == subnet {
+				pass = true
+				break
+			}
+		}
+
+		if pass == true {
+			return
+		}
+
 		err = errors.New("there is a network with this name")
 		return
 	}
