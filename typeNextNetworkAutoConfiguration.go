@@ -1,6 +1,7 @@
 package iotmakerDocker
 
 import (
+	"errors"
 	"github.com/docker/docker/api/types/network"
 )
 
@@ -9,6 +10,7 @@ type NextNetworkAutoConfiguration struct {
 	id      string
 	name    string
 	gateway string
+	err     error
 }
 
 // init a network for new container
@@ -19,12 +21,15 @@ func (el *NextNetworkAutoConfiguration) Init(id, name, gateway string, a, b, c, 
 	el.name = name
 	el.gateway = gateway
 	el.ip.Init(a, b, c, d)
+
+	el.err = errors.New("run GetNext() function before get a valid ip address")
 }
 
 func (el *NextNetworkAutoConfiguration) GetNext() (error, *network.NetworkingConfig) {
-	var err = el.ip.Inc()
+	el.err = el.ip.Inc()
+
 	newIp := el.ip.String()
-	return err, &network.NetworkingConfig{
+	return el.err, &network.NetworkingConfig{
 		EndpointsConfig: map[string]*network.EndpointSettings{
 			el.name: {
 				NetworkID: el.id,
@@ -36,4 +41,8 @@ func (el *NextNetworkAutoConfiguration) GetNext() (error, *network.NetworkingCon
 			},
 		},
 	}
+}
+
+func (el *NextNetworkAutoConfiguration) GetCurrentIpAddress() (err error, IP string) {
+	return el.err, el.ip.String()
 }
