@@ -55,8 +55,25 @@ import (
 //            	http.HandleFunc("/hello", hello)
 //            	http.ListenAndServe(":8080", nil)
 //            }
-func (el *DockerSystem) ContainerCreateChangeExposedPortAndStart(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig, currentPort, changeToPort []nat.Port) (error, string) {
-	err, id := el.ContainerCreateAndChangeExposedPort(imageName, containerName, restart, mountVolumes, net, currentPort, changeToPort)
+func (el *DockerSystem) ContainerCreateChangeExposedPortAndStart(
+	imageName,
+	containerName string,
+	restart RestartPolicy,
+	mountVolumes []mount.Mount,
+	net *network.NetworkingConfig,
+	currentPort,
+	changeToPort []nat.Port,
+) (error, string) {
+
+	err, id := el.ContainerCreateAndChangeExposedPort(
+		imageName,
+		containerName,
+		restart,
+		mountVolumes,
+		net,
+		currentPort,
+		changeToPort,
+	)
 	if err != nil {
 		return err, ""
 	}
