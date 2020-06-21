@@ -2,7 +2,6 @@ package iotmakerDocker
 
 import (
 	"errors"
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/network"
 )
 
