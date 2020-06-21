@@ -5,9 +5,17 @@ import (
 )
 
 // create a network with gateway 10.0.0.1 and subnet 10.0.0.0/16
-func NewNetwork(networkName string) (err error, networkId string, networkAutoConfiguration *iotmakerDocker.NextNetworkAutoConfiguration) {
+func NewNetwork(networkName string) (
+	err error,
+	networkId string,
+	networkAutoConfiguration *iotmakerDocker.NextNetworkAutoConfiguration,
+) {
+
 	var dockerSys = iotmakerDocker.DockerSystem{}
-	dockerSys.Init()
+	err = dockerSys.Init()
+	if err != nil {
+		return
+	}
 
 	err, networkId, networkAutoConfiguration = dockerSys.NetworkCreate(
 		networkName,

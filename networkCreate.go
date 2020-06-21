@@ -6,11 +6,6 @@ import (
 	"github.com/docker/docker/api/types/network"
 )
 
-const (
-	kGatewayExpressionRegular = `^(?P<fieldA>[0-9]{0,3})\.(?P<fieldB>[0-9]{0,3})\.(?P<fieldC>[0-9]{0,3})\.(?P<fieldD>[0-9]{0,3})$`
-	kSubnetExpressionRegular  = `^(?P<fieldA>[0-9]{0,3})\.(?P<fieldB>[0-9]{0,3})\.(?P<fieldC>[0-9]{0,3})\.(?P<fieldD>[0-9]{0,3})/(?P<range>[0-9]{0,3})$`
-)
-
 // create network
 //    name:    string       Ex.: "containerNetwork"
 //    drive:   NetworkDrive Ex.: KNetworkDriveBridge
@@ -42,6 +37,9 @@ func (el *DockerSystem) NetworkCreate(
 				Verbose: false,
 			},
 		)
+		if err != nil {
+			return
+		}
 		pass := false
 		for _, v := range insp.IPAM.Config {
 			if v.Gateway == gateway && v.Subnet == subnet {
@@ -81,7 +79,7 @@ func (el *DockerSystem) NetworkCreate(
 				},
 			},
 		},
-		Attachable: false,
+		Attachable: true,
 		Labels: map[string]string{
 			"name": name,
 		},
