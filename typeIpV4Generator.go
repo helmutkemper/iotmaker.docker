@@ -196,6 +196,7 @@ func (el IPv4Generator) cidrPrefixToDecimal(cidr int) (cidrDecimal int) {
 }
 
 func (el IPv4Generator) verify(a, b, c, d, CIDRPrefix int) (err error) {
+	return nil
 	if a > 255 || b > 255 || c > 255 || d > 255 || CIDRPrefix > 128 {
 		err = errors.New("max theoretical allowed value is 255.255.255.255/128")
 	}

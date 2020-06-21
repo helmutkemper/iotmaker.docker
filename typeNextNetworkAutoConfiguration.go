@@ -26,51 +26,6 @@ func (el *NextNetworkAutoConfiguration) Init(id, name, gateway string, a, b, c, 
 	el.err = errors.New("run GetNext() function before get a valid ip address")
 }
 
-func (el *NextNetworkAutoConfiguration) GetNextAndAppendPublicNetwork() (err error, configPointer *network.NetworkingConfig) {
-	var d = DockerSystem{}
-	var ipGen = IPv4Generator{}
-	var publicNetwork types.NetworkResource
-	err = d.Init()
-	if err != nil {
-		return
-	}
-
-	err, publicNetwork = d.NetworkFindNetworkTypeBridgePublic()
-	if err != nil {
-		return
-	}
-
-	for _, v := range publicNetwork.Containers {
-		err = ipGen.InitWithStringAndAllowMaxValue(v.IPv4Address)
-		if err != nil {
-			return
-		}
-	}
-
-	publicNextIp := ipGen.String()
-	publicName := publicNetwork.Name
-	publicId := publicNetwork.ID
-
-	el.err = el.ip.Inc()
-	newIp := el.ip.String()
-	return el.err, &network.NetworkingConfig{
-		EndpointsConfig: map[string]*network.EndpointSettings{
-			el.name: {
-				NetworkID: el.id,
-				Gateway:   el.gateway,
-				IPAMConfig: &network.EndpointIPAMConfig{
-					IPv4Address: newIp,
-				},
-				IPAddress: newIp,
-			},
-			publicName: {
-				NetworkID: publicId,
-				IPAddress: publicNextIp,
-			},
-		},
-	}
-}
-
 func (el *NextNetworkAutoConfiguration) GetNext() (error, *network.NetworkingConfig) {
 	el.err = el.ip.Inc()
 
