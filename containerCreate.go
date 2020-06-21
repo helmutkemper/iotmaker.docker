@@ -5,6 +5,7 @@ import (
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
+	"strings"
 )
 
 //
@@ -39,6 +40,10 @@ func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart
 	var imageId string
 	var portExposedList nat.PortMap
 	var resp container.ContainerCreateCreatedBody
+
+	if strings.Contains(imageName, ":") == false {
+		imageName = imageName + ":latest"
+	}
 
 	err, imageId = el.ImageFindIdByName(imageName)
 	if err != nil {
