@@ -62,6 +62,8 @@ func (el *DockerSystem) ContainerCreateAndChangeExposedPort(
 	var portExposedList nat.PortMap
 	var resp container.ContainerCreateCreatedBody
 
+	imageName = el.AdjustImageName(imageName)
+
 	err, imageId = el.ImageFindIdByName(imageName)
 	if err != nil {
 		return err, ""

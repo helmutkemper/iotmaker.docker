@@ -13,6 +13,8 @@ func (el *DockerSystem) ContainerCreateWithoutExposePortsAndStart(
 	net *network.NetworkingConfig,
 ) (err error, containerID string) {
 
+	imageName = el.AdjustImageName(imageName)
+
 	err, containerID = el.ContainerCreateWithoutExposePorts(imageName, containerName, restart, mountVolumes, net)
 	if err != nil {
 		return

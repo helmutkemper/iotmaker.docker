@@ -3,6 +3,7 @@ package iotmakerDocker
 import (
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/go-connections/nat"
 )
 
 // en: Create a container and automatically exposes the ports listed in the image before
@@ -44,15 +45,18 @@ func (el *DockerSystem) ContainerCreateAndStart(
 	imageName,
 	containerName string,
 	restart RestartPolicy,
+	portExposedList nat.PortMap,
 	mountVolumes []mount.Mount,
-	net *network.NetworkingConfig,
-) (err error, id string) {
+	containerNetwork *network.NetworkingConfig,
+) (err error, containerID string) {
 
-	err, id = el.ContainerCreate(imageName, containerName, restart, mountVolumes, net)
+	imageName = el.AdjustImageName(imageName)
+
+	err, containerID = el.ContainerCreate(imageName, containerName, restart, portExposedList, mountVolumes, containerNetwork)
 	if err != nil {
-		return err, ""
+		return
 	}
 
-	err = el.ContainerStart(id)
-	return err, id
+	err = el.ContainerStart(containerID)
+	return
 }

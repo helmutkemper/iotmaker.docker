@@ -60,24 +60,26 @@ func (el *DockerSystem) ContainerCreateChangeExposedPortAndStart(
 	containerName string,
 	restart RestartPolicy,
 	mountVolumes []mount.Mount,
-	net *network.NetworkingConfig,
+	containerNetwork *network.NetworkingConfig,
 	currentPort,
 	changeToPort []nat.Port,
-) (error, string) {
+) (err error, containerID string) {
 
-	err, id := el.ContainerCreateAndChangeExposedPort(
+	imageName = el.AdjustImageName(imageName)
+
+	err, containerID = el.ContainerCreateAndChangeExposedPort(
 		imageName,
 		containerName,
 		restart,
 		mountVolumes,
-		net,
+		containerNetwork,
 		currentPort,
 		changeToPort,
 	)
 	if err != nil {
-		return err, ""
+		return
 	}
 
-	err = el.ContainerStart(id)
-	return err, id
+	err = el.ContainerStart(containerID)
+	return
 }

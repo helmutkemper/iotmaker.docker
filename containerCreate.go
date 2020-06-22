@@ -5,7 +5,6 @@ import (
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
-	"strings"
 )
 
 //
@@ -35,15 +34,20 @@ import (
 //       if err != nil {
 //         panic(err)
 //       }
-func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig) (error, string) {
+func (el *DockerSystem) ContainerCreateAndExposePortsAutomatically(
+	imageName,
+	containerName string,
+	restart RestartPolicy,
+	mountVolumes []mount.Mount,
+	containerNetwork *network.NetworkingConfig,
+) (error, string) {
+
 	var err error
 	var imageId string
 	var portExposedList nat.PortMap
 	var resp container.ContainerCreateCreatedBody
 
-	if strings.Contains(imageName, ":") == false {
-		imageName = imageName + ":latest"
-	}
+	imageName = el.AdjustImageName(imageName)
 
 	err, imageId = el.ImageFindIdByName(imageName)
 	if err != nil {
@@ -66,14 +70,14 @@ func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart
 			ExposedPorts: el.convertPort(portExposedList),
 		},
 		&container.HostConfig{
-			PortBindings: portExposedList,
+			//PortBindings: portExposedList,
 			RestartPolicy: container.RestartPolicy{
 				Name: restart.String(),
 			},
 			Resources: container.Resources{},
 			Mounts:    mountVolumes,
 		},
-		net,
+		containerNetwork,
 		containerName,
 	)
 	if err != nil {
@@ -83,4 +87,47 @@ func (el *DockerSystem) ContainerCreate(imageName, containerName string, restart
 	el.container[resp.ID] = resp
 
 	return nil, resp.ID
+}
+
+func (el *DockerSystem) ContainerCreate(
+	imageName,
+	containerName string,
+	restartPolicy RestartPolicy,
+	portExposedList nat.PortMap,
+	mountVolumes []mount.Mount,
+	containerNetwork *network.NetworkingConfig,
+) (err error, containerID string) {
+
+	var resp container.ContainerCreateCreatedBody
+
+	imageName = el.AdjustImageName(imageName)
+
+	if len(el.container) == 0 {
+		el.container = make(map[string]container.ContainerCreateCreatedBody)
+	}
+
+	resp, err = el.cli.ContainerCreate(
+		el.ctx,
+		&container.Config{
+			Image: imageName,
+		},
+		&container.HostConfig{
+			PortBindings: portExposedList,
+			RestartPolicy: container.RestartPolicy{
+				Name: restartPolicy.String(),
+			},
+			Resources: container.Resources{},
+			Mounts:    mountVolumes,
+		},
+		containerNetwork,
+		containerName,
+	)
+	if err != nil {
+		return
+	}
+
+	el.container[resp.ID] = resp
+	containerID = resp.ID
+
+	return
 }

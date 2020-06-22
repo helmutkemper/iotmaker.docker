@@ -4,7 +4,6 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
-	"strings"
 )
 
 //
@@ -34,13 +33,17 @@ import (
 //       if err != nil {
 //         panic(err)
 //       }
-func (el *DockerSystem) ContainerCreateWithoutExposePorts(imageName, containerName string, restart RestartPolicy, mountVolumes []mount.Mount, net *network.NetworkingConfig) (error, string) {
-	var err error
+func (el *DockerSystem) ContainerCreateWithoutExposePorts(
+	imageName,
+	containerName string,
+	restart RestartPolicy,
+	mountVolumes []mount.Mount,
+	net *network.NetworkingConfig,
+) (err error, containerID string) {
+
 	var resp container.ContainerCreateCreatedBody
 
-	if strings.Contains(imageName, ":") == false {
-		imageName = imageName + ":latest"
-	}
+	imageName = el.AdjustImageName(imageName)
 
 	if len(el.container) == 0 {
 		el.container = make(map[string]container.ContainerCreateCreatedBody)
@@ -62,10 +65,11 @@ func (el *DockerSystem) ContainerCreateWithoutExposePorts(imageName, containerNa
 		containerName,
 	)
 	if err != nil {
-		return err, ""
+		return
 	}
 
 	el.container[resp.ID] = resp
+	containerID = resp.ID
 
-	return nil, resp.ID
+	return
 }
