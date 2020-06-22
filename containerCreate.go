@@ -58,6 +58,7 @@ func (el *DockerSystem) ContainerCreate(
 			ExposedPorts: el.convertPort(portExposedList),
 		},
 		&container.HostConfig{
+			PortBindings: portExposedList,
 			RestartPolicy: container.RestartPolicy{
 				Name: restartPolicy.String(),
 			},
