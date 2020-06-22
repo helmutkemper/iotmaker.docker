@@ -34,18 +34,30 @@ import (
 //       if err != nil {
 //         panic(err)
 //       }
-func (el *DockerSystem) ContainerCreate(
+func (el *DockerSystem) ContainerCreateAndExposePortsAutomatically(
 	imageName,
 	containerName string,
-	restartPolicy RestartPolicy,
-	portExposedList nat.PortMap,
+	restart RestartPolicy,
 	mountVolumes []mount.Mount,
 	containerNetwork *network.NetworkingConfig,
-) (err error, containerID string) {
+) (error, string) {
 
+	var err error
+	var imageId string
+	var portExposedList nat.PortMap
 	var resp container.ContainerCreateCreatedBody
 
 	imageName = el.AdjustImageName(imageName)
+
+	err, imageId = el.ImageFindIdByName(imageName)
+	if err != nil {
+		return err, ""
+	}
+
+	err, portExposedList = el.ImageMountNatPortList(imageId)
+	if err != nil {
+		return err, ""
+	}
 
 	if len(el.container) == 0 {
 		el.container = make(map[string]container.ContainerCreateCreatedBody)
@@ -54,12 +66,13 @@ func (el *DockerSystem) ContainerCreate(
 	resp, err = el.cli.ContainerCreate(
 		el.ctx,
 		&container.Config{
-			Image: imageName,
+			Image:        imageName,
+			ExposedPorts: el.convertPort(portExposedList),
 		},
 		&container.HostConfig{
-			PortBindings: portExposedList,
+			//PortBindings: portExposedList,
 			RestartPolicy: container.RestartPolicy{
-				Name: restartPolicy.String(),
+				Name: restart.String(),
 			},
 			Resources: container.Resources{},
 			Mounts:    mountVolumes,
@@ -68,11 +81,10 @@ func (el *DockerSystem) ContainerCreate(
 		containerName,
 	)
 	if err != nil {
-		return
+		return err, ""
 	}
 
 	el.container[resp.ID] = resp
-	containerID = resp.ID
 
-	return
+	return nil, resp.ID
 }
