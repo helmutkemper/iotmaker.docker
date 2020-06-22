@@ -54,10 +54,10 @@ func (el *DockerSystem) ContainerCreate(
 	resp, err = el.cli.ContainerCreate(
 		el.ctx,
 		&container.Config{
-			Image: imageName,
+			Image:        imageName,
+			ExposedPorts: el.convertPort(portExposedList),
 		},
 		&container.HostConfig{
-			PortBindings: portExposedList,
 			RestartPolicy: container.RestartPolicy{
 				Name: restartPolicy.String(),
 			},

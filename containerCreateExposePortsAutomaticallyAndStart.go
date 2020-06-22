@@ -5,7 +5,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 )
 
-func (el *DockerSystem) ContainerCreateWithoutExposePortsAndStart(
+func (el *DockerSystem) ContainerCreateExposePortsAutomaticallyAndStart(
 	imageName,
 	containerName string,
 	restartPolicy RestartPolicy,
@@ -13,7 +13,7 @@ func (el *DockerSystem) ContainerCreateWithoutExposePortsAndStart(
 	containerNetwork *network.NetworkingConfig,
 ) (err error, containerID string) {
 
-	err, containerID = el.ContainerCreateWithoutExposePorts(
+	err, containerID = el.ContainerCreateAndExposePortsAutomatically(
 		imageName,
 		containerName,
 		restartPolicy,

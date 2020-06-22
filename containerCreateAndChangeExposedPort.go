@@ -50,17 +50,15 @@ import (
 func (el *DockerSystem) ContainerCreateAndChangeExposedPort(
 	imageName,
 	containerName string,
-	restart RestartPolicy,
+	restartPolicy RestartPolicy,
 	mountVolumes []mount.Mount,
-	net *network.NetworkingConfig,
+	containerNetwork *network.NetworkingConfig,
 	currentPort,
 	changeToPort []nat.Port,
-) (error, string) {
+) (err error, containerID string) {
 
-	var err error
 	var imageId string
 	var portExposedList nat.PortMap
-	var resp container.ContainerCreateCreatedBody
 
 	imageName = el.AdjustImageName(imageName)
 
@@ -78,28 +76,12 @@ func (el *DockerSystem) ContainerCreateAndChangeExposedPort(
 		el.container = make(map[string]container.ContainerCreateCreatedBody)
 	}
 
-	// fixme: container create de iotmakerDocker
-	resp, err = el.cli.ContainerCreate(
-		el.ctx,
-		&container.Config{
-			Image: imageName,
-		},
-		&container.HostConfig{
-			PortBindings: portExposedList,
-			RestartPolicy: container.RestartPolicy{
-				Name: restart.String(),
-			},
-			Resources: container.Resources{},
-			Mounts:    mountVolumes,
-		},
-		net,
+	return el.ContainerCreate(
+		imageName,
 		containerName,
+		restartPolicy,
+		portExposedList,
+		mountVolumes,
+		containerNetwork,
 	)
-	if err != nil {
-		return err, ""
-	}
-
-	el.container[resp.ID] = resp
-
-	return nil, resp.ID
 }

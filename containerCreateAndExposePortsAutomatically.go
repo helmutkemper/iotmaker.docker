@@ -37,15 +37,13 @@ import (
 func (el *DockerSystem) ContainerCreateAndExposePortsAutomatically(
 	imageName,
 	containerName string,
-	restart RestartPolicy,
+	restartPolicy RestartPolicy,
 	mountVolumes []mount.Mount,
 	containerNetwork *network.NetworkingConfig,
-) (error, string) {
+) (err error, containerID string) {
 
-	var err error
 	var imageId string
 	var portExposedList nat.PortMap
-	var resp container.ContainerCreateCreatedBody
 
 	imageName = el.AdjustImageName(imageName)
 
@@ -63,28 +61,12 @@ func (el *DockerSystem) ContainerCreateAndExposePortsAutomatically(
 		el.container = make(map[string]container.ContainerCreateCreatedBody)
 	}
 
-	resp, err = el.cli.ContainerCreate(
-		el.ctx,
-		&container.Config{
-			Image:        imageName,
-			ExposedPorts: el.convertPort(portExposedList),
-		},
-		&container.HostConfig{
-			//PortBindings: portExposedList,
-			RestartPolicy: container.RestartPolicy{
-				Name: restart.String(),
-			},
-			Resources: container.Resources{},
-			Mounts:    mountVolumes,
-		},
-		containerNetwork,
+	return el.ContainerCreate(
+		imageName,
 		containerName,
+		restartPolicy,
+		portExposedList,
+		mountVolumes,
+		containerNetwork,
 	)
-	if err != nil {
-		return err, ""
-	}
-
-	el.container[resp.ID] = resp
-
-	return nil, resp.ID
 }

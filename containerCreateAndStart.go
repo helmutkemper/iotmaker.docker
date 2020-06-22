@@ -52,7 +52,14 @@ func (el *DockerSystem) ContainerCreateAndStart(
 
 	imageName = el.AdjustImageName(imageName)
 
-	err, containerID = el.ContainerCreate(imageName, containerName, restart, portExposedList, mountVolumes, containerNetwork)
+	err, containerID = el.ContainerCreate(
+		imageName,
+		containerName,
+		restart,
+		portExposedList,
+		mountVolumes,
+		containerNetwork,
+	)
 	if err != nil {
 		return
 	}

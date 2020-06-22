@@ -4,6 +4,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/go-connections/nat"
 )
 
 //
@@ -36,12 +37,12 @@ import (
 func (el *DockerSystem) ContainerCreateWithoutExposePorts(
 	imageName,
 	containerName string,
-	restart RestartPolicy,
+	restartPolicy RestartPolicy,
 	mountVolumes []mount.Mount,
-	net *network.NetworkingConfig,
+	containerNetwork *network.NetworkingConfig,
 ) (err error, containerID string) {
 
-	var resp container.ContainerCreateCreatedBody
+	var portExposedList nat.PortMap
 
 	imageName = el.AdjustImageName(imageName)
 
@@ -49,27 +50,12 @@ func (el *DockerSystem) ContainerCreateWithoutExposePorts(
 		el.container = make(map[string]container.ContainerCreateCreatedBody)
 	}
 
-	resp, err = el.cli.ContainerCreate(
-		el.ctx,
-		&container.Config{
-			Image: imageName,
-		},
-		&container.HostConfig{
-			RestartPolicy: container.RestartPolicy{
-				Name: restart.String(),
-			},
-			Resources: container.Resources{},
-			Mounts:    mountVolumes,
-		},
-		net,
+	return el.ContainerCreate(
+		imageName,
 		containerName,
+		restartPolicy,
+		portExposedList,
+		mountVolumes,
+		containerNetwork,
 	)
-	if err != nil {
-		return
-	}
-
-	el.container[resp.ID] = resp
-	containerID = resp.ID
-
-	return
 }
