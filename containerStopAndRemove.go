@@ -1,7 +1,6 @@
 package iotmakerDocker
 
 import (
-	"fmt"
 	"github.com/docker/docker/api/types"
 	"time"
 )
@@ -16,13 +15,11 @@ func (el *DockerSystem) ContainerStopAndRemove(id string, removeVolumes, removeL
 
 	ok, notOk := el.cli.ContainerWait(el.ctx, id, "not-running")
 	select {
-	case o := <-ok:
-		fmt.Printf("%v\n\n\n", o)
+	case <-ok:
+		break
 	case err = <-notOk:
 		return err
 	}
-
-	err = el.cli.NetworkDisconnect(el.ctx, "network_test", id, force)
 
 	time.Sleep(time.Second * 5)
 	return el.cli.ContainerRemove(el.ctx, id, types.ContainerRemoveOptions{
