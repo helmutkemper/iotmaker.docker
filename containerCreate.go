@@ -54,8 +54,8 @@ func (el *DockerSystem) ContainerCreate(
 	resp, err = el.cli.ContainerCreate(
 		el.ctx,
 		&container.Config{
-			Image:        imageName,
-			ExposedPorts: el.convertPort(portExposedList),
+			Image: imageName,
+			//ExposedPorts: el.convertPort(portExposedList),
 		},
 		&container.HostConfig{
 			PortBindings: portExposedList,
