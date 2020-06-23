@@ -5,7 +5,6 @@ import (
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
-	specs "github.com/opencontainers/image-spec/specs-go/v1"
 )
 
 //
@@ -67,7 +66,6 @@ func (el *DockerSystem) ContainerCreate(
 			Mounts:    mountVolumes,
 		},
 		containerNetwork,
-		&specs.Platform{},
 		containerName,
 	)
 	if err != nil {
