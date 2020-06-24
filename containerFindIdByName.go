@@ -11,7 +11,7 @@ func (el *DockerSystem) ContainerFindIdByName(name string) (err error, id string
 	err, list = el.ContainerListAll()
 	for _, containerData := range list {
 		for _, containerName := range containerData.Names {
-			if containerName == name {
+			if containerName == name || containerName == "/"+name {
 				id = containerData.ID
 				return
 			}
