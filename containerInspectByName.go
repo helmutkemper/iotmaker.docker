@@ -12,7 +12,7 @@ func (el *DockerSystem) ContainerInspectByName(name string) (err error, inspect 
 		return
 	}
 
-	inspect, err = el.cli.ContainerInspect(el.ctx, id)
+	err, inspect = el.ContainerInspect(id)
 
 	return err, inspect
 }
