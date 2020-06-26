@@ -4,7 +4,10 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-func (el *DockerSystem) ContainerInspectByName(name string) (err error, inspect types.ContainerJSON) {
+func (el *DockerSystem) ContainerInspectByName(
+	name string,
+) (err error, inspect types.ContainerJSON) {
+
 	var id string
 
 	err, id = el.ContainerFindIdByName(name)
