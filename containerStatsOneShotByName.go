@@ -5,7 +5,7 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-func (el *DockerSystem) ContainerStatsOneShotByName(name string) (error, types.Stats) {
+func (el *DockerSystem) ContainerStatisticsOneShotByName(name string) (error, types.Stats) {
 	var err error
 	var list []types.Container
 	var ret types.Stats
@@ -31,5 +31,5 @@ func (el *DockerSystem) ContainerStatsOneShotByName(name string) (error, types.S
 		return errors.New("container name not found"), ret
 	}
 
-	return el.ContainerStatsOneShot(id)
+	return el.ContainerStatisticsOneShot(id)
 }

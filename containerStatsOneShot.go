@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 )
 
-func (el *DockerSystem) ContainerStatsOneShot(id string) (error, types.Stats) {
+func (el *DockerSystem) ContainerStatisticsOneShot(id string) (error, types.Stats) {
 	var err error
 	var stats types.ContainerStats
 	var body []byte
