@@ -38,8 +38,9 @@ import (
 //       }
 //       dockerSys.ContainerCreateChangeExposedPortAndStart(...)
 //
-func (el *DockerSystem) ClientCreate() error {
-	var err error
+func (el *DockerSystem) ClientCreate() (
+	err error,
+) {
 
 	el.cli, err = client.NewClientWithOpts(
 		client.FromEnv,

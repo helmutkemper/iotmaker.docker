@@ -5,10 +5,14 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-func (el *DockerSystem) ContainerStatisticsOneShotByName(name string) (error, types.Stats) {
-	var err error
+func (el *DockerSystem) ContainerStatisticsOneShotByName(
+	name string,
+) (
+	err error,
+	ret types.Stats,
+) {
+
 	var list []types.Container
-	var ret types.Stats
 	var pass bool
 	var id string
 

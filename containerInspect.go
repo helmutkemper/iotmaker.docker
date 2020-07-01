@@ -6,7 +6,10 @@ import (
 
 func (el *DockerSystem) ContainerInspect(
 	id string,
-) (err error, inspect types.ContainerJSON) {
+) (
+	err error,
+	inspect types.ContainerJSON,
+) {
 
 	inspect, err = el.cli.ContainerInspect(el.ctx, id)
 	if err != nil {

@@ -5,14 +5,20 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-func (el *DockerSystem) ContainerFindIdByName(name string) (err error, id string) {
+func (el *DockerSystem) ContainerFindIdByName(
+	name string,
+) (
+	err error,
+	ID string,
+) {
+
 	var list []types.Container
 
 	err, list = el.ContainerListAll()
 	for _, containerData := range list {
 		for _, containerName := range containerData.Names {
 			if containerName == name || containerName == "/"+name {
-				id = containerData.ID
+				ID = containerData.ID
 				return
 			}
 		}

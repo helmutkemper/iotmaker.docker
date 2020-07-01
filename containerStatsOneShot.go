@@ -6,22 +6,26 @@ import (
 	"io/ioutil"
 )
 
-func (el *DockerSystem) ContainerStatisticsOneShot(id string) (error, types.Stats) {
-	var err error
+func (el *DockerSystem) ContainerStatisticsOneShot(
+	id string,
+) (
+	err error,
+	statsRet types.Stats,
+) {
+
 	var stats types.ContainerStats
 	var body []byte
-	var ret types.Stats
 
 	stats, err = el.cli.ContainerStats(el.ctx, id, true)
 	if err != nil {
-		return err, ret
+		return
 	}
 
 	body, err = ioutil.ReadAll(stats.Body)
 	if err != nil {
-		return err, ret
+		return
 	}
 
-	err = json.Unmarshal(body, &ret)
-	return err, ret
+	err = json.Unmarshal(body, &statsRet)
+	return
 }

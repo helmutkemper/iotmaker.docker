@@ -59,7 +59,14 @@ import (
 //            	http.HandleFunc("/hello", hello)
 //            	http.ListenAndServe(":8080", nil)
 //            }
-func (el *DockerSystem) ImageBuildFromFolder(folderPath string, tags []string, channel *chan ContainerPullStatusSendToChannel) (err error) {
+func (el *DockerSystem) ImageBuildFromFolder(
+	folderPath string,
+	tags []string,
+	channel *chan ContainerPullStatusSendToChannel,
+) (
+	err error,
+) {
+
 	var tarFileReader *bytes.Reader
 	var imageBuildOptions types.ImageBuildOptions
 	var reader io.Reader

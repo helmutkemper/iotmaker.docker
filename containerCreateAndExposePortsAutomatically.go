@@ -40,7 +40,10 @@ func (el *DockerSystem) ContainerCreateAndExposePortsAutomatically(
 	restartPolicy RestartPolicy,
 	mountVolumes []mount.Mount,
 	containerNetwork *network.NetworkingConfig,
-) (err error, containerID string) {
+) (
+	err error,
+	containerID string,
+) {
 
 	var imageId string
 	var portExposedList nat.PortMap

@@ -8,7 +8,15 @@ import (
 	"strings"
 )
 
-func (el DockerSystem) imageBuildPrepareFolderContextSupport(dirPath, toRemoveInsideTarFilePathList string, buf *bytes.Buffer, tarWriter *tar.Writer) (err error) {
+func (el DockerSystem) imageBuildPrepareFolderContextSupport(
+	dirPath,
+	toRemoveInsideTarFilePathList string,
+	buf *bytes.Buffer,
+	tarWriter *tar.Writer,
+) (
+	err error,
+) {
+
 	var dirContent []os.FileInfo
 	var tarHeader *tar.Header
 	var fileData []byte

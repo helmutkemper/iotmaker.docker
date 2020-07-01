@@ -2,7 +2,10 @@ package iotmakerDocker
 
 func (el *DockerSystem) ContainerInspectJSonByName(
 	name string,
-) (err error, inspect []byte) {
+) (
+	err error,
+	inspect []byte,
+) {
 
 	var id string
 

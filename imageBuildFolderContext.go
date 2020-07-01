@@ -6,7 +6,13 @@ import (
 	"strings"
 )
 
-func (el DockerSystem) imageBuildPrepareFolderContext(dirPath string) (err error, file *bytes.Reader) {
+func (el DockerSystem) imageBuildPrepareFolderContext(
+	dirPath string,
+) (
+	err error,
+	file *bytes.Reader,
+) {
+
 	var buf bytes.Buffer
 	var tarWriter *tar.Writer
 	tarWriter = tar.NewWriter(&buf)

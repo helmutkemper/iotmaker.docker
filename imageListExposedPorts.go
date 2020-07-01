@@ -6,7 +6,13 @@ import (
 )
 
 // list image exposed ports by id
-func (el *DockerSystem) ImageListExposedPorts(id string) (err error, portList []nat.Port) {
+func (el *DockerSystem) ImageListExposedPorts(
+	id string,
+) (
+	err error,
+	portList []nat.Port,
+) {
+
 	var imageData types.ImageInspect
 
 	imageData, _, err = el.cli.ImageInspectWithRaw(el.ctx, id)

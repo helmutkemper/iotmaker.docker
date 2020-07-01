@@ -5,8 +5,15 @@ import (
 	"time"
 )
 
-func (el *DockerSystem) ContainerStopAndRemove(id string, removeVolumes, removeLinks, force bool) error {
-	var err error
+func (el *DockerSystem) ContainerStopAndRemove(
+	id string,
+	removeVolumes,
+	removeLinks,
+	force bool,
+) (
+	err error,
+) {
+
 	var timeout = time.Microsecond * 10000
 	err = el.cli.ContainerStop(el.ctx, id, &timeout)
 	if err != nil {

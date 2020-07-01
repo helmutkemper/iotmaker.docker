@@ -41,7 +41,10 @@ func (el *DockerSystem) ContainerCreate(
 	portExposedList nat.PortMap,
 	mountVolumes []mount.Mount,
 	containerNetwork *network.NetworkingConfig,
-) (err error, containerID string) {
+) (
+	err error,
+	containerID string,
+) {
 
 	var resp container.ContainerCreateCreatedBody
 

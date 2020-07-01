@@ -6,7 +6,10 @@ import (
 
 func (el *DockerSystem) ContainerInspectByName(
 	name string,
-) (err error, inspect types.ContainerJSON) {
+) (
+	err error,
+	inspect types.ContainerJSON,
+) {
 
 	var id string
 

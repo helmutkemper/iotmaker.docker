@@ -40,7 +40,10 @@ func (el *DockerSystem) ContainerCreateWithoutExposePorts(
 	restartPolicy RestartPolicy,
 	mountVolumes []mount.Mount,
 	containerNetwork *network.NetworkingConfig,
-) (err error, containerID string) {
+) (
+	err error,
+	containerID string,
+) {
 
 	var portExposedList nat.PortMap
 

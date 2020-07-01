@@ -48,7 +48,10 @@ func (el *DockerSystem) ContainerCreateAndStart(
 	portExposedList nat.PortMap,
 	mountVolumes []mount.Mount,
 	containerNetwork *network.NetworkingConfig,
-) (err error, containerID string) {
+) (
+	err error,
+	containerID string,
+) {
 
 	imageName = el.AdjustImageName(imageName)
 

@@ -11,7 +11,10 @@ func (el *DockerSystem) ContainerCreateExposePortsAutomaticallyAndStart(
 	restartPolicy RestartPolicy,
 	mountVolumes []mount.Mount,
 	containerNetwork *network.NetworkingConfig,
-) (err error, containerID string) {
+) (
+	err error,
+	containerID string,
+) {
 
 	err, containerID = el.ContainerCreateAndExposePortsAutomatically(
 		imageName,

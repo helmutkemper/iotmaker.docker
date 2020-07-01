@@ -2,7 +2,13 @@ package iotmakerDocker
 
 import "github.com/docker/docker/api/types"
 
-func (el *DockerSystem) ContainerNetworkInspect(id string) (err error, netDataList ContainerNetworkDataList) {
+func (el *DockerSystem) ContainerNetworkInspect(
+	id string,
+) (
+	err error,
+	netDataList ContainerNetworkDataList,
+) {
+
 	var insp types.ContainerJSON
 
 	netDataList = make(map[string]ContainerNetworkData)

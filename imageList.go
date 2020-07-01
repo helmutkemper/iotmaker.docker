@@ -5,7 +5,11 @@ import (
 )
 
 // list images
-func (el *DockerSystem) ImageList() (error, []types.ImageSummary) {
-	ret, err := el.cli.ImageList(el.ctx, types.ImageListOptions{})
-	return err, ret
+func (el *DockerSystem) ImageList() (
+	err error,
+	list []types.ImageSummary,
+) {
+
+	list, err = el.cli.ImageList(el.ctx, types.ImageListOptions{})
+	return
 }

@@ -69,7 +69,9 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(
 	imageName string,
 	tags []string,
 	channel *chan ContainerPullStatusSendToChannel,
-) (err error) {
+) (
+	err error,
+) {
 
 	var imageBuildOptions types.ImageBuildOptions
 	var reader io.Reader

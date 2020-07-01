@@ -2,11 +2,20 @@ package iotmakerDocker
 
 import (
 	"errors"
+	"github.com/docker/docker/api/types"
 )
 
 // find image id by name
-func (el *DockerSystem) ImageFindIdByName(name string) (error, string) {
-	err, list := el.ImageList()
+func (el *DockerSystem) ImageFindIdByName(
+	name string,
+) (
+	err error,
+	ID string,
+) {
+
+	var list []types.ImageSummary
+
+	err, list = el.ImageList()
 	if err != nil {
 		return err, ""
 	}

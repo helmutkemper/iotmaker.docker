@@ -2,10 +2,11 @@ package iotmakerDocker
 
 import "github.com/docker/docker/api/types"
 
-func (el *DockerSystem) ContainerListAll() (error, []types.Container) {
-	var err error
-	var list []types.Container
-	list, err = el.cli.ContainerList(el.ctx, types.ContainerListOptions{All: true})
+func (el *DockerSystem) ContainerListAll() (
+	err error,
+	list []types.Container,
+) {
 
-	return err, list
+	list, err = el.cli.ContainerList(el.ctx, types.ContainerListOptions{All: true})
+	return
 }

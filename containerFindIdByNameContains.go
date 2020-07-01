@@ -6,14 +6,20 @@ import (
 	"strings"
 )
 
-func (el *DockerSystem) ContainerFindIdByNameContains(containsName string) (err error, id string) {
+func (el *DockerSystem) ContainerFindIdByNameContains(
+	containsName string,
+) (
+	err error,
+	ID string,
+) {
+
 	var list []types.Container
 
 	err, list = el.ContainerListAll()
 	for _, containerData := range list {
 		for _, containerName := range containerData.Names {
 			if strings.Contains(containerName, containsName) == true {
-				id = containerData.ID
+				ID = containerData.ID
 				return
 			}
 		}

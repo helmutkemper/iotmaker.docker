@@ -55,7 +55,10 @@ func (el *DockerSystem) ContainerCreateAndChangeExposedPort(
 	containerNetwork *network.NetworkingConfig,
 	currentPort,
 	changeToPort []nat.Port,
-) (err error, containerID string) {
+) (
+	err error,
+	containerID string,
+) {
 
 	var imageId string
 	var portExposedList nat.PortMap
