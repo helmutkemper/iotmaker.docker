@@ -105,5 +105,11 @@ func (el *DockerSystem) NetworkCreate(
 	el.networkId[name] = resp.ID
 	id = resp.ID
 
+	if len(el.networkGenerator) == 0 {
+		el.networkGenerator = make(map[string]*NextNetworkAutoConfiguration)
+	}
+
+	el.networkGenerator[name] = networkGenerator
+
 	return
 }

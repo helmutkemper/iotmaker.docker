@@ -7,9 +7,10 @@ import (
 )
 
 type DockerSystem struct {
-	cli       *client.Client
-	ctx       context.Context
-	networkId map[string]string
-	imageId   map[string]string
-	container map[string]container.ContainerCreateCreatedBody
+	cli              *client.Client
+	ctx              context.Context
+	networkId        map[string]string
+	imageId          map[string]string
+	container        map[string]container.ContainerCreateCreatedBody
+	networkGenerator map[string]*NextNetworkAutoConfiguration
 }
