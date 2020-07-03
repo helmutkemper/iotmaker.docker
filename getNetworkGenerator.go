@@ -1,5 +1,5 @@
 package iotmakerDocker
 
-func (el *DockerSystem) getNetworkGenerator(name string) *NextNetworkAutoConfiguration {
+func (el *DockerSystem) GetNetworkGenerator(name string) *NextNetworkAutoConfiguration {
 	return el.networkGenerator[name]
 }
