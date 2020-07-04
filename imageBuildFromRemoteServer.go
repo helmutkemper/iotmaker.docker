@@ -1,6 +1,7 @@
 package iotmakerDocker
 
 import (
+	"errors"
 	"github.com/docker/docker/api/types"
 	"io"
 )
@@ -89,7 +90,10 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(
 	}
 
 	err, reader = el.imageBuild(nil, imageBuildOptions)
-	el.processBuildAndPullReaders(&reader, channel)
+	successfully := el.processBuildAndPullReaders(&reader, channel)
+	if successfully == false && err == nil {
+		err = errors.New("image build error")
+	}
 
 	return
 }

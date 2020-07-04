@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *chan ContainerPullStatusSendToChannel) {
+func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *chan ContainerPullStatusSendToChannel) (successfully bool) {
 	var err error
 	var imageName string
 	var imageId string
@@ -35,6 +35,8 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 				toChannel.ImageName = imageName
 				toChannel.ImageID = imageId
 				toChannel.Closed = true
+				toChannel.successfullyBuildImage = channelOut.successfullyBuildImage
+				toChannel.successfullyBuildContainer = channelOut.successfullyBuildContainer
 				el.imagePullWriteChannel(channel, toChannel)
 
 				return
@@ -48,8 +50,20 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 			err = json.Unmarshal(bufferDataInput, &channelOut)
 			bufferDataInput = make([]byte, 0)
 
-			if strings.Contains(channelOut.Stream, kContainerBuildImageStatusSuccess) {
+			if strings.Contains(channelOut.Stream, kContainerBuildImageStatusSuccessContainer) {
 				channelOut.SysStatus = KContainerPullStatusComplete
+				channelOut.successfullyBuildContainer = true
+
+				successfully = true
+			} else if channelOut.Stream != "" {
+				channelOut.SysStatus = KContainerPullStatusBuilding
+			}
+
+			if strings.Contains(channelOut.Stream, kContainerBuildImageStatusSuccessImage) {
+				channelOut.SysStatus = KContainerPullStatusComplete
+				channelOut.successfullyBuildImage = true
+
+				successfully = true
 			} else if channelOut.Stream != "" {
 				channelOut.SysStatus = KContainerPullStatusBuilding
 			}
@@ -116,6 +130,8 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 			toChannel.ImageName = imageName
 			toChannel.ImageID = imageId
 			toChannel.Stream = channelOut.Stream
+			toChannel.successfullyBuildImage = channelOut.successfullyBuildImage
+			toChannel.successfullyBuildContainer = channelOut.successfullyBuildContainer
 
 			//>>>>> send to channel
 			el.imagePullWriteChannel(channel, toChannel)

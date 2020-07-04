@@ -1,6 +1,7 @@
 package iotmakerDocker
 
 import (
+	"errors"
 	"github.com/docker/docker/api/types"
 	"io"
 )
@@ -15,7 +16,8 @@ const (
 	kContainerPullStatusDigestText               = "Digest: "
 	kContainerPullStatusDownloadedNewerImageText = "Status: Downloaded newer image for "
 	kContainerPullStatusImageIsUpToDate          = "Status: Image is up to date for "
-	kContainerBuildImageStatusSuccess            = "Success fully tagged"
+	kContainerBuildImageStatusSuccessContainer   = "Success fully tagged"
+	kContainerBuildImageStatusSuccessImage       = "Successfully tagged"
 )
 
 func (el *DockerSystem) ImagePull(name string, channel *chan ContainerPullStatusSendToChannel) (err error, imageId string, imageName string) {
@@ -34,7 +36,10 @@ func (el *DockerSystem) ImagePull(name string, channel *chan ContainerPullStatus
 	}
 
 	el.imageId[name] = ""
-	el.processBuildAndPullReaders(&reader, channel)
+	successfully := el.processBuildAndPullReaders(&reader, channel)
+	if successfully == false {
+		err = errors.New("image pull error")
+	}
 
 	return
 }

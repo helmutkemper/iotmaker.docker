@@ -6,16 +6,18 @@ import (
 )
 
 type ContainerPullStatusSendToChannel struct {
-	Waiting           int
-	Downloading       ContainerPullStatusSendToChannelCount
-	VerifyingChecksum int
-	DownloadComplete  int
-	Extracting        ContainerPullStatusSendToChannelCount
-	PullComplete      int
-	ImageName         string
-	ImageID           string
-	Closed            bool
-	Stream            string
+	Waiting                    int
+	Downloading                ContainerPullStatusSendToChannelCount
+	VerifyingChecksum          int
+	DownloadComplete           int
+	Extracting                 ContainerPullStatusSendToChannelCount
+	PullComplete               int
+	ImageName                  string
+	ImageID                    string
+	Closed                     bool
+	Stream                     string
+	successfullyBuildContainer bool
+	successfullyBuildImage     bool
 }
 
 func (el *ContainerPullStatusSendToChannel) calcPercentage() {

@@ -2,6 +2,7 @@ package iotmakerDocker
 
 import (
 	"bytes"
+	"errors"
 	"github.com/docker/docker/api/types"
 	"io"
 )
@@ -82,7 +83,10 @@ func (el *DockerSystem) ImageBuildFromFolder(
 	}
 
 	err, reader = el.imageBuild(tarFileReader, imageBuildOptions)
-	el.processBuildAndPullReaders(&reader, channel)
+	successfully := el.processBuildAndPullReaders(&reader, channel)
+	if successfully == false && err == nil {
+		err = errors.New("image build error")
+	}
 
 	return
 }
