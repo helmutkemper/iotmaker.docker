@@ -1,10 +1,6 @@
 package iotmakerDocker
 
-import (
-	"github.com/docker/docker/api/types"
-)
-
-func (el *DockerSystem) ImageRemoveByName(name string) error {
+func (el *DockerSystem) ImageRemoveByName(name string, force, pruneChildren bool) error {
 	var err error
 	var id string
 
@@ -14,7 +10,7 @@ func (el *DockerSystem) ImageRemoveByName(name string) error {
 		return err
 	}
 
-	_, err = el.cli.ImageRemove(el.ctx, id, types.ImageRemoveOptions{})
+	err = el.ImageRemove(id, force, pruneChildren)
 
 	return err
 }
