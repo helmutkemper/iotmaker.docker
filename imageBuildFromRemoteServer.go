@@ -81,6 +81,8 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(
 		tags = []string{
 			imageName,
 		}
+	} else {
+		tags = append(tags, imageName)
 	}
 
 	imageBuildOptions = types.ImageBuildOptions{
