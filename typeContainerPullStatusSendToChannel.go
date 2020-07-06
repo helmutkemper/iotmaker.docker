@@ -16,8 +16,8 @@ type ContainerPullStatusSendToChannel struct {
 	ImageID                    string
 	Closed                     bool
 	Stream                     string
-	successfullyBuildContainer bool
-	successfullyBuildImage     bool
+	SuccessfullyBuildContainer bool
+	SuccessfullyBuildImage     bool
 }
 
 func (el *ContainerPullStatusSendToChannel) calcPercentage() {

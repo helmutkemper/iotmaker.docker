@@ -7,6 +7,6 @@ type ContainerPullProgress struct {
 	ID                         string                      `json:"id"`
 	SysStatus                  ContainerPullStatus         `json:"-"`
 	ImageName                  string
-	successfullyBuildContainer bool
-	successfullyBuildImage     bool
+	SuccessfullyBuildContainer bool
+	SuccessfullyBuildImage     bool
 }

@@ -35,8 +35,8 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 				toChannel.ImageName = imageName
 				toChannel.ImageID = imageId
 				toChannel.Closed = true
-				toChannel.successfullyBuildImage = channelOut.successfullyBuildImage
-				toChannel.successfullyBuildContainer = channelOut.successfullyBuildContainer
+				toChannel.SuccessfullyBuildImage = channelOut.SuccessfullyBuildImage
+				toChannel.SuccessfullyBuildContainer = channelOut.SuccessfullyBuildContainer
 				el.imagePullWriteChannel(channel, toChannel)
 
 				return
@@ -52,7 +52,7 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 
 			if strings.Contains(channelOut.Stream, kContainerBuildImageStatusSuccessContainer) {
 				channelOut.SysStatus = KContainerPullStatusComplete
-				channelOut.successfullyBuildContainer = true
+				channelOut.SuccessfullyBuildContainer = true
 
 				successfully = true
 			} else if channelOut.Stream != "" {
@@ -61,7 +61,7 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 
 			if strings.Contains(channelOut.Stream, kContainerBuildImageStatusSuccessImage) {
 				channelOut.SysStatus = KContainerPullStatusComplete
-				channelOut.successfullyBuildImage = true
+				channelOut.SuccessfullyBuildImage = true
 
 				successfully = true
 			} else if channelOut.Stream != "" {
@@ -130,8 +130,8 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 			toChannel.ImageName = imageName
 			toChannel.ImageID = imageId
 			toChannel.Stream = channelOut.Stream
-			toChannel.successfullyBuildImage = channelOut.successfullyBuildImage
-			toChannel.successfullyBuildContainer = channelOut.successfullyBuildContainer
+			toChannel.SuccessfullyBuildImage = channelOut.SuccessfullyBuildImage
+			toChannel.SuccessfullyBuildContainer = channelOut.SuccessfullyBuildContainer
 
 			//>>>>> send to channel
 			el.imagePullWriteChannel(channel, toChannel)
