@@ -148,6 +148,21 @@ func TestDockerSystem_ImageBuildFromRemoteServer(t *testing.T) {
 	var newImageName = "delete:latest"
 	var newContainerName = "delete"
 	var imageTags = make([]string, 0)
+	var restartPolicy RestartPolicy = KRestartPolicyUnlessStopped
+	var mountVolumes = []mount.Mount{
+		{
+			Type:   "bind",
+			Source: "//var/run/docker.sock",
+			Target: "/var/run/docker.sock",
+		},
+	}
+	var containerNetwork *network.NetworkingConfig = nil
+	var currentPort = []nat.Port{
+		"3000/tcp",
+	}
+	var changeToPort = []nat.Port{
+		"3000/tcp",
+	}
 
 	var err error
 	var dockerSys = DockerSystem{}
@@ -159,27 +174,7 @@ func TestDockerSystem_ImageBuildFromRemoteServer(t *testing.T) {
 
 	RunBeforeTestToMakeAChannel()
 	ImageBuildFromRemoteServer(t, &dockerSys, serverPath, newImageName, imageTags, &pullStatusChannel)
-	ContainerCreateChangeExposedPortAndStart(
-		t,
-		&dockerSys,
-		newImageName,
-		newContainerName,
-		KRestartPolicyUnlessStopped,
-		[]mount.Mount{
-			{
-				Type:   "bind",
-				Source: "//var/run/docker.sock",
-				Target: "/var/run/docker.sock",
-			},
-		},
-		nil,
-		[]nat.Port{
-			"3000/tcp",
-		},
-		[]nat.Port{
-			"3000/tcp",
-		},
-	)
+	ContainerCreateChangeExposedPortAndStart(t, &dockerSys, newImageName, newContainerName, restartPolicy, mountVolumes, containerNetwork, currentPort, changeToPort)
 	ImageGarbageCollector(t, &dockerSys)
 	ContainerStopAndRemove(t, &dockerSys)
 	ImageRemoveByName(t, &dockerSys)
