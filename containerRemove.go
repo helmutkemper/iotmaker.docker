@@ -1,6 +1,8 @@
 package iotmakerDocker
 
-import "github.com/docker/docker/api/types"
+import (
+	"github.com/docker/docker/api/types"
+)
 
 // English: Remove a container by id
 //   id - container id

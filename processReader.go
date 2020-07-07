@@ -6,7 +6,13 @@ import (
 	"strings"
 )
 
-func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *chan ContainerPullStatusSendToChannel) (successfully bool) {
+func (el *DockerSystem) processBuildAndPullReaders(
+	reader *io.Reader,
+	channel *chan ContainerPullStatusSendToChannel,
+) (
+	successfully bool,
+) {
+
 	var err error
 	var imageName string
 	var imageId string
@@ -53,8 +59,8 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 			if strings.Contains(channelOut.Stream, kContainerBuildImageStatusSuccessContainer) {
 				channelOut.SysStatus = KContainerPullStatusComplete
 				channelOut.SuccessfullyBuildContainer = true
-
 				successfully = true
+
 			} else if channelOut.Stream != "" {
 				channelOut.SysStatus = KContainerPullStatusBuilding
 			}
@@ -62,8 +68,8 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 			if strings.Contains(channelOut.Stream, kContainerBuildImageStatusSuccessImage) {
 				channelOut.SysStatus = KContainerPullStatusComplete
 				channelOut.SuccessfullyBuildImage = true
-
 				successfully = true
+
 			} else if channelOut.Stream != "" {
 				channelOut.SysStatus = KContainerPullStatusBuilding
 			}
@@ -102,6 +108,8 @@ func (el *DockerSystem) processBuildAndPullReaders(reader *io.Reader, channel *c
 
 			if strings.Contains(channelOut.Status, kContainerPullStatusImageIsUpToDate) {
 				imageName = strings.Replace(channelOut.Status, kContainerPullStatusImageIsUpToDate, "", 1)
+				channelOut.SuccessfullyBuildImage = true
+				successfully = true
 			}
 
 			toProcess[channelOut.ID] = channelOut

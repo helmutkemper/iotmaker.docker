@@ -1,7 +1,6 @@
 package iotmakerDocker
 
 import (
-	"github.com/docker/docker/api/types"
 	"time"
 )
 
@@ -29,9 +28,5 @@ func (el *DockerSystem) ContainerStopAndRemove(
 	}
 
 	time.Sleep(time.Second * 5)
-	return el.cli.ContainerRemove(el.ctx, id, types.ContainerRemoveOptions{
-		RemoveVolumes: removeVolumes,
-		RemoveLinks:   removeLinks,
-		Force:         force,
-	})
+	return el.ContainerRemove(id, removeVolumes, removeLinks, force)
 }
