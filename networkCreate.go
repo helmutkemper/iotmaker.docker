@@ -24,6 +24,7 @@ func (el *DockerSystem) NetworkCreate(
 	networkGenerator *NextNetworkAutoConfiguration,
 ) {
 
+	//todo: se já tem uma rede, ajustar o ip automático para o próximo endereço
 	var resp types.NetworkCreateResponse
 	var insp types.NetworkResource
 	var gatewayFieldA, gatewayFieldB, gatewayFieldC, gatewayFieldD int
