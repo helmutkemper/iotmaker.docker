@@ -17,6 +17,10 @@ func (el *DockerSystem) ContainerFindIdByNameContains(
 	var listOfContainers []types.Container
 
 	err, listOfContainers = el.ContainerListAll()
+	if err != nil {
+		return
+	}
+
 	for _, containerData := range listOfContainers {
 		for _, containerName := range containerData.Names {
 			if strings.Contains(containerName, containsName) == true {
@@ -24,12 +28,13 @@ func (el *DockerSystem) ContainerFindIdByNameContains(
 					ID:   containerData.ID,
 					Name: containerName,
 				})
-				return
 			}
 		}
 	}
 
-	err = errors.New("container name not found")
+	if len(list) == 0 {
+		err = errors.New("container name not found")
+	}
 
 	return
 }
