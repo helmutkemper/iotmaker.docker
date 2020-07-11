@@ -4,7 +4,7 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-func (el *DockerSystem) containerInspectByNameContains(
+func (el *DockerSystem) ContainerInspectByNameContains(
 	name string,
 ) (
 	err error,
