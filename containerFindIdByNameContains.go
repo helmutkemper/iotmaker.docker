@@ -10,16 +10,20 @@ func (el *DockerSystem) ContainerFindIdByNameContains(
 	containsName string,
 ) (
 	err error,
-	ID string,
+	list []NameAndId,
 ) {
 
-	var list []types.Container
+	list = make([]NameAndId, 0)
+	var listOfContainers []types.Container
 
-	err, list = el.ContainerListAll()
-	for _, containerData := range list {
+	err, listOfContainers = el.ContainerListAll()
+	for _, containerData := range listOfContainers {
 		for _, containerName := range containerData.Names {
 			if strings.Contains(containerName, containsName) == true {
-				ID = containerData.ID
+				list = append(list, NameAndId{
+					ID:   containerData.ID,
+					Name: containerName,
+				})
 				return
 			}
 		}
