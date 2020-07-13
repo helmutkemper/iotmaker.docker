@@ -136,7 +136,7 @@ func ContainerStopAndRemove(t *testing.T, d *DockerSystem) {
 
 func ImageRemoveByName(t *testing.T, d *DockerSystem) {
 	var err error
-	err = d.ImageRemoveByName("delete:latest")
+	err = d.ImageRemoveByName("delete:latest", false, true)
 	if err != nil {
 		t.Fatalf("error: %v", err.Error())
 		return
