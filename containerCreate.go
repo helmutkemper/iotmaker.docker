@@ -38,7 +38,7 @@ func (el *DockerSystem) ContainerCreate(
 	imageName,
 	containerName string,
 	restartPolicy RestartPolicy,
-	portExposedList nat.PortMap,
+	portExposedList []nat.Port,
 	mountVolumes []mount.Mount,
 	containerNetwork *network.NetworkingConfig,
 ) (
@@ -54,6 +54,15 @@ func (el *DockerSystem) ContainerCreate(
 		el.container = make(map[string]container.ContainerCreateCreatedBody)
 	}
 
+	var convertedPortList = nat.PortMap{}
+	for _, port := range portExposedList {
+		convertedPortList[port] = []nat.PortBinding{
+			{
+				HostPort: port.Port(),
+			},
+		}
+	}
+
 	resp, err = el.cli.ContainerCreate(
 		el.ctx,
 		&container.Config{
@@ -61,7 +70,7 @@ func (el *DockerSystem) ContainerCreate(
 			//ExposedPorts: el.convertPort(portExposedList),
 		},
 		&container.HostConfig{
-			PortBindings: portExposedList,
+			PortBindings: convertedPortList,
 			RestartPolicy: container.RestartPolicy{
 				Name: restartPolicy.String(),
 			},
