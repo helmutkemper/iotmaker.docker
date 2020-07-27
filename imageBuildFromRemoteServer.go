@@ -97,11 +97,5 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(
 		err = errors.New("image build error")
 	}
 
-	if err != nil {
-		return
-	}
-
-	err = el.ImageGarbageCollector()
-
 	return
 }
