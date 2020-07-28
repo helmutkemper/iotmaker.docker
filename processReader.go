@@ -2,6 +2,7 @@ package iotmakerDocker
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"strings"
 )
@@ -38,8 +39,19 @@ func (el *DockerSystem) processBuildAndPullReaders(
 
 				//>>>>> send to channel
 				toChannel.calcPercentage()
-				toChannel.ImageName = imageName
-				toChannel.ImageID = imageId
+
+				if imageName != "" {
+					toChannel.ImageName = imageName
+					fmt.Printf(">>>>>>> eof image name: %v\n", imageName)
+				}
+
+				if imageId != "" {
+					toChannel.ImageID = imageId
+					fmt.Printf(">>>>>>> eof image id: %v\n", imageId)
+				} else if imageName != "" {
+					err, toChannel.ImageID = el.ImageFindIdByName(imageName)
+				}
+
 				toChannel.Closed = true
 				toChannel.SuccessfullyBuildImage = channelOut.SuccessfullyBuildImage
 				toChannel.SuccessfullyBuildContainer = channelOut.SuccessfullyBuildContainer
@@ -70,16 +82,24 @@ func (el *DockerSystem) processBuildAndPullReaders(
 				channelOut.SuccessfullyBuildImage = true
 				successfully = true
 
+				imageName = strings.Replace(channelOut.Stream, kContainerBuildImageStatusSuccessImage, "", 1)
+				imageName = strings.Replace(imageName, "\n", "", -1)
+				imageName = strings.Replace(imageName, "\r", "", -1)
+				imageName = strings.TrimSpace(imageName)
+
 			} else if channelOut.Stream != "" {
 				channelOut.SysStatus = KContainerPullStatusBuilding
 			}
 
+			//Successfully tagged delete_remote_server:latest
 			if strings.Contains(channelOut.Status, kContainerPullStatusDownloadedNewerImageText) {
 				imageName = strings.Replace(channelOut.Status, kContainerPullStatusDownloadedNewerImageText, "", 1)
+				fmt.Printf("******************* imageName: %v\n", imageName)
 			}
 
 			if strings.Contains(channelOut.Status, kContainerPullStatusDigestText) {
 				imageId = strings.Replace(channelOut.Status, kContainerPullStatusDigestText, "", 1)
+				fmt.Printf("******************* imageId: %v\n", imageId)
 			}
 
 			if strings.Contains(channelOut.Status, kContainerPullStatusPullCompleteText) {
@@ -135,8 +155,17 @@ func (el *DockerSystem) processBuildAndPullReaders(
 			}
 
 			toChannel.calcPercentage()
-			toChannel.ImageName = imageName
-			toChannel.ImageID = imageId
+
+			if imageName != "" {
+				toChannel.ImageName = imageName
+				fmt.Printf(">>>>>>> image name: %v\n", imageName)
+			}
+
+			if imageId != "" {
+				toChannel.ImageID = imageId
+				fmt.Printf(">>>>>>> image id: %v\n", imageId)
+			}
+
 			toChannel.Stream = channelOut.Stream
 			toChannel.SuccessfullyBuildImage = channelOut.SuccessfullyBuildImage
 			toChannel.SuccessfullyBuildContainer = channelOut.SuccessfullyBuildContainer
