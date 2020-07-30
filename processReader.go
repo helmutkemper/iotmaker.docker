@@ -2,7 +2,6 @@ package iotmakerDocker
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"strings"
 )
@@ -42,12 +41,10 @@ func (el *DockerSystem) processBuildAndPullReaders(
 
 				if imageName != "" {
 					toChannel.ImageName = imageName
-					fmt.Printf(">>>>>>> eof image name: %v\n", imageName)
 				}
 
 				if imageId != "" {
 					toChannel.ImageID = imageId
-					fmt.Printf(">>>>>>> eof image id: %v\n", imageId)
 				} else if imageName != "" {
 					err, toChannel.ImageID = el.ImageFindIdByName(imageName)
 				}
@@ -94,12 +91,10 @@ func (el *DockerSystem) processBuildAndPullReaders(
 			//Successfully tagged delete_remote_server:latest
 			if strings.Contains(channelOut.Status, kContainerPullStatusDownloadedNewerImageText) {
 				imageName = strings.Replace(channelOut.Status, kContainerPullStatusDownloadedNewerImageText, "", 1)
-				fmt.Printf("******************* imageName: %v\n", imageName)
 			}
 
 			if strings.Contains(channelOut.Status, kContainerPullStatusDigestText) {
 				imageId = strings.Replace(channelOut.Status, kContainerPullStatusDigestText, "", 1)
-				fmt.Printf("******************* imageId: %v\n", imageId)
 			}
 
 			if strings.Contains(channelOut.Status, kContainerPullStatusPullCompleteText) {
@@ -158,15 +153,13 @@ func (el *DockerSystem) processBuildAndPullReaders(
 
 			if imageName != "" {
 				toChannel.ImageName = imageName
-				fmt.Printf(">>>>>>> image name: %v\n", imageName)
 			}
 
 			if imageId != "" {
 				toChannel.ImageID = imageId
-				fmt.Printf(">>>>>>> image id: %v\n", imageId)
 			}
 
-			toChannel.Stream = channelOut.Stream
+			toChannel.Stream = TerminalToHtml(channelOut.Stream)
 			toChannel.SuccessfullyBuildImage = channelOut.SuccessfullyBuildImage
 			toChannel.SuccessfullyBuildContainer = channelOut.SuccessfullyBuildContainer
 
