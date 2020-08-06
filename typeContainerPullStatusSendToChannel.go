@@ -14,6 +14,7 @@ type ContainerPullStatusSendToChannel struct {
 	PullComplete               int
 	ImageName                  string
 	ImageID                    string
+	ContainerID                string
 	Closed                     bool
 	Stream                     string
 	SuccessfullyBuildContainer bool
