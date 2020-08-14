@@ -1,6 +1,9 @@
 package iotmakerDocker
 
-import "github.com/docker/docker/api/types"
+import (
+	"errors"
+	"github.com/docker/docker/api/types"
+)
 
 func (el *DockerSystem) NetworkFindIdByName(
 	name string,
@@ -22,6 +25,8 @@ func (el *DockerSystem) NetworkFindIdByName(
 			return
 		}
 	}
+
+	err = errors.New("network not found")
 
 	return
 }
