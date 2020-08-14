@@ -70,9 +70,25 @@ func (el *DockerSystem) ContainerCreateAndChangeExposedPort(
 		return err, ""
 	}
 
-	err, portExposedList = el.ImageMountNatPortListChangeExposed(imageId, currentPort, changeToPort)
-	if err != nil {
-		return err, ""
+	if containerNetwork != nil {
+
+		for name, config := range containerNetwork.EndpointsConfig {
+			if name == "bridge" || name == "host" || name == "none" {
+				continue
+			}
+
+			err, portExposedList = el.ImageMountNatPortListChangeExposedWithIpAddress(imageId, config.IPAddress, currentPort, changeToPort)
+			if err != nil {
+				return err, ""
+			}
+
+			break
+		}
+	} else {
+		err, portExposedList = el.ImageMountNatPortListChangeExposed(imageId, currentPort, changeToPort)
+		if err != nil {
+			return err, ""
+		}
 	}
 
 	if len(el.container) == 0 {
