@@ -19,7 +19,7 @@ func (el *DockerSystem) ImageMountNatPortListChangeExposedWithIpAddress(imageId,
 		inPort := ""
 		for k, currPort := range currentPortList {
 			if currPort.Port() == port.Port() && currPort.Proto() == port.Proto() {
-				inPort = changeToPortList[k].Port() + "/" + changeToPortList[k].Proto()
+				inPort = changeToPortList[k].Port()
 				break
 			}
 		}
