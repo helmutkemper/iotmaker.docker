@@ -18,6 +18,7 @@ import (
 //      KRestartPolicyUnlessStopped - Similar to always, except that when the container is stopped (manually or otherwise), it is not restarted even after Docker daemon restarts.
 //   mountVolumes: please use a factoryWhaleAquarium.NewVolumeMount()
 //      for a complete list of volumes exposed by image, use ImageListExposedVolumes(id) and ImageListExposedVolumesByName(name)
+//   containerNetwork:
 func (el *DockerSystem) ContainerCreate(
 	imageName,
 	containerName string,
