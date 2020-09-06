@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 )
 
-func ExampleDockerSystem_ImageBuildFromFolder() {
+func ExampleDockerSystem_NetworkCreate() {
 	var err error
 	var containerId string
 	var networkId string
