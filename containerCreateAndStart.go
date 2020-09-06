@@ -6,8 +6,7 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-// en: Create a container and automatically exposes the ports listed in the image before
-//     start
+// English: Create a container and automatically exposes the ports listed in the image before start
 //   imageName: image name for download and pull
 //   containerName: unique container name
 //   RestartPolicy:

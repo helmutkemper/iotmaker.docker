@@ -7,7 +7,7 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-// en: Create a container and change exposed ports
+// English: Create a container and change exposed ports
 //   imageName: image name for download and pull
 //   containerName: unique container name
 //   RestartPolicy:

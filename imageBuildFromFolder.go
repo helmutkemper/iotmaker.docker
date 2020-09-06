@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-// en: Make a image from folder path content
+// English: Make a image from folder path content
 //     Please note: dockerfile name must be "Dockerfile" inside root folder
 //
 //     Example:

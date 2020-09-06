@@ -4,6 +4,20 @@ type VolumeMountType int
 
 const (
 	// TypeBind is the type for mounting host dir (real folder inside computer where this code work)
+	KVolumeMountTypeBindString = "bind"
+
+	// TypeVolume is the type for remote storage volumes
+	KVolumeMountTypeVolumeString = "volume"
+
+	// TypeTmpfs is the type for mounting tmpfs
+	KVolumeMountTypeTmpfsString = "tmpfs"
+
+	// TypeNamedPipe is the type for mounting Windows named pipes
+	KVolumeMountTypeNpipeString = "npipe"
+)
+
+const (
+	// TypeBind is the type for mounting host dir (real folder inside computer where this code work)
 	KVolumeMountTypeBind VolumeMountType = iota
 
 	// TypeVolume is the type for remote storage volumes
