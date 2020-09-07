@@ -2,24 +2,14 @@ package iotmakerDocker
 
 import (
 	"errors"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/api/types/network"
 	"github.com/helmutkemper/iotmaker.docker/util"
-	"os"
 	"path/filepath"
-	"reflect"
 )
 
-func ExampleDockerSystem_ContainerCreateWithoutExposePorts() {
+func ExampleDockerSystem_ImageFindIdByName() {
 
 	var err error
-	var containerId string
-	var networkId string
 	var dockerSys *DockerSystem
-
-	var networkAutoConfiguration *NextNetworkAutoConfiguration
-	var networkNextAddress *network.NetworkingConfig
 
 	// English: make a channel to end goroutine
 	// Português: monta um canal para terminar a goroutine
@@ -70,11 +60,6 @@ func ExampleDockerSystem_ContainerCreateWithoutExposePorts() {
 		panic(err)
 	}
 
-	// English: 'static' folder path
-	// Português: caminho da pasta 'static'
-	var smallServerPathStatic string
-	smallServerPathStatic = smallServerPath + string(os.PathSeparator) + "static"
-
 	// English: create a new default client. Please, use: err, dockerSys = factoryDocker.NewClient()
 	// Português: cria um novo cliente com configurações padrão. Por favor, usr: err, dockerSys = factoryDocker.NewClient()
 	dockerSys = &DockerSystem{}
@@ -87,31 +72,6 @@ func ExampleDockerSystem_ContainerCreateWithoutExposePorts() {
 	// English: garbage collector and deletes networks and images whose name contains the term 'delete'
 	// Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 'delete'
 	err = dockerSys.RemoveAllByNameContains("delete")
-	if err != nil {
-		panic(err)
-	}
-
-	// English: create a network named 'network_delete_before_test'
-	// Português: cria uma nova rede de nome 'network_delete_before_test'
-	networkId, networkAutoConfiguration, err = dockerSys.NetworkCreate(
-		"network_delete_before_test",
-		KNetworkDriveBridge,
-		"local",
-		"10.0.0.0/16",
-		"10.0.0.1",
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	if networkId == "" {
-		err = errors.New("network id was not generated")
-		panic(err)
-	}
-
-	// English: get next ip address from network, '10.0.0.2'
-	// Português: pega o próxima endereço da rede, '10.0.0.2'
-	err, networkNextAddress = networkAutoConfiguration.GetNext()
 	if err != nil {
 		panic(err)
 	}
@@ -136,84 +96,18 @@ func ExampleDockerSystem_ContainerCreateWithoutExposePorts() {
 		panic(err)
 	}
 
-	// English: mount and start a container
-	// Português: monta i inicializa o container
-	containerId, err = dockerSys.ContainerCreateWithoutExposePorts(
-		"image_server_delete_before_test:latest", // image name
-		"container_delete_before_test",           // container name
-		KRestartPolicyUnlessStopped,              // restart policy
-		[]mount.Mount{ // mount volumes
-			{
-				Type: KVolumeMountTypeBindString, // bind - is the type for mounting host dir
-				// (real folder inside computer where this
-				// code work)
-
-				Source: smallServerPathStatic, // path inside host machine
-				Target: "/static",             // path inside image
-			},
-		},
-		networkNextAddress, // [optional] container network
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	if containerId == "" {
-		err = errors.New("container id was not generated")
-		panic(err)
-	}
-
-	// English: start a container by id
-	// Português: inicia um container por id
-	err = dockerSys.ContainerStart(containerId)
-	if err != nil {
-		panic(err)
-	}
-
 	// English: ends a goroutine
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	// English: inspect a container by ID
-	// Português: inspeciona um container por ID
-	var inspect types.ContainerJSON
-	inspect, err = dockerSys.ContainerInspect(containerId)
+	var imageID string
+	imageID, err = dockerSys.ImageFindIdByName("image_server_delete_before_test:latest")
 	if err != nil {
 		panic(err)
 	}
 
-	if inspect.Name != "/container_delete_before_test" {
-		err = errors.New("wrong container name")
-		panic(err)
-	}
-
-	if inspect.State == nil {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if inspect.State.Running == false {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if len(inspect.Config.ExposedPorts) == 0 {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if reflect.ValueOf(inspect.Config.ExposedPorts["3000/tcp"]).IsZero() == false {
-		err = errors.New("exposed ports fail")
-		panic(err)
-	}
-
-	if len(inspect.NetworkSettings.Networks) != 1 {
-		err = errors.New("IPv4 address error")
-		panic(err)
-	}
-
-	if inspect.NetworkSettings.Networks["network_delete_before_test"].IPAddress != "10.0.0.2" {
-		err = errors.New("IPv4 address error")
+	if imageID == "" {
+		err = errors.New("image not found")
 		panic(err)
 	}
 

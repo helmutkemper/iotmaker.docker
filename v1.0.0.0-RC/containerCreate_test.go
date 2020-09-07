@@ -136,6 +136,13 @@ func ExampleDockerSystem_ContainerCreate() {
 		panic(err)
 	}
 
+	// English: building a multi-step image leaves large and useless images, taking up space on the HD.
+	// Português: construir uma imagem de múltiplas etapas deixa imagens grandes e sem serventia, ocupando espaço no HD.
+	err = dockerSys.ImageGarbageCollector()
+	if err != nil {
+		panic(err)
+	}
+
 	// English: mount and start a container
 	// Português: monta i inicializa o container
 	containerId, err = dockerSys.ContainerCreate(

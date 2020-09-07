@@ -2,16 +2,15 @@ package iotmakerDocker
 
 import (
 	"errors"
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/go-connections/nat"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"os"
 	"path/filepath"
-	"reflect"
 )
 
-func ExampleDockerSystem_ContainerCreateWithoutExposePorts() {
+func ExampleDockerSystem_ImageBuildFromRemoteServer() {
 
 	var err error
 	var containerId string
@@ -118,11 +117,10 @@ func ExampleDockerSystem_ContainerCreateWithoutExposePorts() {
 
 	// English: build a new image from folder 'small_test_server_port_3000'
 	// Português: monta uma imagem a partir da pasta 'small_test_server_port_3000'
-	err = dockerSys.ImageBuildFromFolder(
-		smallServerPath,
-		[]string{
-			"image_server_delete_before_test:latest", // image name
-		},
+	err = dockerSys.ImageBuildFromRemoteServer(
+		"https://github.com/helmutkemper/iotmaker.docker.util.whaleAquarium.sample.git",
+		"image_server_delete_before_test:latest", // image name
+		[]string{},
 		&chStatus, // [channel|nil]
 	)
 	if err != nil {
@@ -138,10 +136,17 @@ func ExampleDockerSystem_ContainerCreateWithoutExposePorts() {
 
 	// English: mount and start a container
 	// Português: monta i inicializa o container
-	containerId, err = dockerSys.ContainerCreateWithoutExposePorts(
+	containerId, err = dockerSys.ContainerCreate(
 		"image_server_delete_before_test:latest", // image name
 		"container_delete_before_test",           // container name
 		KRestartPolicyUnlessStopped,              // restart policy
+		nat.PortMap{
+			"3000/tcp": []nat.PortBinding{ // server original port
+				{
+					HostPort: "9002", // new output port
+				},
+			},
+		},
 		[]mount.Mount{ // mount volumes
 			{
 				Type: KVolumeMountTypeBindString, // bind - is the type for mounting host dir
@@ -163,8 +168,8 @@ func ExampleDockerSystem_ContainerCreateWithoutExposePorts() {
 		panic(err)
 	}
 
-	// English: start a container by id
-	// Português: inicia um container por id
+	// English: container start
+	// Português: inicia o container
 	err = dockerSys.ContainerStart(containerId)
 	if err != nil {
 		panic(err)
@@ -174,46 +179,13 @@ func ExampleDockerSystem_ContainerCreateWithoutExposePorts() {
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	// English: inspect a container by ID
-	// Português: inspeciona um container por ID
-	var inspect types.ContainerJSON
-	inspect, err = dockerSys.ContainerInspect(containerId)
+	err = dockerSys.ContainerStop(containerId)
 	if err != nil {
 		panic(err)
 	}
 
-	if inspect.Name != "/container_delete_before_test" {
-		err = errors.New("wrong container name")
-		panic(err)
-	}
-
-	if inspect.State == nil {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if inspect.State.Running == false {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if len(inspect.Config.ExposedPorts) == 0 {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if reflect.ValueOf(inspect.Config.ExposedPorts["3000/tcp"]).IsZero() == false {
-		err = errors.New("exposed ports fail")
-		panic(err)
-	}
-
-	if len(inspect.NetworkSettings.Networks) != 1 {
-		err = errors.New("IPv4 address error")
-		panic(err)
-	}
-
-	if inspect.NetworkSettings.Networks["network_delete_before_test"].IPAddress != "10.0.0.2" {
-		err = errors.New("IPv4 address error")
+	err = dockerSys.ContainerRemove(containerId, true, false, false)
+	if err != nil {
 		panic(err)
 	}
 
