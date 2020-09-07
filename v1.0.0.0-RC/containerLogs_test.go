@@ -1,0 +1,160 @@
+package iotmakerDocker
+
+import (
+	"bytes"
+	"errors"
+	"github.com/docker/docker/api/types/mount"
+	"github.com/helmutkemper/iotmaker.docker/util"
+	"os"
+	"path/filepath"
+)
+
+func ExampleDockerSystem_ContainerLogs() {
+
+	var err error
+	var containerId string
+	var dockerSys *DockerSystem
+
+	// English: make a channel to end goroutine
+	// Português: monta um canal para terminar a goroutine
+	var chProcessEnd = make(chan bool, 1)
+
+	// English: make a channel [optional] to print build output
+	// Português: monta o canal [opcional] para imprimir a saída do build
+	var chStatus = make(chan ContainerPullStatusSendToChannel, 1)
+
+	// English: make a thread to monitoring and print channel data
+	// Português: monta uma thread para imprimir os dados do canal
+	go func(chStatus chan ContainerPullStatusSendToChannel, chProcessEnd chan bool) {
+
+		for {
+			select {
+			case <-chProcessEnd:
+				return
+
+			case status := <-chStatus:
+				// English: remove this comment to see all build status
+				// Português: remova este comentário para vê todo o status da criação da imagem
+				//fmt.Printf("image pull status: %+v\n", status)
+
+				if status.Closed == true {
+					// fmt.Println("image pull complete!")
+
+					// English: Eliminate this goroutine after process end
+					// Português: Elimina a goroutine após o fim do processo
+					// return
+				}
+			}
+		}
+
+	}(chStatus, chProcessEnd)
+
+	// English: searches for the folder containing the test server
+	// Português: procura pela pasta contendo o servidor de teste
+	var smallServerPath string
+	smallServerPath, err = util.FileFindRecursively("small_test_server_port_3000")
+	if err != nil {
+		panic(err)
+	}
+
+	// English: turns the path into an absolute path
+	// Português: transforma o caminho em caminho absoluto
+	smallServerPath, err = filepath.Abs(smallServerPath)
+	if err != nil {
+		panic(err)
+	}
+
+	// English: 'static' folder path
+	// Português: caminho da pasta 'static'
+	var smallServerPathStatic string
+	smallServerPathStatic = smallServerPath + string(os.PathSeparator) + "static"
+
+	// English: create a new default client. Please, use: err, dockerSys = factoryDocker.NewClient()
+	// Português: cria um novo cliente com configurações padrão. Por favor, usr: err, dockerSys = factoryDocker.NewClient()
+	dockerSys = &DockerSystem{}
+	dockerSys.ContextCreate()
+	err = dockerSys.ClientCreate()
+	if err != nil {
+		panic(err)
+	}
+
+	// English: garbage collector and deletes networks and images whose name contains the term 'delete'
+	// Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 'delete'
+	err = dockerSys.RemoveAllByNameContains("delete")
+	if err != nil {
+		panic(err)
+	}
+
+	// English: build a new image from folder 'small_test_server_port_3000'
+	// Português: monta uma imagem a partir da pasta 'small_test_server_port_3000'
+	err = dockerSys.ImageBuildFromFolder(
+		smallServerPath,
+		[]string{
+			"image_server_delete_before_test:latest", // image name
+		},
+		&chStatus, // [channel|nil]
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// English: mount and start a container
+	// Português: monta i inicializa o container
+	containerId, err = dockerSys.ContainerCreateWithoutExposePorts(
+		"image_server_delete_before_test:latest", // image name
+		"container_delete_before_test",           // container name
+		KRestartPolicyUnlessStopped,              // restart policy
+		[]mount.Mount{ // mount volumes
+			{
+				Type: KVolumeMountTypeBindString, // bind - is the type for mounting host dir
+				// (real folder inside computer where this
+				// code work)
+
+				Source: smallServerPathStatic, // path inside host machine
+				Target: "/static",             // path inside image
+			},
+		},
+		nil, // [optional] container network
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	if containerId == "" {
+		err = errors.New("container id was not generated")
+		panic(err)
+	}
+
+	// English: ends a goroutine
+	// Português: termina a goroutine
+	chProcessEnd <- true
+
+	// English: start a container by id
+	// Português: inicia um container por id
+	err = dockerSys.ContainerStart(containerId)
+	if err != nil {
+		panic(err)
+	}
+
+	// English: list all containers
+	// Português: lista todos os containers
+	var log []byte
+	log, err = dockerSys.ContainerLogs(containerId)
+	if err != nil {
+		panic(err)
+	}
+	if bytes.Contains(log, []byte("starting server at port 3000")) == false {
+		err = errors.New("expected log for container not found")
+		panic(err)
+	}
+
+	// English: garbage collector and deletes networks and images whose name contains the term 'delete'
+	// Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 'delete'
+	err = dockerSys.RemoveAllByNameContains("delete")
+	if err != nil {
+		panic(err)
+	}
+
+	// Output:
+	//
+}
