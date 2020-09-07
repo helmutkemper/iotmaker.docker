@@ -14,3 +14,14 @@ en: This project uses the moby project to manage containers.
 If your need is to install containers with a single line of golang code, please see the 
 [whaleAquarium](https://github.com/helmutkemper/iotmaker.docker.util.whaleAquarium)
  project
+ 
+```go
+	var mountVolumes = []mount.Mount{
+		{
+			Type:   "bind",
+			Source: "//var/run/docker.sock",
+			Target: "/var/run/docker.sock",
+		},
+	}
+```
+ 

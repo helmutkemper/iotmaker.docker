@@ -25,6 +25,5 @@ func (el *DockerSystem) ContainerFindIdByName(
 	}
 
 	err = errors.New("container name not found")
-
 	return
 }
