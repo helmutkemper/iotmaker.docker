@@ -146,27 +146,36 @@ func ExampleDockerSystem_ContainerCreate() {
 	// English: mount and start a container
 	// Português: monta i inicializa o container
 	containerId, err = dockerSys.ContainerCreate(
-		"image_server_delete_before_test:latest", // image name
-		"container_delete_before_test",           // container name
-		KRestartPolicyUnlessStopped,              // restart policy
+		// image name
+		"image_server_delete_before_test:latest",
+		// container name
+		"container_delete_before_test",
+		// restart policy
+		KRestartPolicyUnlessStopped,
+		// portMap
 		nat.PortMap{
+			// container port number/protocol [tpc/udp]
 			"3000/tcp": []nat.PortBinding{ // server original port
 				{
-					HostPort: "9002", // new output port
+					// server output port number
+					HostPort: "9002",
 				},
 			},
 		},
-		[]mount.Mount{ // mount volumes
+		// mount volumes
+		[]mount.Mount{
 			{
-				Type: KVolumeMountTypeBindString, // bind - is the type for mounting host dir
-				// (real folder inside computer where this
-				// code work)
-
-				Source: smallServerPathStatic, // path inside host machine
-				Target: "/static",             // path inside image
+				// bind - is the type for mounting host dir (real folder inside computer where
+				// this code work)
+				Type: KVolumeMountTypeBindString,
+				// path inside host machine
+				Source: smallServerPathStatic,
+				// path inside image
+				Target: "/static",
 			},
 		},
-		networkNextAddress, // [optional] container network
+		// nil or container network configuration
+		networkNextAddress,
 	)
 	if err != nil {
 		panic(err)

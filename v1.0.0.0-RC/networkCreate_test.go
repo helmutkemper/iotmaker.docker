@@ -137,27 +137,37 @@ func ExampleDockerSystem_NetworkCreate() {
 
 	// English: mount and start a container
 	// Português: monta i inicializa o container
-	containerId, err = dockerSys.ContainerCreateChangeExposedPortAndStart(
-		"image_server_delete_before_test:latest", // image name
-		"container_delete_before_test",           // container name
-		KRestartPolicyUnlessStopped,              // restart policy
-		[]mount.Mount{ // mount volumes
-			{
-				Type: KVolumeMountTypeBindString, // bind - is the type for mounting host dir
-				// (real folder inside computer where this
-				// code work)
-
-				Source: smallServerPathStatic, // path inside host machine
-				Target: "/static",             // path inside image
+	containerId, err = dockerSys.ContainerCreate(
+		// image name
+		"image_server_delete_before_test:latest",
+		// container name
+		"container_delete_before_test",
+		// restart policy
+		KRestartPolicyUnlessStopped,
+		// portMap
+		nat.PortMap{
+			// container port number/protocol [tpc/udp]
+			"3000/tcp": []nat.PortBinding{ // server original port
+				{
+					// server output port number
+					HostPort: "9002",
+				},
 			},
 		},
-		networkNextAddress, // [optional] container network
-		[]nat.Port{ // image port list
-			"3000/tcp", // small server port :3000
+		// mount volumes
+		[]mount.Mount{
+			{
+				// bind - is the type for mounting host dir (real folder inside computer where
+				// this code work)
+				Type: KVolumeMountTypeBindString,
+				// path inside host machine
+				Source: smallServerPathStatic,
+				// path inside image
+				Target: "/static",
+			},
 		},
-		[]nat.Port{ // host computer new port list
-			"9002/tcp", // http://localhost:9002
-		},
+		// nil or container network configuration
+		networkNextAddress,
 	)
 	if err != nil {
 		panic(err)

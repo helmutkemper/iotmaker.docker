@@ -5,6 +5,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/go-connections/nat"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"os"
 	"path/filepath"
@@ -138,21 +139,37 @@ func ExampleDockerSystem_containerInspectByName() {
 
 	// English: mount and start a container
 	// Português: monta i inicializa o container
-	containerId, err = dockerSys.ContainerCreateWithoutExposePorts(
-		"image_server_delete_before_test:latest", // image name
-		"container_delete_before_test",           // container name
-		KRestartPolicyUnlessStopped,              // restart policy
-		[]mount.Mount{ // mount volumes
-			{
-				Type: KVolumeMountTypeBindString, // bind - is the type for mounting host dir
-				// (real folder inside computer where this
-				// code work)
-
-				Source: smallServerPathStatic, // path inside host machine
-				Target: "/static",             // path inside image
+	containerId, err = dockerSys.ContainerCreate(
+		// image name
+		"image_server_delete_before_test:latest",
+		// container name
+		"container_delete_before_test",
+		// restart policy
+		KRestartPolicyUnlessStopped,
+		// portMap
+		nat.PortMap{
+			// container port number/protocol [tpc/udp]
+			"3000/tcp": []nat.PortBinding{ // server original port
+				{
+					// server output port number
+					HostPort: "9002",
+				},
 			},
 		},
-		networkNextAddress, // [optional] container network
+		// mount volumes
+		[]mount.Mount{
+			{
+				// bind - is the type for mounting host dir (real folder inside computer where
+				// this code work)
+				Type: KVolumeMountTypeBindString,
+				// path inside host machine
+				Source: smallServerPathStatic,
+				// path inside image
+				Target: "/static",
+			},
+		},
+		// nil or container network configuration
+		networkNextAddress,
 	)
 	if err != nil {
 		panic(err)
