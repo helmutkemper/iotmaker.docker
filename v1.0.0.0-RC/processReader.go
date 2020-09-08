@@ -56,6 +56,12 @@ func (el *DockerSystem) processBuildAndPullReaders(
 					toChannel.ImageID = imageId
 				} else if imageName != "" {
 					toChannel.ImageID, err = el.ImageFindIdByName(imageName)
+					if err != nil {
+						return
+					}
+
+					channelOut.SuccessfullyBuildImage = true
+					successfully = true
 				}
 
 				if len(auxIdList) != 0 {

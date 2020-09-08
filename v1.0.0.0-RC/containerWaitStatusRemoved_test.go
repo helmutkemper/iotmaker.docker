@@ -2,6 +2,7 @@ package iotmakerDocker
 
 import (
 	"errors"
+	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
@@ -42,8 +43,15 @@ func ExampleDockerSystem_ContainerWaitStatusRemoved() {
 
 			case status := <-chStatus:
 				// English: remove this comment to see all build status
-				// Português: remova este comentário para vê todo o status da criação da imagem
-				//fmt.Printf("image pull status: %+v\n", status)
+				// Português: remova este comentário para vê _todo o status da criação da imagem
+				// fmt.Printf("image pull status: %+v\n", status)
+
+				f, e := os.OpenFile("log.txt", os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
+				if e != nil {
+					panic(e)
+				}
+				_, _ = f.WriteString(fmt.Sprintf("%-v", status))
+				_ = f.Close()
 
 				if status.Closed == true {
 					// fmt.Println("image pull complete!")
@@ -131,10 +139,10 @@ func ExampleDockerSystem_ContainerWaitStatusRemoved() {
 		panic(err)
 	}
 
-  if imageId == "" {
-    err = errors.New("image ID was not generated")
-    return
-  }
+	if imageId == "" {
+		err = errors.New("image ID was not generated")
+		return
+	}
 
 	// English: building a multi-step image leaves large and useless images, taking up space on the HD.
 	// Português: construir uma imagem de múltiplas etapas deixa imagens grandes e sem serventia, ocupando espaço no HD.
@@ -196,8 +204,9 @@ func ExampleDockerSystem_ContainerWaitStatusRemoved() {
 			case <-ticker.C:
 				err = dockerSys.ContainerStopAndRemove(containerId, true, false, false)
 				if err != nil {
-					~panic(err)
+					panic(err)
 				}
+				return
 			}
 		}
 	}(dockerSys, containerId)

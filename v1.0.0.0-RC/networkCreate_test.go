@@ -143,7 +143,7 @@ func ExampleDockerSystem_NetworkCreate() {
 
 	// English: mount and start a container
 	// Português: monta i inicializa o container
-	containerId, err = dockerSys.ContainerCreate(
+	containerId, err = dockerSys.ContainerCreateAndStart(
 		// image name
 		"image_server_delete_before_test:latest",
 		// container name

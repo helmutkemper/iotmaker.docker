@@ -1,0 +1,51 @@
+{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Step 1/11 : FROM golang:alpine3.12 as builder false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false 
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in 7b79eb368d31
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container 7b79eb368d31
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> c72191de2aa4
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in 03b91b966b6d
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container 03b91b966b6d
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 12133a95a2e8
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 3c0d2729e9be
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Step 5/11 : ARG CGO_ENABLED=0 false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in b5c78f84e0a5
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container b5c78f84e0a5
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 007139287be6
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in 8280139d1e05
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container 8280139d1e05
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 9fd77df070b5
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 9a46f887b41e
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Step 9/11 : VOLUME /static false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in 5f1066795f94
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container 5f1066795f94
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 621c416ab149
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in e9138ca3592c
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container e9138ca3592c
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> afadb8a3d581
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in b0df327ca2b7
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container b0df327ca2b7
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> ce3f9cc5d927
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0 image_server_delete_before_test:latest   false Successfully tagged image_server_delete_before_test:latest
+ false true []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0 image_server_delete_before_test:latest sha256:ce3f9cc5d9277e445fdbff923e89c098dddef0ab4841d72430a5de7b4655b870  true  false true []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Step 1/11 : FROM golang:alpine3.12 as builder false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false 
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in b1b8b7c94858
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container b1b8b7c94858
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 1d720fbd0611
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in 1ddd2f878836
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container 1ddd2f878836
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 08e9af832de5
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 58e1704ececd
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Step 5/11 : ARG CGO_ENABLED=0 false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in 06a72fcad3b5
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container 06a72fcad3b5
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> dc23c1eea3e4
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in 43ed5b4ce712
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container 43ed5b4ce712
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 5ca0a2347bd5
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 5b3a1a8b9819
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Step 9/11 : VOLUME /static false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in a1e19eb8056f
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container a1e19eb8056f
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 3bfb5ba8782e
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in d6a24a2b6373
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container d6a24a2b6373
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 49c19fcabb28
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> Running in b07bf3a03071
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false Removing intermediate container b07bf3a03071
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0    false  ---> 6a8c0f15d73b
+ false false []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0 image_server_delete_before_test:latest   false Successfully tagged image_server_delete_before_test:latest
+ false true []}{0 {0 0 0 0} 0 0 {0 0 0 0} 0 image_server_delete_before_test:latest sha256:6a8c0f15d73b5b16f1476a12dd94691d1b680fb678b96e4c757a2e19b1ab223d  true  false true []}
