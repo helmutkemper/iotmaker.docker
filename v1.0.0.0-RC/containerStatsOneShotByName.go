@@ -23,7 +23,7 @@ func (el *DockerSystem) ContainerStatisticsOneShotByName(
 
 	for _, containerData := range list {
 		for _, containerName := range containerData.Names {
-			if containerName == name {
+			if containerName == name || containerName == "/"+name {
 				pass = true
 				id = containerData.ID
 				break

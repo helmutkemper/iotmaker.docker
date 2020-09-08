@@ -13,7 +13,7 @@ import (
 	"reflect"
 )
 
-func ExampleDockerSystem_ContainerInspectJSon() {
+func ExampleDockerSystem_ContainerInspectJSonByName() {
 
 	var err error
 	var containerId string
@@ -196,7 +196,7 @@ func ExampleDockerSystem_ContainerInspectJSon() {
 	// Português: inspeciona um container por ID
 	var inspect types.ContainerJSON
 	var jsonData []byte
-	jsonData, err = dockerSys.ContainerInspectJSon(containerId)
+	jsonData, err = dockerSys.ContainerInspectJSonByName("container_delete_before_test")
 	if err != nil {
 		panic(err)
 	}

@@ -1,7 +1,6 @@
 package iotmakerDocker
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/mount"
@@ -10,10 +9,9 @@ import (
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"os"
 	"path/filepath"
-	"reflect"
 )
 
-func ExampleDockerSystem_ContainerInspectJSon() {
+func ExampleDockerSystem_ContainerStatisticsOneShot() {
 
 	var err error
 	var containerId string
@@ -141,36 +139,27 @@ func ExampleDockerSystem_ContainerInspectJSon() {
 	// English: mount and start a container
 	// Português: monta i inicializa o container
 	containerId, err = dockerSys.ContainerCreate(
-		// image name
-		"image_server_delete_before_test:latest",
-		// container name
-		"container_delete_before_test",
-		// restart policy
-		KRestartPolicyUnlessStopped,
-		// portMap
+		"image_server_delete_before_test:latest", // image name
+		"container_delete_before_test",           // container name
+		KRestartPolicyUnlessStopped,              // restart policy
 		nat.PortMap{
-			// container port number/protocol [tpc/udp]
 			"3000/tcp": []nat.PortBinding{ // server original port
 				{
-					// server output port number
-					HostPort: "9002",
+					HostPort: "9002", // new output port
 				},
 			},
 		},
-		// mount volumes
-		[]mount.Mount{
+		[]mount.Mount{ // mount volumes
 			{
-				// bind - is the type for mounting host dir (real folder inside computer where
-				// this code work)
-				Type: KVolumeMountTypeBindString,
-				// path inside host machine
-				Source: smallServerPathStatic,
-				// path inside image
-				Target: "/static",
+				Type: KVolumeMountTypeBindString, // bind - is the type for mounting host dir
+				// (real folder inside computer where this
+				// code work)
+
+				Source: smallServerPathStatic, // path inside host machine
+				Target: "/static",             // path inside image
 			},
 		},
-		// nil or container network configuration
-		networkNextAddress,
+		networkNextAddress, // [optional] container network
 	)
 	if err != nil {
 		panic(err)
@@ -181,8 +170,8 @@ func ExampleDockerSystem_ContainerInspectJSon() {
 		panic(err)
 	}
 
-	// English: start a container by id
-	// Português: inicia um container por id
+	// English: container start
+	// Português: inicia o container
 	err = dockerSys.ContainerStart(containerId)
 	if err != nil {
 		panic(err)
@@ -192,52 +181,40 @@ func ExampleDockerSystem_ContainerInspectJSon() {
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	// English: inspect a container by ID
-	// Português: inspeciona um container por ID
-	var inspect types.ContainerJSON
-	var jsonData []byte
-	jsonData, err = dockerSys.ContainerInspectJSon(containerId)
+	var stats types.Stats
+	stats, err = dockerSys.ContainerStatisticsOneShot(containerId)
 	if err != nil {
 		panic(err)
 	}
 
-	err = json.Unmarshal(jsonData, &inspect)
+	_ = stats
+	if stats.CPUStats.OnlineCPUs == 0 {
+		err = errors.New("container not running")
+		panic(err)
+	}
+
+	if stats.CPUStats.CPUUsage.TotalUsage == 0 {
+		err = errors.New("container not running")
+		panic(err)
+	}
+
+	if stats.MemoryStats.Limit == 0 {
+		err = errors.New("container not running")
+		panic(err)
+	}
+
+	if stats.MemoryStats.Usage == 0 {
+		err = errors.New("container not running")
+		panic(err)
+	}
+
+	err = dockerSys.ContainerStop(containerId)
 	if err != nil {
 		panic(err)
 	}
 
-	if inspect.Name != "/container_delete_before_test" {
-		err = errors.New("wrong container name")
-		panic(err)
-	}
-
-	if inspect.State == nil {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if inspect.State.Running == false {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if len(inspect.Config.ExposedPorts) == 0 {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if reflect.ValueOf(inspect.Config.ExposedPorts["3000/tcp"]).IsZero() == false {
-		err = errors.New("exposed ports fail")
-		panic(err)
-	}
-
-	if len(inspect.NetworkSettings.Networks) != 1 {
-		err = errors.New("IPv4 address error")
-		panic(err)
-	}
-
-	if inspect.NetworkSettings.Networks["network_delete_before_test"].IPAddress != "10.0.0.2" {
-		err = errors.New("IPv4 address error")
+	err = dockerSys.ContainerRemove(containerId, true, false, false)
+	if err != nil {
 		panic(err)
 	}
 

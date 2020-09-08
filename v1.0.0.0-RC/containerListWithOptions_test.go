@@ -1,27 +1,21 @@
 package iotmakerDocker
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"os"
 	"path/filepath"
-	"reflect"
 )
 
-func ExampleDockerSystem_ContainerInspectJSon() {
+func ExampleDockerSystem_ContainerListWithOptions() {
 
 	var err error
 	var containerId string
-	var networkId string
 	var dockerSys *DockerSystem
-
-	var networkAutoConfiguration *NextNetworkAutoConfiguration
-	var networkNextAddress *network.NetworkingConfig
 
 	// English: make a channel to end goroutine
 	// Português: monta um canal para terminar a goroutine
@@ -93,31 +87,6 @@ func ExampleDockerSystem_ContainerInspectJSon() {
 		panic(err)
 	}
 
-	// English: create a network named 'network_delete_before_test'
-	// Português: cria uma nova rede de nome 'network_delete_before_test'
-	networkId, networkAutoConfiguration, err = dockerSys.NetworkCreate(
-		"network_delete_before_test",
-		KNetworkDriveBridge,
-		"local",
-		"10.0.0.0/16",
-		"10.0.0.1",
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	if networkId == "" {
-		err = errors.New("network id was not generated")
-		panic(err)
-	}
-
-	// English: get next ip address from network, '10.0.0.2'
-	// Português: pega o próxima endereço da rede, '10.0.0.2'
-	err, networkNextAddress = networkAutoConfiguration.GetNext()
-	if err != nil {
-		panic(err)
-	}
-
 	// English: build a new image from folder 'small_test_server_port_3000'
 	// Português: monta uma imagem a partir da pasta 'small_test_server_port_3000'
 	err = dockerSys.ImageBuildFromFolder(
@@ -140,7 +109,7 @@ func ExampleDockerSystem_ContainerInspectJSon() {
 
 	// English: mount and start a container
 	// Português: monta i inicializa o container
-	containerId, err = dockerSys.ContainerCreate(
+	containerId, err = dockerSys.ContainerCreateAndStart(
 		// image name
 		"image_server_delete_before_test:latest",
 		// container name
@@ -170,7 +139,7 @@ func ExampleDockerSystem_ContainerInspectJSon() {
 			},
 		},
 		// nil or container network configuration
-		networkNextAddress,
+		nil,
 	)
 	if err != nil {
 		panic(err)
@@ -181,63 +150,37 @@ func ExampleDockerSystem_ContainerInspectJSon() {
 		panic(err)
 	}
 
-	// English: start a container by id
-	// Português: inicia um container por id
-	err = dockerSys.ContainerStart(containerId)
-	if err != nil {
-		panic(err)
-	}
-
 	// English: ends a goroutine
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	// English: inspect a container by ID
-	// Português: inspeciona um container por ID
-	var inspect types.ContainerJSON
-	var jsonData []byte
-	jsonData, err = dockerSys.ContainerInspectJSon(containerId)
+	// English: list all containers
+	// Português: lista todos os containers
+	var list []types.Container
+	var pass = false
+	list, err = dockerSys.ContainerListWithOptions(
+		false,
+		false,
+		false,
+		false,
+		"",
+		"",
+		0,
+		filters.Args{},
+	)
 	if err != nil {
 		panic(err)
 	}
 
-	err = json.Unmarshal(jsonData, &inspect)
-	if err != nil {
-		panic(err)
+	for _, container := range list {
+		if container.ID == containerId && container.Names[0] == "/container_delete_before_test" {
+			pass = true
+			break
+		}
 	}
 
-	if inspect.Name != "/container_delete_before_test" {
-		err = errors.New("wrong container name")
-		panic(err)
-	}
-
-	if inspect.State == nil {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if inspect.State.Running == false {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if len(inspect.Config.ExposedPorts) == 0 {
-		err = errors.New("container not running")
-		panic(err)
-	}
-
-	if reflect.ValueOf(inspect.Config.ExposedPorts["3000/tcp"]).IsZero() == false {
-		err = errors.New("exposed ports fail")
-		panic(err)
-	}
-
-	if len(inspect.NetworkSettings.Networks) != 1 {
-		err = errors.New("IPv4 address error")
-		panic(err)
-	}
-
-	if inspect.NetworkSettings.Networks["network_delete_before_test"].IPAddress != "10.0.0.2" {
-		err = errors.New("IPv4 address error")
+	if pass == false {
+		err = errors.New("container id not found")
 		panic(err)
 	}
 
