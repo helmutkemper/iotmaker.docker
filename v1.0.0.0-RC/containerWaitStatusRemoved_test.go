@@ -16,6 +16,7 @@ func ExampleDockerSystem_ContainerWaitStatusRemoved() {
 
 	var err error
 	var containerId string
+	var imageId string
 	var networkId string
 	var dockerSys *DockerSystem
 
@@ -119,7 +120,7 @@ func ExampleDockerSystem_ContainerWaitStatusRemoved() {
 
 	// English: build a new image from folder 'small_test_server_port_3000'
 	// Português: monta uma imagem a partir da pasta 'small_test_server_port_3000'
-	err = dockerSys.ImageBuildFromFolder(
+	imageId, err = dockerSys.ImageBuildFromFolder(
 		smallServerPath,
 		[]string{
 			"image_server_delete_before_test:latest", // image name
@@ -129,6 +130,11 @@ func ExampleDockerSystem_ContainerWaitStatusRemoved() {
 	if err != nil {
 		panic(err)
 	}
+
+  if imageId == "" {
+    err = errors.New("image ID was not generated")
+    return
+  }
 
 	// English: building a multi-step image leaves large and useless images, taking up space on the HD.
 	// Português: construir uma imagem de múltiplas etapas deixa imagens grandes e sem serventia, ocupando espaço no HD.
@@ -190,7 +196,7 @@ func ExampleDockerSystem_ContainerWaitStatusRemoved() {
 			case <-ticker.C:
 				err = dockerSys.ContainerStopAndRemove(containerId, true, false, false)
 				if err != nil {
-					panic(err)
+					~panic(err)
 				}
 			}
 		}

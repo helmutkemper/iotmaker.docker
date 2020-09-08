@@ -16,6 +16,7 @@ import (
 func ExampleDockerSystem_NetworkCreate() {
 	var err error
 	var containerId string
+	var imageId string
 	var networkId string
 	var dockerSys *DockerSystem
 
@@ -124,7 +125,7 @@ func ExampleDockerSystem_NetworkCreate() {
 
 	// English: build a new image from folder 'small_test_server_port_3000'
 	// Português: monta uma imagem a partir da pasta 'small_test_server_port_3000'
-	err = dockerSys.ImageBuildFromFolder(
+	imageId, err = dockerSys.ImageBuildFromFolder(
 		smallServerPath,
 		[]string{
 			"image_server_delete_before_test:latest", // image name
@@ -133,6 +134,11 @@ func ExampleDockerSystem_NetworkCreate() {
 	)
 	if err != nil {
 		panic(err)
+	}
+
+	if imageId == "" {
+		err = errors.New("image ID was not generated")
+		return
 	}
 
 	// English: mount and start a container

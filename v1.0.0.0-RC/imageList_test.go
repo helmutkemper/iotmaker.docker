@@ -2,11 +2,12 @@ package iotmakerDocker
 
 import (
 	"errors"
+	"github.com/docker/docker/api/types"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"path/filepath"
 )
 
-func ExampleDockerSystem_ImageFindIdByName() {
+func ExampleDockerSystem_ImageList() {
 
 	var err error
 	var dockerSys *DockerSystem
@@ -106,15 +107,31 @@ func ExampleDockerSystem_ImageFindIdByName() {
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	var imageID string
-	imageID, err = dockerSys.ImageFindIdByName("image_server_delete_before_test:latest")
-	if err != nil {
+	var pass = false
+	var list []types.ImageSummary
+	list, err = dockerSys.ImageList()
+	for _, image := range list {
+		if len(image.RepoTags) != 0 && image.RepoTags[0] == "image_server_delete_before_test:latest" {
+			pass = true
+			err = dockerSys.ImageRemove(image.ID, false, false)
+			if err != nil {
+				panic(err)
+			}
+			break
+		}
+	}
+
+	if pass == false {
+		err = errors.New("image not found")
 		panic(err)
 	}
 
-	if imageID == "" {
-		err = errors.New("image not found")
-		panic(err)
+	list, err = dockerSys.ImageList()
+	for _, image := range list {
+		if len(image.RepoTags) != 0 && image.RepoTags[0] == "image_server_delete_before_test:latest" {
+			err = errors.New("image found after image removal")
+			panic(err)
+		}
 	}
 
 	// English: garbage collector and deletes networks and images whose name contains the term 'delete'

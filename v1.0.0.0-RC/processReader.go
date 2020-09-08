@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+type auxId struct {
+	ID string `json:"ID"`
+}
+
+type aux struct {
+	Aux auxId `json:"aux"`
+}
+
 func (el *DockerSystem) processBuildAndPullReaders(
 	reader *io.Reader,
 	channel *chan ContainerPullStatusSendToChannel,
@@ -21,6 +29,7 @@ func (el *DockerSystem) processBuildAndPullReaders(
 	var channelOut ContainerPullProgress
 	var toChannel ContainerPullStatusSendToChannel
 	var toProcess = make(map[string]ContainerPullProgress)
+	var auxIdList = make([]string, 0)
 
 	if reader == nil {
 		return
@@ -47,6 +56,13 @@ func (el *DockerSystem) processBuildAndPullReaders(
 					toChannel.ImageID = imageId
 				} else if imageName != "" {
 					toChannel.ImageID, err = el.ImageFindIdByName(imageName)
+				}
+
+				if len(auxIdList) != 0 {
+					channelOut.SuccessfullyBuildImage = true
+					successfully = true
+					imageId, auxIdList = auxIdList[len(auxIdList)-1], auxIdList[:len(auxIdList)-1]
+					toChannel.SetAuxiliaryImageList(auxIdList)
 				}
 
 				toChannel.Closed = true
@@ -91,6 +107,16 @@ func (el *DockerSystem) processBuildAndPullReaders(
 			//Successfully tagged delete_remote_server:latest
 			if strings.Contains(channelOut.Status, kContainerPullStatusDownloadedNewerImageText) {
 				imageName = strings.Replace(channelOut.Status, kContainerPullStatusDownloadedNewerImageText, "", 1)
+			}
+
+			if strings.Contains(channelOut.Status, kContainerPullStatusAuxId) { // {"aux":{"ID":"sha256:262c77a02e05b41efe2097f62f0e687b323d140ca72948a85bd5a4d7dc50e483"}} {"aux":{"ID":"sha256:bc032e1e78666df7d8d084c18e35752ac821942f5c8ddfe0a790afec33d13eb2"}}
+				var aux aux
+				err = json.Unmarshal([]byte(channelOut.Status), &aux)
+				if err != nil {
+					return
+				}
+
+				auxIdList = append(auxIdList, aux.Aux.ID)
 			}
 
 			if strings.Contains(channelOut.Status, kContainerPullStatusDigestText) {

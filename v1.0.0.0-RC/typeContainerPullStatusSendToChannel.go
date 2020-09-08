@@ -19,6 +19,7 @@ type ContainerPullStatusSendToChannel struct {
 	Stream                     string
 	SuccessfullyBuildContainer bool
 	SuccessfullyBuildImage     bool
+	IdAuxiliaryImages          []string
 }
 
 func (el *ContainerPullStatusSendToChannel) calcPercentage() {
@@ -35,4 +36,8 @@ func (el *ContainerPullStatusSendToChannel) calcPercentage() {
 	}
 	percent = util.Round(percent, 0.5, 2.0)
 	el.Extracting.Percent = percent
+}
+
+func (el *ContainerPullStatusSendToChannel) SetAuxiliaryImageList(list []string) {
+	el.IdAuxiliaryImages = list
 }

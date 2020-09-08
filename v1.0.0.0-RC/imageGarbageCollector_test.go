@@ -1,6 +1,7 @@
 package iotmakerDocker
 
 import (
+	"errors"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"path/filepath"
 )
@@ -9,6 +10,7 @@ func ExampleDockerSystem_ImageGarbageCollector() {
 
 	var err error
 	var dockerSys *DockerSystem
+	var imageId string
 
 	// English: make a channel to end goroutine
 	// Português: monta um canal para terminar a goroutine
@@ -77,7 +79,7 @@ func ExampleDockerSystem_ImageGarbageCollector() {
 
 	// English: build a new image from folder 'small_test_server_port_3000'
 	// Português: monta uma imagem a partir da pasta 'small_test_server_port_3000'
-	err = dockerSys.ImageBuildFromFolder(
+	imageId, err = dockerSys.ImageBuildFromFolder(
 		smallServerPath,
 		[]string{
 			"image_server_delete_before_test:latest", // image name
@@ -86,6 +88,11 @@ func ExampleDockerSystem_ImageGarbageCollector() {
 	)
 	if err != nil {
 		panic(err)
+	}
+
+	if imageId == "" {
+		err = errors.New("image ID was not generated")
+		return
 	}
 
 	// English: building a multi-step image leaves large and useless images, taking up space on the HD.

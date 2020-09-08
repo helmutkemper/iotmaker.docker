@@ -14,6 +14,7 @@ func (el *DockerSystem) ImageBuildFromFolder(
 	tags []string,
 	channel *chan ContainerPullStatusSendToChannel,
 ) (
+	imageID string,
 	err error,
 ) {
 
@@ -35,6 +36,11 @@ func (el *DockerSystem) ImageBuildFromFolder(
 	successfully := el.processBuildAndPullReaders(&reader, channel)
 	if successfully == false && err == nil {
 		err = errors.New("image build error")
+	}
+
+	imageID, err = el.ImageFindIdByName(imageBuildOptions.Tags[0])
+	if err != nil {
+		return
 	}
 
 	return

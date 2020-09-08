@@ -14,6 +14,7 @@ func ExampleDockerSystem_ContainerListAll() {
 
 	var err error
 	var containerId string
+	var imageId string
 	var dockerSys *DockerSystem
 
 	// English: make a channel to end goroutine
@@ -88,7 +89,7 @@ func ExampleDockerSystem_ContainerListAll() {
 
 	// English: build a new image from folder 'small_test_server_port_3000'
 	// Português: monta uma imagem a partir da pasta 'small_test_server_port_3000'
-	err = dockerSys.ImageBuildFromFolder(
+	imageId, err = dockerSys.ImageBuildFromFolder(
 		smallServerPath,
 		[]string{
 			"image_server_delete_before_test:latest", // image name
@@ -97,6 +98,11 @@ func ExampleDockerSystem_ContainerListAll() {
 	)
 	if err != nil {
 		panic(err)
+	}
+
+	if imageId == "" {
+		err = errors.New("image ID was not generated")
+		return
 	}
 
 	// English: building a multi-step image leaves large and useless images, taking up space on the HD.
