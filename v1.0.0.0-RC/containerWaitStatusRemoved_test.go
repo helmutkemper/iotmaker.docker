@@ -2,7 +2,6 @@ package iotmakerDocker
 
 import (
 	"errors"
-	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
@@ -45,13 +44,6 @@ func ExampleDockerSystem_ContainerWaitStatusRemoved() {
 				// English: remove this comment to see all build status
 				// Português: remova este comentário para vê _todo o status da criação da imagem
 				// fmt.Printf("image pull status: %+v\n", status)
-
-				f, e := os.OpenFile("log.txt", os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
-				if e != nil {
-					panic(e)
-				}
-				_, _ = f.WriteString(fmt.Sprintf("%-v", status))
-				_ = f.Close()
 
 				if status.Closed == true {
 					// fmt.Println("image pull complete!")
