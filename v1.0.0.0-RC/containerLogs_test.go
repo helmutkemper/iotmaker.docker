@@ -102,7 +102,7 @@ func ExampleDockerSystem_ContainerLogs() {
 
 	if imageId == "" {
 		err = errors.New("image ID was not generated")
-		return
+		panic(err)
 	}
 
 	// English: building a multi-step image leaves large and useless images, taking up space on the HD.
@@ -173,6 +173,7 @@ func ExampleDockerSystem_ContainerLogs() {
 	if err != nil {
 		panic(err)
 	}
+
 	if bytes.Contains(log, []byte("starting server at port 3000")) == false {
 		err = errors.New("expected log for container not found")
 		panic(err)

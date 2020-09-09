@@ -4,7 +4,7 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-// Mount nat por list by image config
+// fixme: isto deveria ser privado?
 func (el *DockerSystem) ImageMountNatPortListChangeExposed(
 	imageId string,
 	currentPortList,
@@ -14,5 +14,6 @@ func (el *DockerSystem) ImageMountNatPortListChangeExposed(
 	error,
 ) {
 
+	// fixme: ipAddress bug
 	return el.ImageMountNatPortListChangeExposedWithIpAddress(imageId, "", currentPortList, changeToPortList)
 }

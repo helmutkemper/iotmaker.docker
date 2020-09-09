@@ -2,21 +2,16 @@ package iotmakerDocker
 
 import (
 	"errors"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/go-connections/nat"
 	"github.com/helmutkemper/iotmaker.docker/util"
-	"os"
 	"path/filepath"
 )
 
-func ExampleDockerSystem_ContainerListWithOptions() {
+func ExampleDockerSystem_ImageListExposedPorts() {
 
 	var err error
-	var containerId string
-	var imageId string
 	var dockerSys *DockerSystem
+	var imageId string
 
 	// English: make a channel to end goroutine
 	// Português: monta um canal para terminar a goroutine
@@ -67,11 +62,6 @@ func ExampleDockerSystem_ContainerListWithOptions() {
 		panic(err)
 	}
 
-	// English: 'static' folder path
-	// Português: caminho da pasta 'static'
-	var smallServerPathStatic string
-	smallServerPathStatic = smallServerPath + string(os.PathSeparator) + "static"
-
 	// English: create a new default client. Please, use: err, dockerSys = factoryDocker.NewClient()
 	// Português: cria um novo cliente com configurações padrão. Por favor, usr: err, dockerSys = factoryDocker.NewClient()
 	dockerSys = &DockerSystem{}
@@ -113,80 +103,28 @@ func ExampleDockerSystem_ContainerListWithOptions() {
 		panic(err)
 	}
 
-	// English: mount and start a container
-	// Português: monta i inicializa o container
-	containerId, err = dockerSys.ContainerCreateAndStart(
-		// image name
-		"image_server_delete_before_test:latest",
-		// container name
-		"container_delete_before_test",
-		// restart policy
-		KRestartPolicyUnlessStopped,
-		// portMap
-		nat.PortMap{
-			// container port number/protocol [tpc/udp]
-			"3000/tcp": []nat.PortBinding{ // server original port
-				{
-					// server output port number
-					HostPort: "9002",
-				},
-			},
-		},
-		// mount volumes
-		[]mount.Mount{
-			{
-				// bind - is the type for mounting host dir (real folder inside computer where
-				// this code work)
-				Type: KVolumeMountTypeBindString,
-				// path inside host machine
-				Source: smallServerPathStatic,
-				// path inside image
-				Target: "/static",
-			},
-		},
-		// nil or container network configuration
-		nil,
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	if containerId == "" {
-		err = errors.New("container id was not generated")
-		panic(err)
-	}
-
 	// English: ends a goroutine
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	// English: list all containers
-	// Português: lista todos os containers
-	var list []types.Container
-	var pass = false
-	list, err = dockerSys.ContainerListWithOptions(
-		false,
-		false,
-		false,
-		false,
-		"",
-		"",
-		0,
-		filters.Args{},
-	)
+	var portList []nat.Port
+	portList, err = dockerSys.ImageListExposedPorts(imageId)
 	if err != nil {
 		panic(err)
 	}
 
-	for _, container := range list {
-		if container.ID == containerId && container.Names[0] == "/container_delete_before_test" {
-			pass = true
-			break
-		}
+	if len(portList) == 0 {
+		err = errors.New("port list is empty")
+		panic(err)
 	}
 
-	if pass == false {
-		err = errors.New("container id not found")
+	if portList[0].Port() != "3000" {
+		err = errors.New("wrong server port")
+		panic(err)
+	}
+
+	if portList[0].Proto() != "tcp" {
+		err = errors.New("wrong server port")
 		panic(err)
 	}
 

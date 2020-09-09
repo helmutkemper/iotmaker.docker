@@ -6,21 +6,6 @@ import (
 	"io"
 )
 
-const (
-	kContainerPullStatusWaitingText              = "Waiting"
-	kContainerPullStatusDownloadingText          = "Downloading"
-	kContainerPullStatusVerifyingChecksumText    = "Verifying Checksum"
-	kContainerPullStatusDownloadCompleteText     = "Download complete"
-	kContainerPullStatusExtractingText           = "Extracting"
-	kContainerPullStatusPullCompleteText         = "Pull complete"
-	kContainerPullStatusAuxId                    = "\"aux\":{\"ID\""
-	kContainerPullStatusDigestText               = "Digest: "
-	kContainerPullStatusDownloadedNewerImageText = "Status: Downloaded newer image for "
-	kContainerPullStatusImageIsUpToDate          = "Status: Image is up to date for "
-	kContainerBuildImageStatusSuccessContainer   = "Success fully tagged"
-	kContainerBuildImageStatusSuccessImage       = "Successfully tagged"
-)
-
 func (el *DockerSystem) ImagePull(
 	name string,
 	channel *chan ContainerPullStatusSendToChannel,
@@ -48,6 +33,11 @@ func (el *DockerSystem) ImagePull(
 	successfully := el.processBuildAndPullReaders(&reader, channel)
 	if successfully == false {
 		err = errors.New("image pull error")
+	}
+
+	imageId, err = el.ImageFindIdByName(name)
+	if err != nil {
+		return
 	}
 
 	return

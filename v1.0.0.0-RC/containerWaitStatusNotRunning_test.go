@@ -132,7 +132,7 @@ func ExampleDockerSystem_ContainerWaitStatusNotRunning() {
 
 	if imageId == "" {
 		err = errors.New("image ID was not generated")
-		return
+		panic(err)
 	}
 
 	// English: building a multi-step image leaves large and useless images, taking up space on the HD.
@@ -199,6 +199,7 @@ func ExampleDockerSystem_ContainerWaitStatusNotRunning() {
 	if err != nil {
 		panic(err)
 	}
+
 	if bytes.Contains(log, []byte("Bye...")) == false {
 		err = errors.New("expected log for container not found")
 		panic(err)

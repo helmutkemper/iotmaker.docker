@@ -133,7 +133,7 @@ func ExampleDockerSystem_ContainerWaitStatusRemoved() {
 
 	if imageId == "" {
 		err = errors.New("image ID was not generated")
-		return
+		panic(err)
 	}
 
 	// English: building a multi-step image leaves large and useless images, taking up space on the HD.
