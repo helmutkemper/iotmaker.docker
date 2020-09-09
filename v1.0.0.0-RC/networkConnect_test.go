@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"os"
@@ -12,16 +11,13 @@ import (
 	"reflect"
 )
 
-func ExampleDockerSystem_ContainerInspectByNameContains() {
+func ExampleDockerSystem_NetworkConnect() {
 
 	var err error
 	var containerId string
 	var imageId string
 	var networkId string
 	var dockerSys *DockerSystem
-
-	var networkAutoConfiguration *NextNetworkAutoConfiguration
-	var networkNextAddress *network.NetworkingConfig
 
 	// English: make a channel to end goroutine
 	// Português: monta um canal para terminar a goroutine
@@ -95,7 +91,7 @@ func ExampleDockerSystem_ContainerInspectByNameContains() {
 
 	// English: create a network named 'network_delete_before_test'
 	// Português: cria uma nova rede de nome 'network_delete_before_test'
-	networkId, networkAutoConfiguration, err = dockerSys.NetworkCreate(
+	networkId, _, err = dockerSys.NetworkCreate(
 		"network_delete_before_test",
 		KNetworkDriveBridge,
 		"local",
@@ -108,13 +104,6 @@ func ExampleDockerSystem_ContainerInspectByNameContains() {
 
 	if networkId == "" {
 		err = errors.New("network id was not generated")
-		panic(err)
-	}
-
-	// English: get next ip address from network, '10.0.0.2'
-	// Português: pega o próxima endereço da rede, '10.0.0.2'
-	err, networkNextAddress = networkAutoConfiguration.GetNext()
-	if err != nil {
 		panic(err)
 	}
 
@@ -175,7 +164,7 @@ func ExampleDockerSystem_ContainerInspectByNameContains() {
 			},
 		},
 		// nil or container network configuration
-		networkNextAddress,
+		nil,
 	)
 	if err != nil {
 		panic(err)
@@ -186,8 +175,13 @@ func ExampleDockerSystem_ContainerInspectByNameContains() {
 		panic(err)
 	}
 
-	// English: start a container by id
-	// Português: inicia um container por id
+	err = dockerSys.NetworkConnect(networkId, containerId, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	// English: container start
+	// Português: inicia o container
 	err = dockerSys.ContainerStart(containerId)
 	if err != nil {
 		panic(err)
@@ -197,50 +191,104 @@ func ExampleDockerSystem_ContainerInspectByNameContains() {
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	// English: inspect a container by Name
-	// Português: inspeciona um container por Name
-	var inspectList []types.ContainerJSON
-	inspectList, err = dockerSys.ContainerInspectByNameContains("delete")
+	// English: inspect a container by id
+	// Português: inspeciona um container por id
+	var inspect types.ContainerJSON
+	inspect, err = dockerSys.ContainerInspect(containerId)
 	if err != nil {
 		panic(err)
 	}
 
-	if len(inspectList) == 0 {
-		err = errors.New("container name contains 'delete' not found")
-		panic(err)
-	}
-
-	if inspectList[0].Name != "/container_delete_before_test" {
+	if inspect.Name != "/container_delete_before_test" {
 		err = errors.New("wrong container name")
 		panic(err)
 	}
 
-	if inspectList[0].State == nil {
+	if inspect.State == nil {
 		err = errors.New("container not running")
 		panic(err)
 	}
 
-	if inspectList[0].State.Running == false {
+	if inspect.State.Running == false {
 		err = errors.New("container not running")
 		panic(err)
 	}
 
-	if len(inspectList[0].Config.ExposedPorts) == 0 {
+	if len(inspect.Config.ExposedPorts) == 0 {
 		err = errors.New("container not running")
 		panic(err)
 	}
 
-	if reflect.ValueOf(inspectList[0].Config.ExposedPorts["3000/tcp"]).IsZero() == false {
+	if reflect.ValueOf(inspect.Config.ExposedPorts["3000/tcp"]).IsZero() == false {
 		err = errors.New("exposed ports fail")
 		panic(err)
 	}
 
-	if len(inspectList[0].NetworkSettings.Networks) != 1 {
+	if inspect.NetworkSettings.Networks["network_delete_before_test"].IPAddress != "10.0.0.2" {
 		err = errors.New("IPv4 address error")
 		panic(err)
 	}
 
-	if inspectList[0].NetworkSettings.Networks["network_delete_before_test"].IPAddress != "10.0.0.2" {
+	err = dockerSys.ContainerStop(containerId)
+	if err != nil {
+		panic(err)
+	}
+
+	err = dockerSys.NetworkDisconnect(networkId, containerId, false)
+	if err != nil {
+		panic(err)
+	}
+
+	err = dockerSys.NetworkRemove(networkId)
+	if err != nil {
+		panic(err)
+	}
+
+	networkId, err = dockerSys.NetworkFindIdByName("bridge")
+	if err != nil {
+		panic(err)
+	}
+
+	err = dockerSys.NetworkConnect(networkId, containerId, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	// English: container start
+	// Português: inicia o container
+	err = dockerSys.ContainerStart(containerId)
+	if err != nil {
+		panic(err)
+	}
+
+	// English: inspect a container by id
+	// Português: inspeciona um container por id
+	inspect, err = dockerSys.ContainerInspect(containerId)
+	if err != nil {
+		panic(err)
+	}
+
+	if inspect.Name != "/container_delete_before_test" {
+		err = errors.New("wrong container name")
+		panic(err)
+	}
+
+	if inspect.State == nil {
+		err = errors.New("container not running")
+		panic(err)
+	}
+
+	if inspect.State.Running == false {
+		err = errors.New("container not running")
+		panic(err)
+	}
+
+	if reflect.ValueOf(inspect.Config.ExposedPorts["3000/tcp"]).IsZero() == false {
+		err = errors.New("exposed ports fail")
+		panic(err)
+	}
+
+	if inspect.NetworkSettings.Networks["bridge"].IPAddress == "10.0.0.2" {
 		err = errors.New("IPv4 address error")
 		panic(err)
 	}
