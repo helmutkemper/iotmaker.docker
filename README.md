@@ -1,5 +1,7 @@
 # iotmaker.docker
 
+![gopher and docker](./image/brendan-le-glaunec-gopherpiratedockernobg.jpg)
+
 ### Português
 
 Este projeto é uma forma simples de gerenciar containers por código **Golang**.
