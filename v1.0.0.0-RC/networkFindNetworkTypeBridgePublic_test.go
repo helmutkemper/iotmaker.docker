@@ -18,7 +18,13 @@ func TestDockerSystem_NetworkFindNetworkTypeBridgePublic(t *testing.T) {
 		panic(err)
 	}
 
-	_, _, err = d.NetworkCreate("delete_before_test", KNetworkDriveBridge, "local", "10.0.0.0/16", "10.0.0.1")
+	_, _, err = d.NetworkCreate(
+		"delete_before_test",
+		KNetworkDriveBridge,
+		"local",
+		"10.0.0.0/16",
+		"10.0.0.1",
+	)
 	if err != nil {
 		t.Fail()
 		panic(err)

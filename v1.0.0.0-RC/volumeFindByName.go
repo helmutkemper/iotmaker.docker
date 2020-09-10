@@ -1,6 +1,7 @@
 package iotmakerDocker
 
 import (
+	"errors"
 	"github.com/docker/docker/api/types"
 )
 
@@ -19,5 +20,7 @@ func (el *DockerSystem) VolumeFindByName(
 			return
 		}
 	}
+
+	err = errors.New("volume name not found")
 	return
 }
