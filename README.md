@@ -20,9 +20,9 @@ The code has around 90% coverage with tests and documentation in Portuguese and 
 
 ### Exemplos / Samples
 
-Português: Monta um servidor baseado em um diretório local:
+**Português:** Monta um servidor baseado em um diretório local:
 
-English: Build a small server based on a local directory:
+**English:** Build a small server based on a local directory:
 ```golang
 package main
 
@@ -301,10 +301,11 @@ func main() {
 }
 ```
 
-Português: Monta o mesmo exemplo de servidor baseado em um repositório do 
+**Português:** Monta o mesmo exemplo de servidor baseado em um repositório do 
 [**github**](https://github.com/).
 
-English: Build a small server based on a [**github**](https://github.com/) repository:
+**English:** Build a small server based on a [**github**](https://github.com/) 
+repository:
 ```golang
 package main
 
@@ -384,8 +385,10 @@ func main() {
   var smallServerPathStatic string
   smallServerPathStatic = smallServerPath + string(os.PathSeparator) + "static"
 
-  // English: create a new default client. Please, use: err, dockerSys = factoryDocker.NewClient()
-  // Português: cria um novo cliente com configurações padrão. Por favor, usr: err, dockerSys = factoryDocker.NewClient()
+  // English: create a new default client. Please, use: err, dockerSys = 
+  // factoryDocker.NewClient()
+  // Português: cria um novo cliente com configurações padrão. Por favor, usr: err, 
+  // dockerSys = factoryDocker.NewClient()
   dockerSys = &iotmakerDocker.DockerSystem{}
   dockerSys.ContextCreate()
   err = dockerSys.ClientCreate()
@@ -393,8 +396,10 @@ func main() {
     panic(err)
   }
 
-  // English: garbage collector and deletes networks and images whose name contains the term 'delete'
-  // Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 'delete'
+  // English: garbage collector and deletes networks and images whose name contains the 
+  // term 'delete'
+  // Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 
+  // 'delete'
   err = dockerSys.RemoveAllByNameContains("delete")
   if err != nil {
     panic(err)
@@ -442,8 +447,10 @@ func main() {
     panic(err)
   }
 
-  // English: building a multi-step image leaves large and useless images, taking up space on the HD.
-  // Português: construir uma imagem de múltiplas etapas deixa imagens grandes e sem serventia, ocupando espaço no HD.
+  // English: building a multi-step image leaves large and useless images, taking up 
+  // space on the HD.
+  // Português: construir uma imagem de múltiplas etapas deixa imagens grandes e sem 
+  // serventia, ocupando espaço no HD.
   err = dockerSys.ImageGarbageCollector()
   if err != nil {
     panic(err)
@@ -452,24 +459,39 @@ func main() {
   // English: mount and start a container
   // Português: monta i inicializa o container
   containerId, err = dockerSys.ContainerCreate(
-    "image_server_delete_before_test:latest", // image name
-    "container_delete_before_test",           // container name
-    iotmakerDocker.KRestartPolicyUnlessStopped,              // restart policy
+    // image name
+    "image_server_delete_before_test:latest",
+
+    // container name
+    "container_delete_before_test",
+
+    // restart policy
+    iotmakerDocker.KRestartPolicyUnlessStopped,
+
+    // port list
     nat.PortMap{
-      "3000/tcp": []nat.PortBinding{ // server original port
+      // server original port
+      "3000/tcp": []nat.PortBinding{ 
         {
-          HostPort: "9002", // new output port
+          // new output port
+          HostPort: "9002", 
         },
       },
     },
-    []mount.Mount{ // mount volumes
+
+    // mount volumes
+    []mount.Mount{ 
       {
-        Type: iotmakerDocker.KVolumeMountTypeBindString, // bind - is the type for mounting host dir
+        // bind - is the type for mounting host dir
         // (real folder inside computer where this
         // code work)
+        Type: iotmakerDocker.KVolumeMountTypeBindString,
 
-        Source: smallServerPathStatic, // path inside host machine
-        Target: "/static",             // path inside image
+        // path inside host machine
+        Source: smallServerPathStatic,
+
+        // path inside image
+        Target: "/static",
       },
     },
     networkNextAddress, // [optional] container network
@@ -504,8 +526,10 @@ func main() {
     panic(err)
   }
 
-  // English: garbage collector and deletes networks and images whose name contains the term 'delete'
-  // Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 'delete'
+  // English: garbage collector and deletes networks and images whose name contains the 
+  // term 'delete'
+  // Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 
+  // 'delete'
   err = dockerSys.RemoveAllByNameContains("delete")
   if err != nil {
     panic(err)
