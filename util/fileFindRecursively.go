@@ -33,3 +33,13 @@ func FileFindRecursively(fileName string) (filePath string, err error) {
 
 	return
 }
+
+func FileFindRecursivelyFullPath(fileName string) (filePath string, err error) {
+	filePath, err = FileFindRecursively(fileName)
+	if err != nil {
+		return
+	}
+
+	filePath, err = filepath.Abs(filePath)
+	return
+}

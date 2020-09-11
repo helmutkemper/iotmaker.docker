@@ -1,6 +1,6 @@
 # iotmaker.docker
 
-<p align="center"><img src="https://github.com/helmutkemper/iotmaker.docker/blob/master/image/Go-Logo_LightBlue.svg" width="250"></p>
+<p align="center"><img src="https://github.com/helmutkemper/iotmaker.docker/blob/master/image/Go-Logo_LightBlue.svg" width="500"></p>
 <p align="center">
   <a href="https://goreportcard.com/report/github.com/helmutkemper/iotmaker.docker">
     <img src="https://goreportcard.com/badge/github.com/helmutkemper/iotmaker.docker">

@@ -2,8 +2,6 @@ package iotmakerDocker
 
 import (
 	"errors"
-	"github.com/helmutkemper/iotmaker.docker/util"
-	"path/filepath"
 )
 
 func ExampleDockerSystem_ImagePull() {
@@ -46,21 +44,6 @@ func ExampleDockerSystem_ImagePull() {
 		}
 
 	}(chStatus, chProcessEnd)
-
-	// English: searches for the folder containing the test server
-	// Português: procura pela pasta contendo o servidor de teste
-	var smallServerPath string
-	smallServerPath, err = util.FileFindRecursively("small_test_server_port_3000")
-	if err != nil {
-		panic(err)
-	}
-
-	// English: turns the path into an absolute path
-	// Português: transforma o caminho em caminho absoluto
-	smallServerPath, err = filepath.Abs(smallServerPath)
-	if err != nil {
-		panic(err)
-	}
 
 	// English: create a new default client. Please, use: err, dockerSys = factoryDocker.NewClient()
 	// Português: cria um novo cliente com configurações padrão. Por favor, usr: err, dockerSys = factoryDocker.NewClient()

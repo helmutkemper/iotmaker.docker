@@ -10,7 +10,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path/filepath"
 )
 
 func ExampleDockerSystem_ContainerCreateAndStart() {
@@ -61,14 +60,7 @@ func ExampleDockerSystem_ContainerCreateAndStart() {
 	// English: searches for the folder containing the test server
 	// Português: procura pela pasta contendo o servidor de teste
 	var smallServerPath string
-	smallServerPath, err = util.FileFindRecursively("small_test_server_port_3000")
-	if err != nil {
-		panic(err)
-	}
-
-	// English: turns the path into an absolute path
-	// Português: transforma o caminho em caminho absoluto
-	smallServerPath, err = filepath.Abs(smallServerPath)
+	smallServerPath, err = util.FileFindRecursivelyFullPath("small_test_server_port_3000")
 	if err != nil {
 		panic(err)
 	}

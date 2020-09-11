@@ -8,7 +8,6 @@ import (
 	"github.com/docker/go-connections/nat"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"os"
-	"path/filepath"
 )
 
 func ExampleDockerSystem_ContainerStatisticsOneShotByName() {
@@ -60,13 +59,6 @@ func ExampleDockerSystem_ContainerStatisticsOneShotByName() {
 	// Português: procura pela pasta contendo o servidor de teste
 	var smallServerPath string
 	smallServerPath, err = util.FileFindRecursively("small_test_server_port_3000")
-	if err != nil {
-		panic(err)
-	}
-
-	// English: turns the path into an absolute path
-	// Português: transforma o caminho em caminho absoluto
-	smallServerPath, err = filepath.Abs(smallServerPath)
 	if err != nil {
 		panic(err)
 	}
