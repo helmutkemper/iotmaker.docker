@@ -1,16 +1,16 @@
-package factoryDocker
+package factorydocker
 
 import (
 	"fmt"
-	iotmakerDocker "github.com/helmutkemper/iotmaker.docker"
+	iotmakerdocker "github.com/helmutkemper/iotmaker.docker/v1.0.0.0-RC"
 )
 
 //  English: Small example how to use channel do monitoring image/container build
 //  Português: Pequeno exemplo de como usar o canal para ver imagem/container sendo criados
-func NewPullStatusMonitor() (pullStatusChannel *chan iotmakerDocker.ContainerPullStatusSendToChannel) {
+func NewPullStatusMonitor() (pullStatusChannel *chan iotmakerdocker.ContainerPullStatusSendToChannel) {
 	pullStatusChannel = NewImagePullStatusChannel()
 
-	go func(c chan iotmakerDocker.ContainerPullStatusSendToChannel) {
+	go func(c chan iotmakerdocker.ContainerPullStatusSendToChannel) {
 
 		for {
 			select {

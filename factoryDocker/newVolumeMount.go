@@ -1,13 +1,13 @@
-package factoryDocker
+package factorydocker
 
 import (
 	"errors"
 	"github.com/docker/docker/api/types/mount"
-	iotmakerDocker "github.com/helmutkemper/iotmaker.docker"
 	"github.com/helmutkemper/iotmaker.docker/util"
+	iotmakerdocker "github.com/helmutkemper/iotmaker.docker/v1.0.0.0-RC"
 )
 
-func NewVolumeMount(list []iotmakerDocker.Mount) (error, []mount.Mount) {
+func NewVolumeMount(list []iotmakerdocker.Mount) (error, []mount.Mount) {
 	var err error
 	var found bool
 	var fileAbsolutePath string

@@ -1,6 +1,8 @@
-package factoryDocker
+package factorydocker
 
-import iotmakerDocker "github.com/helmutkemper/iotmaker.docker"
+import (
+	iotmakerdocker "github.com/helmutkemper/iotmaker.docker/v1.0.0.0-RC"
+)
 
 // en: Prepare docker system
 //
@@ -10,8 +12,8 @@ import iotmakerDocker "github.com/helmutkemper/iotmaker.docker"
 //         panic(err)
 //       }
 //       dockerSys.ContainerCreateChangeExposedPortAndStart(...)
-func NewClient() (err error, dockerSystem *iotmakerDocker.DockerSystem) {
-	dockerSystem = &iotmakerDocker.DockerSystem{}
+func NewClient() (err error, dockerSystem *iotmakerdocker.DockerSystem) {
+	dockerSystem = &iotmakerdocker.DockerSystem{}
 	dockerSystem.ContextCreate()
 	err = dockerSystem.ClientCreate()
 
