@@ -155,6 +155,10 @@ func ExampleDockerSystem_VolumeList() {
 	var pass = false
 	var volumeList []types.Volume
 	volumeList, err = dockerSys.VolumeList()
+	if err != nil {
+		panic(err)
+	}
+
 	for _, volumeData := range volumeList {
 		if volumeData.Name == "static_smallServer" {
 			pass = true

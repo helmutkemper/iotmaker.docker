@@ -102,6 +102,9 @@ func ExampleDockerSystem_ImageList() {
 	var pass = false
 	var list []types.ImageSummary
 	list, err = dockerSys.ImageList()
+	if err != nil {
+		panic(err)
+	}
 	for _, image := range list {
 		if len(image.RepoTags) != 0 && image.RepoTags[0] == "image_server_delete_before_test:latest" {
 			pass = true
@@ -119,6 +122,9 @@ func ExampleDockerSystem_ImageList() {
 	}
 
 	list, err = dockerSys.ImageList()
+	if err != nil {
+		panic(err)
+	}
 	for _, image := range list {
 		if len(image.RepoTags) != 0 && image.RepoTags[0] == "image_server_delete_before_test:latest" {
 			err = errors.New("image found after image removal")

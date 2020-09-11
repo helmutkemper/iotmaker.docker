@@ -130,7 +130,7 @@ func ExampleDockerSystem_NetworkCreate() {
 
 	if imageId == "" {
 		err = errors.New("image ID was not generated")
-		return
+		panic(err)
 	}
 
 	// English: mount and start a container
