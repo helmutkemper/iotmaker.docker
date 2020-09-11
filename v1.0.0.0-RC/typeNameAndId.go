@@ -1,4 +1,4 @@
-package iotmakerDocker
+package iotmakerdocker
 
 type NameAndId struct {
 	ID   string

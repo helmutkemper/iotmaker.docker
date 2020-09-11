@@ -1,4 +1,4 @@
-package iotmakerDocker
+package iotmakerdocker
 
 type ContainerPullProgress struct {
 	Stream                     string                      `json:"stream"`

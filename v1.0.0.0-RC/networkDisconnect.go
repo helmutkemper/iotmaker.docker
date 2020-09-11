@@ -1,4 +1,4 @@
-package iotmakerDocker
+package iotmakerdocker
 
 func (el *DockerSystem) NetworkDisconnect(
 	networkID,

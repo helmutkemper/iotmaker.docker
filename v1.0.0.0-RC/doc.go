@@ -14,4 +14,4 @@
 // Se tudo o que você quer é subir e derrubar containers de forma rápida e simples, por
 // favor, user o projeto whaleAquarium
 // https://github.com/helmutkemper/iotmaker.docker.util.whaleAquarium
-package iotmakerDocker
+package iotmakerdocker

@@ -1,4 +1,4 @@
-package iotmakerDocker
+package iotmakerdocker
 
 // ContainerWait waits until the specified container is in a certain state
 // indicated by the given condition, either "not-running" (default),

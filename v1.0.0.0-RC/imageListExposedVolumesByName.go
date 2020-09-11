@@ -1,4 +1,4 @@
-package iotmakerDocker
+package iotmakerdocker
 
 // list exposed volumes from image by name
 func (el *DockerSystem) ImageListExposedVolumesByName(

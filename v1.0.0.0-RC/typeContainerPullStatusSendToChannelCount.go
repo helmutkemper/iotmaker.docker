@@ -1,4 +1,4 @@
-package iotmakerDocker
+package iotmakerdocker
 
 type ContainerPullStatusSendToChannelCount struct {
 	Count   int

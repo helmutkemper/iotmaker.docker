@@ -1,4 +1,4 @@
-package iotmakerDocker
+package iotmakerdocker
 
 // verify if exposed volume (folder only) defined by user is exposed
 // in image

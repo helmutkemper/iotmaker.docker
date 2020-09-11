@@ -1,4 +1,4 @@
-package iotmakerDocker
+package iotmakerdocker
 
 type ContainerNetworkDataList map[string]ContainerNetworkData
 
