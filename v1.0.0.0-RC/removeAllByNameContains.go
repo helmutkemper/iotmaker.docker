@@ -2,7 +2,7 @@ package iotmakerdocker
 
 import "github.com/docker/docker/api/types"
 
-// Use this function to remove trash after test.
+// RemoveAllByNameContains remove trash after test.
 // This function removes container, image and network by name, and unlinked volumes and
 // imagens
 func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {

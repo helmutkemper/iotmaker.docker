@@ -4,6 +4,8 @@ import (
 	"github.com/docker/docker/client"
 )
 
+// ClientCreate
+//
 // English: Create a new client from docker
 //
 //     Example:
