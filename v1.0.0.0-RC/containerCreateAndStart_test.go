@@ -42,7 +42,7 @@ func ExampleDockerSystem_ContainerCreateAndStart() {
 
 			case status := <-chStatus:
 				// English: remove this comment to see all build status
-				// Português: remova este comentário para vê todo o status da criação da imagem
+				// Português: remova este comentário para vê _todo o status da criação da imagem
 				//fmt.Printf("image pull status: %+v\n", status)
 
 				if status.Closed == true {
@@ -75,8 +75,8 @@ func ExampleDockerSystem_ContainerCreateAndStart() {
 	var smallServerPathStaticContent string
 	smallServerPathStaticContent = smallServerPathStatic + string(os.PathSeparator) + "index.html"
 
-	// English: create a new default client. Please, use: err, dockerSys = factoryDocker.NewClient()
-	// Português: cria um novo cliente com configurações padrão. Por favor, usr: err, dockerSys = factoryDocker.NewClient()
+	// English: create a new default client.
+	// Português: cria um novo cliente com configurações padrão.
 	dockerSys = &DockerSystem{}
 	dockerSys.ContextCreate()
 	err = dockerSys.ClientCreate()
@@ -144,27 +144,36 @@ func ExampleDockerSystem_ContainerCreateAndStart() {
 	// English: mount and start a container
 	// Português: monta i inicializa o container
 	containerId, err = dockerSys.ContainerCreateAndStart(
-		"image_server_delete_before_test:latest", // image name
-		"container_delete_before_test",           // container name
-		KRestartPolicyUnlessStopped,              // restart policy
+		// image name
+		"image_server_delete_before_test:latest",
+		// container name
+		"container_delete_before_test",
+		// restart policy
+		KRestartPolicyUnlessStopped,
+		// portMap
 		nat.PortMap{
+			// container port number/protocol [tpc/udp]
 			"3000/tcp": []nat.PortBinding{ // server original port
 				{
-					HostPort: "9002", // new output port
+					// server output port number
+					HostPort: "9002",
 				},
 			},
 		},
-		[]mount.Mount{ // mount volumes
+		// mount volumes
+		[]mount.Mount{
 			{
-				Type: KVolumeMountTypeBindString, // bind - is the type for mounting host dir
-				// (real folder inside computer where this
-				// code work)
-
-				Source: smallServerPathStatic, // path inside host machine
-				Target: "/static",             // path inside image
+				// bind - is the type for mounting host dir (real folder inside computer where
+				// this code work)
+				Type: KVolumeMountTypeBindString,
+				// path inside host machine
+				Source: smallServerPathStatic,
+				// path inside image
+				Target: "/static",
 			},
 		},
-		networkNextAddress, // [optional] container network
+		// nil or container network configuration
+		networkNextAddress,
 	)
 	if err != nil {
 		panic(err)
@@ -172,13 +181,6 @@ func ExampleDockerSystem_ContainerCreateAndStart() {
 
 	if containerId == "" {
 		err = errors.New("container id was not generated")
-		panic(err)
-	}
-
-	// English: start a container by id
-	// Português: inicia um container por id
-	err = dockerSys.ContainerStart(containerId)
-	if err != nil {
 		panic(err)
 	}
 
