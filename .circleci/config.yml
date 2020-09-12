@@ -22,10 +22,7 @@ jobs:
       - checkout
 
       # specify any bash command here prefixed with `run: `
-      - run: apk update && apk add --no-cache wget
-      - run: wget https://github.com/moby/moby/archive/v19.03.11.tar.gz
-      - run: tar -xzf v19.03.11.tar.gz && rm v19.03.11.tar.gz
-      - run: mv moby-19.03.11 docker
+      - run: go get github.com/moby/moby; exit 0
 
       - run: go get godoc.org/golang.org/x/sys/windows; exit 0
       - run: go get golang.org/x/crypto; exit 0
