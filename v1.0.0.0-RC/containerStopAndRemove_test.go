@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func ExampleDockerSystem_containerStopAndRemove() {
+func ExampleDockerSystem_ContainerStopAndRemove() {
 
 	var err error
 	var containerId string

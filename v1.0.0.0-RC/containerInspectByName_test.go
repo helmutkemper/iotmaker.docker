@@ -11,7 +11,7 @@ import (
 	"reflect"
 )
 
-func ExampleDockerSystem_containerInspectByName() {
+func ExampleDockerSystem_ContainerInspectByName() {
 
 	var err error
 	var containerId string
