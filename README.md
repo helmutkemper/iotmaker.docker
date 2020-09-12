@@ -5,7 +5,7 @@
   <a href="https://goreportcard.com/report/github.com/helmutkemper/iotmaker.docker">
     <img src="https://goreportcard.com/badge/github.com/helmutkemper/iotmaker.docker">
   </a>
-  <a href="https://godoc.org/github.com/helmutkemper/iotmaker.docker">
+  <a href="https://pkg.go.dev/github.com/helmutkemper/iotmaker.docker/v1.0.0.0-RC?tab=doc">
     <img src="https://github.com/helmutkemper/iotmaker.docker/blob/master/image/godoc.svg">
   </a>
 </p>
