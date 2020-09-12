@@ -42,7 +42,7 @@ func ExampleDockerSystem_ContainerCreate() {
 
 			case status := <-chStatus:
 				// English: remove this comment to see all build status
-				// Português: remova este comentário para vê todo o status da criação da imagem
+				// Português: remova este comentário para vê _todo o status da criação da imagem
 				//fmt.Printf("image pull status: %+v\n", status)
 
 				if status.Closed == true {
@@ -75,8 +75,8 @@ func ExampleDockerSystem_ContainerCreate() {
 	var smallServerPathStaticContent string
 	smallServerPathStaticContent = smallServerPathStatic + string(os.PathSeparator) + "index.html"
 
-	// English: create a new default client. Please, use: err, dockerSys = factoryDocker.NewClient()
-	// Português: cria um novo cliente com configurações padrão. Por favor, usr: err, dockerSys = factoryDocker.NewClient()
+	// English: create a new default client.
+	// Português: cria um novo cliente com configurações padrão.
 	dockerSys = &DockerSystem{}
 	dockerSys.ContextCreate()
 	err = dockerSys.ClientCreate()
