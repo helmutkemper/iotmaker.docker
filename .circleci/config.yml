@@ -43,7 +43,6 @@ jobs:
       - run: go get github.com/docker/go-units; exit 0
       - run: go get github.com/docker/distribution/reference; exit 0
       - run: go get github.com/Microsoft/go-winio; exit 0
-      - run: go get github.com/helmutkemper/iotmaker.docker.util.whaleAquarium; exit 0
       - run: go get github.com/helmutkemper/iotmaker.docker; exit 0
       - run: find . -name vendor -type d -exec rm -rf {} +
-      - run: go test -v ./v1.0.0.0-RC
+      - run: go test -v ./...
