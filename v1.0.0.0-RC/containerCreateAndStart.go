@@ -21,6 +21,11 @@ import (
 //      KRestartPolicyUnlessStopped - Similar to always, except that when the container
 //      is stopped (manually or otherwise), it is not restarted even after Docker daemon
 //      restarts.
+//   portExposedList: nat.PortMap exposed port list from container
+//      key: string (container port umber/protocol tcp|udp). Example: "3000/tcp"
+//      value: []nat.PortBinding
+//        key: one key per server host port
+//        value: struct{ HostPort: numeric string host port }. Example: {HostPort: "3000"}
 //   mountVolumes: array of mount.Mount{}
 //      Type:
 //         KVolumeMountTypeBindString: Bind is the type for mounting host dir (real
@@ -50,6 +55,12 @@ import (
 //      KRestartPolicyUnlessStopped - Similar ao always, exceto quando o container é
 //      parado (manualmente ou não) e não é reiniciado, mesmo quando o Docker daemon
 //      reinicia
+//   portExposedList: nat.PortMap lista de portas exportas do container
+//      key: string (número da porta do container/protocolo tcp|udp). Exemplo: "3000/tcp"
+//      value: []nat.PortBinding
+//        key: uma chave por porta no servidor hospedeiro
+//        value: struct{ HostPort: string numérica da porta no servidor hospedeiro }.
+//               Example: {HostPort: "3000"}
 //   mountVolumes: array de mount.Mount{}
 //      Type:
 //         KVolumeMountTypeBindString: Vincula uma pasta do computador, host, com uma

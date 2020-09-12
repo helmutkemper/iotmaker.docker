@@ -6,6 +6,13 @@ import (
 	"strings"
 )
 
+// ContainerFindIdByNameContains (English): Search by part of the container name and
+// returns a list of NameAndId
+//   name: string part of the container name
+//
+// ContainerFindIdByNameContains (Português): Procura por parte do nome do container e
+// retorna uma lista de NameAndId
+//   name: string parte do nome do container
 func (el *DockerSystem) ContainerFindIdByNameContains(
 	containsName string,
 ) (

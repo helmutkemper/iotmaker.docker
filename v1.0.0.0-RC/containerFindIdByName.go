@@ -5,6 +5,13 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
+// ContainerFindIdByName (English): Searches for the container name and returns the ID of
+// the container
+//   name: string container name
+//
+// ContainerFindIdByName (Português): Procura pelo nome do container e retorna o ID do
+// mesmo
+//   name: string nome do container
 func (el *DockerSystem) ContainerFindIdByName(
 	name string,
 ) (
