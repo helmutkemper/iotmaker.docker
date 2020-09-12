@@ -8,12 +8,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/.circleci/config.yml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/README.md">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/config.yml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/util/dirExists.go">
           <value>
             <set />
           </value>
