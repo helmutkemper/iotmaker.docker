@@ -4,6 +4,11 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
+// ContainerInspect (English): Inspect the container
+//   id: string container ID
+//
+// ContainerInspect (Português): Inspeciona o container
+//   id: string ID do container
 func (el *DockerSystem) ContainerInspect(
 	id string,
 ) (

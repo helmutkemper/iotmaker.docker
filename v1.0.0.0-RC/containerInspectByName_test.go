@@ -189,8 +189,8 @@ func ExampleDockerSystem_ContainerInspectByName() {
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	// English: inspect a container by ID
-	// Português: inspeciona um container por ID
+	// English: inspect a container by name
+	// Português: inspeciona um container por nome
 	var inspect types.ContainerJSON
 	inspect, err = dockerSys.ContainerInspectByName("container_delete_before_test")
 	if err != nil {

@@ -93,6 +93,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/containerInspect.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/containerInspectByName.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/v1.0.0.0-RC/containerInspectByName_test.go">
           <value>
             <set />
