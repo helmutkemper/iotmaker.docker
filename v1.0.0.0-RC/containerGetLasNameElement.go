@@ -2,16 +2,17 @@ package iotmakerdocker
 
 import "strings"
 
+// ContainerGetLasNameElement (English): Eliminates the slash '/' in the name of some
+// containers
+//
+// ContainerGetLasNameElement (Português): Elimina a barra '/' do nome de alguns
+// containers
 func ContainerGetLasNameElement(
 	name string,
 ) string {
 
-	names := strings.Split(name, "/")
-
-	l := len(names) - 1
-
-	if l > -1 {
-		return names[l]
+	if strings.HasPrefix(name, "/") == true {
+		name = strings.Replace(name, "/", "", 1)
 	}
 
 	return name

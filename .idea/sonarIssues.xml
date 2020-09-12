@@ -83,6 +83,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/containerGetLasNameElement.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/containerGetLasNameElement_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/v1.0.0.0-RC/containerInspectByName_test.go">
           <value>
             <set />
