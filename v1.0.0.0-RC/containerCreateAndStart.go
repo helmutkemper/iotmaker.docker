@@ -55,7 +55,7 @@ import (
 //      KRestartPolicyUnlessStopped - Similar ao always, exceto quando o container é
 //      parado (manualmente ou não) e não é reiniciado, mesmo quando o Docker daemon
 //      reinicia
-//   portExposedList: nat.PortMap lista de portas exportas do container
+//   portExposedList: nat.PortMap lista de portas expostas do container
 //      key: string (número da porta do container/protocolo tcp|udp). Exemplo: "3000/tcp"
 //      value: []nat.PortBinding
 //        key: uma chave por porta no servidor hospedeiro
