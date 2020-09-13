@@ -4,17 +4,17 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-// English: Remove a container by id
-//   id - container id
-//   removeVolumes - remove container and volumes
-//   removeLinks - remove container and links
-//   force - force remove
+// ContainerRemove (English): Remove a container by id
+//   id: string container id
+//   removeVolumes: bool remove container and volumes
+//   removeLinks: bool remove container and links
+//   force: bool force remove
 //
-// Português: Remove container por id
-//   id - container id
-//   removeVolumes - remove o container e os volumes
-//   removeLinks - remove o container e os links
-//   force - força a emoção
+// ContainerRemove (Português): Remove container por id
+//   id: string container id
+//   removeVolumes: bool remove o container e os volumes
+//   removeLinks: bool remove o container e os links
+//   force: bool força a emoção
 func (el *DockerSystem) ContainerRemove(
 	id string,
 	removeVolumes,

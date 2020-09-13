@@ -2,6 +2,11 @@ package iotmakerdocker
 
 import "github.com/docker/docker/api/types"
 
+// ContainerNetworkInspect (English): Returns athe network data from a container
+//   id: string container id
+//
+// ContainerNetworkInspect (Português): Retorna os dados da rede do container
+//   id: string container id
 func (el *DockerSystem) ContainerNetworkInspect(
 	id string,
 ) (
