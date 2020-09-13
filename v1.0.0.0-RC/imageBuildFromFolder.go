@@ -22,7 +22,7 @@ func (el *DockerSystem) ImageBuildFromFolder(
 	var imageBuildOptions types.ImageBuildOptions
 	var reader io.Reader
 
-	tarFileReader, err = el.imageBuildPrepareFolderContext(folderPath)
+	tarFileReader, err = el.ImageBuildPrepareFolderContext(folderPath)
 	if err != err {
 		return
 	}
@@ -32,7 +32,7 @@ func (el *DockerSystem) ImageBuildFromFolder(
 		Remove: true,
 	}
 
-	reader, err = el.imageBuild(tarFileReader, imageBuildOptions)
+	reader, err = el.ImageBuild(tarFileReader, imageBuildOptions)
 	if err != nil {
 		panic(err)
 	}

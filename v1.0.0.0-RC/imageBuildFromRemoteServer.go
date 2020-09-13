@@ -39,7 +39,7 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(
 		RemoteContext: server,
 	}
 
-	reader, err = el.imageBuild(nil, imageBuildOptions)
+	reader, err = el.ImageBuild(nil, imageBuildOptions)
 	if err != nil {
 		panic(err)
 	}

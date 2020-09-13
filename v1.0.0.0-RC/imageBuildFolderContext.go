@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (el DockerSystem) imageBuildPrepareFolderContext(
+func (el DockerSystem) ImageBuildPrepareFolderContext(
 	dirPath string,
 ) (
 	file *bytes.Reader,
