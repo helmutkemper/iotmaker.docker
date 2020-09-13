@@ -1,8 +1,12 @@
 package iotmakerdocker
 
-// ContainerWait waits until the specified container is in a certain state
-// indicated by the given condition, either "not-running" (default),
-// "next-exit", or "removed".
+// ContainerWaitStatusNextExit (English): Waits until a container is in "next-exit"
+// status
+//   id: string container id
+//
+// ContainerWaitStatusNextExit (Português): Aguarda até o container entrar no estado de
+// "next-exit"
+//   id: string container id
 func (el *DockerSystem) ContainerWaitStatusNextExit(
 	id string,
 ) (

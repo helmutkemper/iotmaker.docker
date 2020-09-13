@@ -5,6 +5,13 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
+// ContainerStatisticsOneShotByName (English): Returns the performance information of the
+// container in a timely manner by name
+//   name: string container name
+//
+// ContainerStatisticsOneShotByName (Português): Retorna as informações de desempenho do
+// container de forma pontual por nome
+//   name: string container nome
 func (el *DockerSystem) ContainerStatisticsOneShotByName(
 	name string,
 ) (

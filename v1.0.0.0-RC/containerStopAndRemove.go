@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+// ContainerStopAndRemove (English): Stop and removes a container by id
+//   id: string container id
+//
+// ContainerStopAndRemove (Português): Para e remove um container por id
+//   id: string container id
 func (el *DockerSystem) ContainerStopAndRemove(
 	id string,
 	removeVolumes,
