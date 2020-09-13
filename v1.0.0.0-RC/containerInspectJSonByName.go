@@ -1,5 +1,11 @@
 package iotmakerdocker
 
+// ContainerInspectJSonByName (English): Inspect the container by name e return a json
+//   name: string container name
+//
+// ContainerInspectJSonByName (Português): Inspeciona o container pelo nome e retorna um
+// json
+//   name: string nome do container
 func (el *DockerSystem) ContainerInspectJSonByName(
 	name string,
 ) (

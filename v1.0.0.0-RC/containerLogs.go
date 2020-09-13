@@ -6,6 +6,9 @@ import (
 	"io/ioutil"
 )
 
+// ContainerLogs (English): Returns container std out
+//
+// ContainerLogs (Português): Retorna a saída padrão do container
 func (el *DockerSystem) ContainerLogs(
 	id string,
 ) (
