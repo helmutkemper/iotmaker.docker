@@ -1,11 +1,13 @@
 # iotmaker.docker
 
-<p align="center"><img src="https://github.com/helmutkemper/iotmaker.docker/blob/master/image/Go-Logo_LightBlue.svg" width="500"></p>
+<p align="center">
+    <img src="https://github.com/helmutkemper/iotmaker.docker/blob/master/image/Go-Logo_LightBlue.svg" width="500">
+</p>
 <p align="center">
   <a href="https://goreportcard.com/report/github.com/helmutkemper/iotmaker.docker">
     <img src="https://goreportcard.com/badge/github.com/helmutkemper/iotmaker.docker">
   </a>
-  <a href="https://pkg.go.dev/github.com/helmutkemper/iotmaker.docker/v1.0.0.0-RC?tab=doc">
+  <a href="https://pkg.go.dev/github.com/helmutkemper/iotmaker.docker/v1.0.0?tab=doc">
     <img src="https://github.com/helmutkemper/iotmaker.docker/blob/master/image/godoc.svg">
   </a>
 </p>

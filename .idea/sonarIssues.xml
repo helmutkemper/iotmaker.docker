@@ -8,12 +8,47 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/README.md">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/v1.0.0/factoryContainerFromRemoteServer/newContainerCreateExposePortsAutomaticallyAndStart.go">
           <value>
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/v1.0.0/factoryContainerFromRemoteServer/newContainerCreateExposePortsAutomaticallyAndStart_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/v1.0.0/factoryContainerFromRemoteServer/newContainerFromRemoteServerChangeExposedPortAndVolumesWithNetworkConfiguration_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/v1.0.0/factoryContainerFromRemoteServer/newContainerFromRemoteServerChangeExposedPortAndVolumes_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/v1.0.0/factoryContainerFromRemoteServer/newContainerFromRemoteServerChangeVolumesWithNetworkConfiguration_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/v1.0.0/factoryContainerFromRemoteServer/newContainerFromRemoteServerChangeVolumes_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/v1.0.0/factoryContainerFromRemoteServer/newContainerFromRemoteServerWithNetworkConfiguration_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/workInProgress/rabbitmq/newRabbitMQLatest.go">
           <value>
             <set />
           </value>
