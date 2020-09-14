@@ -6,13 +6,13 @@ import (
 
 // Mount nat por list by image config
 
-// ImageListExposedNatPort (English): List all ports/protocols published inside image
+// ImageListExposedNatPort (English): List all ports / protocols published inside image
 //   name: image name
 // Note: Similar functions: ImageListExposedNatPort(), ImageListExposedPortsByName(),
 // ImageListExposedPorts()
 //
-// ImageListExposedNatPort (Português): Lista todas as portas/protocolos publicadas dentro
-// da imagem
+// ImageListExposedNatPort (Português): Lista todas as portas / protocolos publicadas
+// dentro da imagem
 //   name: nome da imagem
 // Nota: funções similares: ImageListExposedNatPort(), ImageListExposedPortsByName(),
 // ImageListExposedPorts()
