@@ -8,6 +8,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/v1.0.0/factoryContainerFromRemoteServer/newContainerCreateExposePortsAutomaticallyAndStart.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/v1.0.0/factoryContainerFromRemoteServer/newContainerFromRemoteServerWithNetworkConfiguration_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/.circleci/config.yml">
           <value>
             <set />
@@ -198,6 +208,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/doc.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/v1.0.0.0-RC/fileMakeAbsolutePath.go">
           <value>
             <set />
@@ -219,6 +234,21 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageBuildFromRemoteServer.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageBuildPrepareFolderContextSupport.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageFindIdByName.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageFindIdByNameContains.go">
           <value>
             <set />
           </value>

@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func (el DockerSystem) imageBuildPrepareFolderContextSupport(
+func (el DockerSystem) ImageBuildPrepareFolderContextSupport(
 	dirPath,
 	toRemoveInsideTarFilePathList string,
 	buf *bytes.Buffer,
@@ -35,7 +35,7 @@ func (el DockerSystem) imageBuildPrepareFolderContextSupport(
 		filePath = dirPath + folderItem.Name()
 
 		if folderItem.IsDir() == true {
-			err = el.imageBuildPrepareFolderContextSupport(filePath, toRemoveInsideTarFilePathList, buf, tarWriter)
+			err = el.ImageBuildPrepareFolderContextSupport(filePath, toRemoveInsideTarFilePathList, buf, tarWriter)
 			if err != nil {
 				return
 			}

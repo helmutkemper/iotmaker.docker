@@ -7,8 +7,17 @@ import (
 	"io"
 )
 
-// English: Make a image from folder path content
-//     Please note: dockerfile name must be "Dockerfile" inside root folder
+// ImageBuildFromFolder (English): Make a image from folder path content
+//   folderPath: string absolute folder path
+//   tags: []string image tags
+//   channel: *chan channel of pull/build data
+// Note: dockerfile name must be "Dockerfile" inside root folder
+//
+// ImageBuildFromFolder (Português): Monta uma imagem a partir de um diretório
+//   folderPath: string caminho absoluto do diretório
+//   tags: []string tags da imagem
+//   channel: *chan channel com dados do pull/build da imagem
+// Nota: O nome do arquivo dockerfile dentro da raiz do diretório deve ser "Dockerfile"
 func (el *DockerSystem) ImageBuildFromFolder(
 	folderPath string,
 	tags []string,

@@ -5,7 +5,11 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-// find image id by name
+// ImageFindIdByName (English): Find image id by name
+//   name: name of image
+//
+// ImageFindIdByName (Português): Procura uma imagem por nome:
+//   name: nome da imagem
 func (el *DockerSystem) ImageFindIdByName(
 	name string,
 ) (

@@ -6,6 +6,12 @@ import (
 	"strings"
 )
 
+// ImageFindIdByName (English): Find image whose part of the name contains the search
+// term
+//   name: search term
+//
+// ImageFindIdByName (Português): Procura uma imagem cujo o nome contém o termo procurado
+//   name: termo procurado
 func (el *DockerSystem) ImageFindIdByNameContains(
 	name string,
 ) (

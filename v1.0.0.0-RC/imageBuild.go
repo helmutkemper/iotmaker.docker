@@ -5,13 +5,13 @@ import (
 	"io"
 )
 
-// imageBuild (English): Image build from reader. Please, see
+// ImageBuild (English): Image build from reader. Please, see
 // ImageBuildFromFolder(folderPath string, tags []string) and
 // ImageBuildFromRemoteServer(server string, tags []string)
 //   dockerFileTarReader: io.Reader reader from image
 //   imageBuildOptions: types.ImageBuildOptions image build options
 //
-// imageBuild (Português): Monta uma imagem baseada no header. Por favor, veja,
+// ImageBuild (Português): Monta uma imagem baseada no header. Por favor, veja,
 // ImageBuildFromFolder(folderPath string, tags []string) e
 // ImageBuildFromRemoteServer(server string, tags []string)
 //   dockerFileTarReader: io.Reader reader from image
