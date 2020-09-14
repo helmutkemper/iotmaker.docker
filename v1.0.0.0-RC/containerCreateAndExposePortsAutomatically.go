@@ -88,7 +88,7 @@ func (el *DockerSystem) ContainerCreateAndExposePortsAutomatically(
 		return "", err
 	}
 
-	portExposedList, err = el.ImageMountNatPortList(imageId)
+	portExposedList, err = el.ImageListExposedNatPort(imageId)
 	if err != nil {
 		return "", err
 	}

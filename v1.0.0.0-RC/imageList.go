@@ -4,7 +4,9 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-// list images
+// ImageList (English): List all images inside host server
+//
+// ImageList (Português): Lista todas as imagens do servidor hospedeiro
 func (el *DockerSystem) ImageList() (
 	list []types.ImageSummary,
 	err error,

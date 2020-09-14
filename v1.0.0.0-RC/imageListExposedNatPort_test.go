@@ -6,7 +6,7 @@ import (
 	"github.com/helmutkemper/iotmaker.docker/util"
 )
 
-func ExampleDockerSystem_ImageMountNatPortList() {
+func ExampleDockerSystem_ImageListExposedNatPort() {
 
 	var err error
 	var dockerSys *DockerSystem
@@ -100,7 +100,7 @@ func ExampleDockerSystem_ImageMountNatPortList() {
 	chProcessEnd <- true
 
 	var portList nat.PortMap
-	portList, err = dockerSys.ImageMountNatPortList(imageId)
+	portList, err = dockerSys.ImageListExposedNatPort(imageId)
 	if err != nil {
 		panic(err)
 	}

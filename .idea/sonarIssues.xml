@@ -253,6 +253,46 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageGarbageCollector.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageList.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageListExposedPorts.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageListExposedPortsByName.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageListExposedVolumes.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageListExposedVolumesByName.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageMountNatPortList.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0.0-RC/imageMountNatPortList_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
       </map>
     </option>
   </component>

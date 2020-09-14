@@ -2,7 +2,17 @@ package iotmakerdocker
 
 import "github.com/docker/go-connections/nat"
 
-// list image exposed ports by name
+// ImageListExposedPorts (English): List all ports/protocols published inside image
+// by image name
+//   name: image name
+// Note: Similar functions: ImageListExposedNatPort(), ImageListExposedPortsByName(),
+// ImageListExposedPorts()
+//
+// ImageListExposedPorts (Português): Lista todas as portas/protocolos publicadas dentro
+// da imagem pelo nome da imagem
+//   name: nome da imagem
+// Nota: funções similares: ImageListExposedNatPort(), ImageListExposedPortsByName(),
+// ImageListExposedPorts()
 func (el *DockerSystem) ImageListExposedPortsByName(
 	name string,
 ) (
