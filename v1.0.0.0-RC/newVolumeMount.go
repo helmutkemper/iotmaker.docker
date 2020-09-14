@@ -1,31 +1,37 @@
-package factorydocker
+package iotmakerdocker
 
 import (
 	"errors"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/helmutkemper/iotmaker.docker/util"
-	iotmakerdocker "github.com/helmutkemper/iotmaker.docker/v1.0.0.0-RC"
 )
 
-func NewVolumeMount(list []iotmakerdocker.Mount) (error, []mount.Mount) {
-	var err error
+func NewVolumeMount(
+	list []Mount,
+) (
+	mountVolumesList []mount.Mount,
+	err error,
+) {
+
+	mountVolumesList = make([]mount.Mount, 0)
+
 	var found bool
 	var fileAbsolutePath string
-	var ret = make([]mount.Mount, 0)
 
 	for _, v := range list {
 		found = util.VerifyFileExists(v.Source)
 		if found == false {
-			return errors.New("source file not found"), nil
+			err = errors.New("source file not found")
+			return
 		}
 
 		err, fileAbsolutePath = util.FileGetAbsolutePath(v.Source)
 		if err != nil {
-			return err, nil
+			return
 		}
 
-		ret = append(
-			ret,
+		mountVolumesList = append(
+			mountVolumesList,
 			mount.Mount{
 				Type:   mount.Type(v.MountType.String()),
 				Source: fileAbsolutePath,
@@ -34,5 +40,5 @@ func NewVolumeMount(list []iotmakerdocker.Mount) (error, []mount.Mount) {
 		)
 	}
 
-	return nil, ret
+	return
 }
