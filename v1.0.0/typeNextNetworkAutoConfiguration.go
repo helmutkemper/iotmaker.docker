@@ -25,24 +25,25 @@ func (el *NextNetworkAutoConfiguration) Init(id, name, gateway string, a, b, c, 
 	el.err = errors.New("run GetNext() function before get a valid ip address")
 }
 
-func (el *NextNetworkAutoConfiguration) GetNext() (error, *network.NetworkingConfig) {
+func (el *NextNetworkAutoConfiguration) GetNext() (*network.NetworkingConfig, error) {
 	el.err = el.ip.Inc()
 
 	newIp := el.ip.String()
-	return el.err, &network.NetworkingConfig{
-		EndpointsConfig: map[string]*network.EndpointSettings{
-			el.name: {
-				NetworkID: el.id,
-				Gateway:   el.gateway,
-				IPAMConfig: &network.EndpointIPAMConfig{
-					IPv4Address: newIp,
+	return &network.NetworkingConfig{
+			EndpointsConfig: map[string]*network.EndpointSettings{
+				el.name: {
+					NetworkID: el.id,
+					Gateway:   el.gateway,
+					IPAMConfig: &network.EndpointIPAMConfig{
+						IPv4Address: newIp,
+					},
+					IPAddress: newIp,
 				},
-				IPAddress: newIp,
 			},
 		},
-	}
+		el.err
 }
 
-func (el *NextNetworkAutoConfiguration) GetCurrentIpAddress() (err error, IP string) {
-	return el.err, el.ip.String()
+func (el *NextNetworkAutoConfiguration) GetCurrentIpAddress() (IP string, err error) {
+	return el.ip.String(), el.err
 }

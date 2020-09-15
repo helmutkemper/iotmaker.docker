@@ -110,7 +110,7 @@ func ExampleDockerSystem_ContainerCreateAndExposePortsAutomatically() {
 
 	// English: get next ip address from network, '10.0.0.2'
 	// Português: pega o próxima endereço da rede, '10.0.0.2'
-	err, networkNextAddress = networkAutoConfiguration.GetNext()
+	networkNextAddress, err = networkAutoConfiguration.GetNext()
 	if err != nil {
 		panic(err)
 	}
