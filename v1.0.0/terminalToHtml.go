@@ -53,6 +53,233 @@ const (
 	KAnsiBrightBgWhite  = `\u001b[107m`
 )
 
+type TerminalColor struct {
+	resetCounter int
+}
+
+func (el *TerminalColor) AnsiColor8ToHtmlColor(ansiValue []byte) (htmlTag []byte) {
+	if bytes.Compare([]byte(KAnsiReset), ansiValue) == 0 {
+		for i := 0; i != el.resetCounter; i += 1 {
+			htmlTag = append(htmlTag, []byte("</span>")...)
+		}
+		el.resetCounter = 0
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBold), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='font-weight: bold;'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiUnderline), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='text-decoration: underline;'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiReversed), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='filter: invert(100%);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBlack), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(0,0,0);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiRed), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(255,0,0);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiGreen), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(0,255,0);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiYellow), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(255,255,0);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBlue), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(0,0,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiPurple), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(128,0,128);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiCyan), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(0,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiWhite), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(245,245,245);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBlack), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(105,105,105);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightRed), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(205,51,51);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightGreen), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(127,255,0);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightYellow), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(255,255,127);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBlue), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(30,144,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightPurple), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(155,48,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightCyan), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(0,238,238);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightWhite), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='color: rgb(255,255,255);'>")
+		return
+	}
+
+	// background
+	if bytes.Compare([]byte(KAnsiBgBlack), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(0,0,0); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBgRed), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(255,0,0); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBgGreen), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(0,255,0); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBgYellow), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(255,255,0); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBgBlue), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(0,0,255); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBgPurple), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(128,0,128); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBgCyan), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(0,255,255); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBgWhite), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(245,245,245); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBgBlack), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(105,105,105); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBgRed), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(205,51,51); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBgGreen), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(127,255,0); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBgYellow), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(255,255,127); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBgBlue), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(30,144,255); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBgPurple), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(155,48,255); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBgCyan), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(0,238,238); color: rgb(255,255,255);'>")
+		return
+	}
+
+	if bytes.Compare([]byte(KAnsiBrightBgWhite), ansiValue) == 0 {
+		el.resetCounter += 1
+		htmlTag = []byte("<span style='background-color: rgb(255,255,255); color: rgb(255,255,255);'>")
+		return
+	}
+
+	return
+}
+
 func TerminalToHtml(terminalString string) (htmlString string) {
 	var terminalBytes = []byte(terminalString)
 	var resetCounter = 0
