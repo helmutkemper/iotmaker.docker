@@ -10,6 +10,7 @@
   <a href="https://pkg.go.dev/github.com/helmutkemper/iotmaker.docker/v1.0.0?tab=doc">
     <img src="https://github.com/helmutkemper/iotmaker.docker/blob/master/image/godoc.svg">
   </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fhelmutkemper%2Fiotmaker.docker?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhelmutkemper%2Fiotmaker.docker.svg?type=shield"/></a>
 </p>
 
 ### Português
@@ -548,3 +549,6 @@ func main() {
   }
 }
 ```
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhelmutkemper%2Fiotmaker.docker.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhelmutkemper%2Fiotmaker.docker?ref=badge_large)
