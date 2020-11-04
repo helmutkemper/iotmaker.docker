@@ -8,6 +8,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Desktop/trabalho/cli/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/README.md">
           <value>
             <set />
@@ -129,6 +134,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/util/dirExists.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/util/fileFindRecursively.go">
           <value>
             <set />
           </value>
@@ -548,6 +558,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/v1.0.0/imageBuildFromFolder.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/v1.0.0/imageBuildFromFolder_test.go">
           <value>
             <set />
@@ -564,6 +579,26 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/v1.0.0/terminalToHtml.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.util.grpc.goToGrpc/README.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.util.grpc.goToGrpc/main/apagar/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.util.grpc.goToGrpc/main/kemper_client/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.util.grpc.goToGrpc/server/funcContainerCreate.go">
           <value>
             <set />
           </value>

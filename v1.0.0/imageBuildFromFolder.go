@@ -4,8 +4,52 @@ import (
 	"bytes"
 	"errors"
 	"github.com/docker/docker/api/types"
+	"github.com/helmutkemper/iotmaker.docker/util"
 	"io"
+	"path/filepath"
 )
+
+// FindDockerFile (English): Find dockerfile in folder tree.
+//   Priority order: './Dockerfile', './dockerfile', 'Dockerfile.*', 'dockerfile.*',
+//   '.*Dockerfile.*', '.*dockerfile.*'
+//
+// FindDockerFile (Português): Procura pelo arquivo dockerfile na árvore de diretórios.
+//   Ordem de prioridade: './Dockerfile', './dockerfile', 'Dockerfile.*', 'dockerfile.*',
+//   '.*Dockerfile.*', '.*dockerfile.*'
+func (el *DockerSystem) FindDockerFile() (fullPath string, err error) {
+	var fileExists bool
+
+	fileExists = util.VerifyFileExists("./Dockerfile")
+	if fileExists == true {
+		fullPath, err = filepath.Abs("./Dockerfile")
+		return
+	}
+
+	fileExists = util.VerifyFileExists("./dockerfile")
+	if fileExists == true {
+		fullPath, err = filepath.Abs("./dockerfile")
+		return
+	}
+
+	fullPath, err = util.FileFindHasPrefixRecursivelyFullPath("Dockerfile")
+	if err != nil {
+		return
+	}
+
+	fullPath, err = util.FileFindHasPrefixRecursivelyFullPath("dockerfile")
+	if err != nil {
+		return
+	}
+
+	fullPath, err = util.FileFindContainsRecursivelyFullPath("Dockerfile")
+	if err != nil {
+		return
+	}
+
+	fullPath, err = util.FileFindContainsRecursivelyFullPath("dockerfile")
+
+	return
+}
 
 // ImageBuildFromFolder (English): Make a image from folder path content
 //   folderPath: string absolute folder path
@@ -30,20 +74,27 @@ func (el *DockerSystem) ImageBuildFromFolder(
 	var tarFileReader *bytes.Reader
 	var imageBuildOptions types.ImageBuildOptions
 	var reader io.Reader
+	var dockerFilePath string
 
 	tarFileReader, err = el.ImageBuildPrepareFolderContext(folderPath)
 	if err != err {
 		return
 	}
 
+	dockerFilePath, err = el.FindDockerFile()
+	if err != nil {
+		return
+	}
+
 	imageBuildOptions = types.ImageBuildOptions{
-		Tags:   tags,
-		Remove: true,
+		Tags:       tags,
+		Remove:     true,
+		Dockerfile: dockerFilePath,
 	}
 
 	reader, err = el.ImageBuild(tarFileReader, imageBuildOptions)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	successfully := el.processBuildAndPullReaders(&reader, channel)
