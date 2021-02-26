@@ -6,7 +6,6 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"io"
-	"path/filepath"
 )
 
 // FindDockerFile (English): Find dockerfile in folder tree.
@@ -16,37 +15,37 @@ import (
 // FindDockerFile (Português): Procura pelo arquivo dockerfile na árvore de diretórios.
 //   Ordem de prioridade: './Dockerfile', './dockerfile', 'Dockerfile.*', 'dockerfile.*',
 //   '.*Dockerfile.*', '.*dockerfile.*'
-func (el *DockerSystem) FindDockerFile() (fullPath string, err error) {
+func (el *DockerSystem) FindDockerFile(folderPath string) (fullPathInsideTarFile string, err error) {
 	var fileExists bool
 
-	fileExists = util.VerifyFileExists("./Dockerfile")
+	fileExists = util.VerifyFileExists(folderPath + "/Dockerfile")
 	if fileExists == true {
-		fullPath, err = filepath.Abs("./Dockerfile")
+		fullPathInsideTarFile = "/Dockerfile"
 		return
 	}
 
-	fileExists = util.VerifyFileExists("./dockerfile")
+	fileExists = util.VerifyFileExists(folderPath + "/dockerfile")
 	if fileExists == true {
-		fullPath, err = filepath.Abs("./dockerfile")
+		fullPathInsideTarFile = "/dockerfile"
 		return
 	}
 
-	fullPath, err = util.FileFindHasPrefixRecursivelyFullPath("Dockerfile")
-	if err != nil {
+	fullPathInsideTarFile, err = util.FileFindHasPrefixRecursively("Dockerfile")
+	if err == nil {
 		return
 	}
 
-	fullPath, err = util.FileFindHasPrefixRecursivelyFullPath("dockerfile")
-	if err != nil {
+	fullPathInsideTarFile, err = util.FileFindHasPrefixRecursively("dockerfile")
+	if err == nil {
 		return
 	}
 
-	fullPath, err = util.FileFindContainsRecursivelyFullPath("Dockerfile")
-	if err != nil {
+	fullPathInsideTarFile, err = util.FileFindContainsRecursively("Dockerfile")
+	if err == nil {
 		return
 	}
 
-	fullPath, err = util.FileFindContainsRecursivelyFullPath("dockerfile")
+	fullPathInsideTarFile, err = util.FileFindContainsRecursively("dockerfile")
 
 	return
 }
@@ -81,15 +80,16 @@ func (el *DockerSystem) ImageBuildFromFolder(
 		return
 	}
 
-	dockerFilePath, err = el.FindDockerFile()
+	dockerFilePath, err = el.FindDockerFile(folderPath)
 	if err != nil {
 		return
 	}
 
+	_ = dockerFilePath
 	imageBuildOptions = types.ImageBuildOptions{
 		Tags:       tags,
 		Remove:     true,
-		Dockerfile: dockerFilePath,
+		Dockerfile: "dockerfile",
 	}
 
 	reader, err = el.ImageBuild(tarFileReader, imageBuildOptions)

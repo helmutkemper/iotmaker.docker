@@ -100,7 +100,7 @@ func main() {
     // English: searches for the folder containing the test server
     // Português: procura pela pasta contendo o servidor de teste
     var smallServerPath string
-    smallServerPath, err = util.FileFindRecursively("small_test_server_port_3000")
+    smallServerPath, err = util.FileFindRecursively("small_server_p3000")
     if err != nil {
       panic(err)
     }
