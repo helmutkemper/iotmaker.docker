@@ -1,8 +1,17 @@
 package iotmakerdocker
 
 import (
+	"bytes"
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/pkg/stdcopy"
+	"log"
 )
+
+type ExecResult struct {
+	StdOut   string
+	StdErr   string
+	ExitCode int
+}
 
 func (el *DockerSystem) ContainerExecCommand(
 	id string,
@@ -18,26 +27,42 @@ func (el *DockerSystem) ContainerExecCommand(
 		el.ctx,
 		id,
 		types.ExecConfig{
-			Cmd: commands,
+			Cmd:          commands,
+			AttachStdin:  true,
+			AttachStdout: true,
+			AttachStderr: true,
+			Privileged:   true,
 		},
 	)
 	if err != nil {
 		return
 	}
 
-	err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, types.ExecStartCheck{})
+	var resp types.HijackedResponse
+	resp, err = el.cli.ContainerExecAttach(el.ctx, idResponse.ID, types.ExecStartCheck{})
+	if err != nil {
+		return
+	}
+	defer resp.Close()
+
+	var e types.ExecStartCheck
+	err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)
 	if err != nil {
 		return
 	}
 
-	var inspect types.ContainerExecInspect
-	inspect, err = el.cli.ContainerExecInspect(el.ctx, idResponse.ID)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	_, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)
+
 	if err != nil {
 		return
 	}
 
-	exitCode = inspect.ExitCode
-	runing = inspect.Running
+	log.Println(stdout.String())
+
+	exitCode = 0
+	runing = false
 
 	return
 }

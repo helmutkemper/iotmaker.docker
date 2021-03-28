@@ -3,7 +3,7 @@ package util
 import "os"
 
 func VerifyExists(path string) bool {
-	info, err := os.Stat(fileName)
+	info, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		return false
 	}

@@ -8,7 +8,7 @@ COPY . /app
 # import golang packages to be used inside image "scratch"
 ARG CGO_ENABLED=0
 RUN go build -o /app/main /app/main.go
-
+RUN chmod +x /app/test.sh
 FROM scratch
 
 COPY --from=builder /app/ .
