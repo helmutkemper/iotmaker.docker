@@ -9,9 +9,9 @@ import (
 	"strings"
 )
 
-// ContainerLogs (English): Returns container std out
+// ContainerLogs (English):
 //
-// ContainerLogs (Português): Retorna a saída padrão do container
+// ContainerLogs (Português):
 func (el *DockerSystem) ContainerLogsWaitText(
 	id string,
 	text string,
