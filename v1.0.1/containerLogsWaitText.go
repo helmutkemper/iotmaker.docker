@@ -50,7 +50,7 @@ func (el *DockerSystem) ContainerLogsWaitText(
 		previousLog = make([]byte, len(logContainer))
 		copy(previousLog, logContainer)
 
-		if out != nil {
+		if out != nil && len(cleanLog) != 0 {
 			log.Printf("%s", cleanLog)
 		}
 
