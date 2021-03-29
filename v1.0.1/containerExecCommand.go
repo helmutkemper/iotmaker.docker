@@ -28,15 +28,21 @@ func (el *DockerSystem) ContainerExecCommand(
 		id,
 		types.ExecConfig{
 			Cmd:          commands,
+			Privileged:   true,
+			AttachStderr: true,
 			AttachStdin:  true,
 			AttachStdout: true,
-			AttachStderr: true,
-			Privileged:   true,
 		},
 	)
 	if err != nil {
 		return
 	}
+
+	//var e types.ExecStartCheck
+	//err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)
+	//if err != nil {
+	//	return
+	//}
 
 	var resp types.HijackedResponse
 	resp, err = el.cli.ContainerExecAttach(el.ctx, idResponse.ID, types.ExecStartCheck{})
@@ -45,10 +51,8 @@ func (el *DockerSystem) ContainerExecCommand(
 	}
 	defer resp.Close()
 
-	var e types.ExecStartCheck
-	err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)
-	if err != nil {
-		return
+	select {
+	case <-el.ctx.Done():
 	}
 
 	stdout := new(bytes.Buffer)
@@ -61,8 +65,11 @@ func (el *DockerSystem) ContainerExecCommand(
 
 	log.Println(stdout.String())
 
-	exitCode = 0
-	runing = false
+	var i types.ContainerExecInspect
+	i, err = el.cli.ContainerExecInspect(el.ctx, idResponse.ID)
+
+	exitCode = i.ExitCode
+	runing = i.Running
 
 	return
 }
