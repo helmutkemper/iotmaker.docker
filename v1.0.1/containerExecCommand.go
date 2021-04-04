@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/pkg/stdcopy"
-	"log"
 )
 
 type ExecResult struct {
@@ -19,8 +18,11 @@ func (el *DockerSystem) ContainerExecCommand(
 ) (
 	exitCode int,
 	runing bool,
+	stdout *bytes.Buffer,
 	err error,
 ) {
+
+	stdout = new(bytes.Buffer)
 
 	var idResponse types.IDResponse
 	idResponse, err = el.cli.ContainerExecCreate(
@@ -55,7 +57,6 @@ func (el *DockerSystem) ContainerExecCommand(
 	case <-el.ctx.Done():
 	}
 
-	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 	_, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)
 
@@ -63,10 +64,11 @@ func (el *DockerSystem) ContainerExecCommand(
 		return
 	}
 
-	log.Println(stdout.String())
-
 	var i types.ContainerExecInspect
 	i, err = el.cli.ContainerExecInspect(el.ctx, idResponse.ID)
+	if err != nil {
+		return
+	}
 
 	exitCode = i.ExitCode
 	runing = i.Running
