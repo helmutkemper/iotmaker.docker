@@ -2,7 +2,6 @@ package iotmakerdocker
 
 import (
 	"errors"
-	"fmt"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
@@ -201,11 +200,10 @@ func ExampleDockerSystem_ContainerExecCommand() {
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	var e int
-	var r bool
-	var stdout, stderr []byte
-	e, r, stdout, stderr, err = dockerSys.ContainerExecCommand(containerId, []string{`ls`})
-	fmt.Printf("stdout: %s, stderr: %v, exitCode: %v, runing: %v, err: %v", stdout, stderr, e, r, err)
+	_, _, _, _, err = dockerSys.ContainerExecCommand(containerId, []string{`/test.sh`})
+	if err != nil {
+		panic(err)
+	}
 
 	// English: garbage collector and deletes networks and images whose name contains the term 'delete'
 	// Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 'delete'

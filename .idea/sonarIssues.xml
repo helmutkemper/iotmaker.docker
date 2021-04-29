@@ -598,6 +598,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/v1.0.1/test/small_test_server_port_3000/dockerfile">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../iotmaker.util.grpc.goToGrpc/README.md">
           <value>
             <set />
