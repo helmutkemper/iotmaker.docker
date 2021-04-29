@@ -56,10 +56,6 @@ func (el *DockerSystem) ContainerExecCommand(
 	}
 	defer resp.Close()
 
-	select {
-	case <-el.ctx.Done():
-	}
-
 	stderr := new(bytes.Buffer)
 	if err != nil {
 		return
