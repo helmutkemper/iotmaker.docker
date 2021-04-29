@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/pkg/stdcopy"
+	"io/ioutil"
 	"log"
 )
 
@@ -69,6 +70,9 @@ func (el *DockerSystem) ContainerExecCommand(
 
 	written, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)
 	log.Printf("------------------------written: %v", written)
+	var out []byte
+	out, err = ioutil.ReadAll(stdout)
+	log.Printf("%s", out)
 
 	exitCode = i.ExitCode
 	runing = i.Running
