@@ -583,6 +583,21 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/v1.0.1/containerExecCommand.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.1/containerExecCommand_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.1/containerLogsWaitText.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../iotmaker.util.grpc.goToGrpc/README.md">
           <value>
             <set />

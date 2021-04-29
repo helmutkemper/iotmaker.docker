@@ -1,6 +1,7 @@
 package iotmakerdocker
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"github.com/docker/docker/api/types/container"
@@ -8,6 +9,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	"github.com/helmutkemper/iotmaker.docker/util"
+	"log"
 	"os"
 )
 
@@ -42,14 +44,14 @@ func ExampleDockerSystem_ContainerExecCommand() {
 			case status := <-chStatus:
 				// English: remove this comment to see all build status
 				// Português: remova este comentário para vê todo o status da criação da imagem
-				// fmt.Printf("image pull status: %+v\n", status)
+				log.Printf("image pull status: %+v\n", status)
 
 				if status.Closed == true {
-					// fmt.Println("image pull complete!")
+					log.Println("image pull complete!")
 
 					// English: Eliminate this goroutine after process end
 					// Português: Elimina a goroutine após o fim do processo
-					// return
+					return
 				}
 			}
 		}
@@ -203,8 +205,9 @@ func ExampleDockerSystem_ContainerExecCommand() {
 
 	var e int
 	var r bool
-	e, r, err = dockerSys.ContainerExecCommand(containerId, []string{`#!sh`, `-c`, `ls`})
-	fmt.Printf("exitCode: %v, runing: %v, err: %v", e, r, err)
+	var bf *bytes.Buffer
+	e, r, bf, err = dockerSys.ContainerExecCommand(containerId, []string{`#!sh`, `-c`, `ls`})
+	fmt.Printf("out: %s, exitCode: %v, runing: %v, err: %v", bf, e, r, err)
 
 	// English: garbage collector and deletes networks and images whose name contains the term 'delete'
 	// Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 'delete'
