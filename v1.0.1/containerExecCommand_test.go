@@ -1,7 +1,6 @@
 package iotmakerdocker
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"github.com/docker/docker/api/types/container"
