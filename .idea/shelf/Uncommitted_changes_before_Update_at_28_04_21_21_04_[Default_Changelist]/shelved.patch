@@ -1,0 +1,67 @@
+Index: v1.0.1/containerExecCommand.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package iotmakerdocker\n\nimport (\n\t\"bytes\"\n\t\"github.com/docker/docker/api/types\"\n\t\"github.com/docker/docker/pkg/stdcopy\"\n\t\"log\"\n)\n\ntype ExecResult struct {\n\tStdOut   string\n\tStdErr   string\n\tExitCode int\n}\n\nfunc (el *DockerSystem) ContainerExecCommand(\n\tid string,\n\tcommands []string,\n) (\n\texitCode int,\n\truning bool,\n\terr error,\n) {\n\n\tvar idResponse types.IDResponse\n\tidResponse, err = el.cli.ContainerExecCreate(\n\t\tel.ctx,\n\t\tid,\n\t\ttypes.ExecConfig{\n\t\t\tCmd:          commands,\n\t\t\tAttachStdin:  true,\n\t\t\tAttachStdout: true,\n\t\t\tAttachStderr: true,\n\t\t\tPrivileged:   true,\n\t\t},\n\t)\n\tif err != nil {\n\t\treturn\n\t}\n\n\tvar resp types.HijackedResponse\n\tresp, err = el.cli.ContainerExecAttach(el.ctx, idResponse.ID, types.ExecStartCheck{})\n\tif err != nil {\n\t\treturn\n\t}\n\tdefer resp.Close()\n\n\tvar e types.ExecStartCheck\n\terr = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)\n\tif err != nil {\n\t\treturn\n\t}\n\n\tstdout := new(bytes.Buffer)\n\tstderr := new(bytes.Buffer)\n\t_, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)\n\n\tif err != nil {\n\t\treturn\n\t}\n\n\tlog.Println(stdout.String())\n\n\texitCode = 0\n\truning = false\n\n\treturn\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/v1.0.1/containerExecCommand.go b/v1.0.1/containerExecCommand.go
+--- a/v1.0.1/containerExecCommand.go	(revision a06c9d391ec18f796c704990a9c37b280d8f815c)
++++ b/v1.0.1/containerExecCommand.go	(date 1617049626065)
+@@ -28,29 +28,33 @@
+ 		id,
+ 		types.ExecConfig{
+ 			Cmd:          commands,
++			Privileged:   true,
++			AttachStderr: true,
+ 			AttachStdin:  true,
+ 			AttachStdout: true,
+-			AttachStderr: true,
+-			Privileged:   true,
+ 		},
+ 	)
+ 	if err != nil {
+ 		return
+ 	}
+-
++	
++	//var e types.ExecStartCheck
++	//err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)
++	//if err != nil {
++	//	return
++	//}
++	
+ 	var resp types.HijackedResponse
+ 	resp, err = el.cli.ContainerExecAttach(el.ctx, idResponse.ID, types.ExecStartCheck{})
+ 	if err != nil {
+ 		return
+ 	}
+ 	defer resp.Close()
+-
+-	var e types.ExecStartCheck
+-	err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)
+-	if err != nil {
+-		return
++	
++	select {
++	case <- el.ctx.Done():
+ 	}
+-
++	
+ 	stdout := new(bytes.Buffer)
+ 	stderr := new(bytes.Buffer)
+ 	_, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)
+@@ -61,8 +65,11 @@
+ 
+ 	log.Println(stdout.String())
+ 
+-	exitCode = 0
+-	runing = false
++	var i types.ContainerExecInspect
++	i, err = el.cli.ContainerExecInspect(el.ctx, idResponse.ID)
++	
++	exitCode = i.ExitCode
++	runing = i.Running
+ 
+ 	return
+ }

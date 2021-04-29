@@ -618,6 +618,21 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../../../../../projetos/mysqlCDC/go.mod">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../../../../projetos/mysqlCDC/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../../../../projetos/mysqlCDC/script/my:latest.cnf">
+          <value>
+            <set />
+          </value>
+        </entry>
       </map>
     </option>
   </component>

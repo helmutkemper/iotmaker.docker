@@ -5,7 +5,6 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/pkg/stdcopy"
 	"log"
-	"time"
 )
 
 type ExecResult struct {
@@ -24,11 +23,9 @@ func (el *DockerSystem) ContainerExecCommand(
 	err error,
 ) {
 
-	log.Print("entrou 0")
-	stdout = &bytes.Buffer{}
+	stdout = new(bytes.Buffer)
 
 	var idResponse types.IDResponse
-	time.Sleep(1 * time.Second)
 	idResponse, err = el.cli.ContainerExecCreate(
 		el.ctx,
 		id,
@@ -44,26 +41,26 @@ func (el *DockerSystem) ContainerExecCommand(
 		return
 	}
 
+	var written int64
+
 	//var e types.ExecStartCheck
 	//err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)
 	//if err != nil {
 	//	return
 	//}
-	log.Print("entrou 1")
+
 	var resp types.HijackedResponse
 	resp, err = el.cli.ContainerExecAttach(el.ctx, idResponse.ID, types.ExecStartCheck{})
 	if err != nil {
 		return
 	}
 	defer resp.Close()
-	log.Print("entrou 2")
-	//select {
-	//case <-el.ctx.Done():
-	//}
-	log.Print("entrou 3")
+
+	select {
+	case <-el.ctx.Done():
+	}
+
 	stderr := new(bytes.Buffer)
-	_, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)
-	log.Print("entrou 4")
 	if err != nil {
 		return
 	}
@@ -73,7 +70,10 @@ func (el *DockerSystem) ContainerExecCommand(
 	if err != nil {
 		return
 	}
-	log.Print("entrou 5")
+
+	written, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)
+	log.Printf("------------------------written: %v", written)
+
 	exitCode = i.ExitCode
 	runing = i.Running
 
