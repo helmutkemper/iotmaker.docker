@@ -43,11 +43,11 @@ func (el *DockerSystem) ContainerExecCommand(
 
 	var written int64
 
-	//var e types.ExecStartCheck
-	//err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)
-	//if err != nil {
-	//	return
-	//}
+	var e types.ExecStartCheck
+	err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)
+	if err != nil {
+		return
+	}
 
 	var resp types.HijackedResponse
 	resp, err = el.cli.ContainerExecAttach(el.ctx, idResponse.ID, types.ExecStartCheck{})
