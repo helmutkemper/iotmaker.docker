@@ -3,7 +3,6 @@ package iotmakerdocker
 import (
 	"bytes"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/pkg/stdcopy"
 	"io/ioutil"
 	"log"
 )
