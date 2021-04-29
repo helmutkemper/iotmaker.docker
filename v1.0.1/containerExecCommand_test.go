@@ -205,9 +205,9 @@ func ExampleDockerSystem_ContainerExecCommand() {
 
 	var e int
 	var r bool
-	var bf *bytes.Buffer
-	e, r, bf, err = dockerSys.ContainerExecCommand(containerId, []string{`ls`})
-	fmt.Printf("out: %s, exitCode: %v, runing: %v, err: %v", bf, e, r, err)
+	var stdout, stderr []byte
+	e, r, stdout, stderr, err = dockerSys.ContainerExecCommand(containerId, []string{`ls`})
+	fmt.Printf("stdout: %s, stderr: %v, exitCode: %v, runing: %v, err: %v", stdout, stderr, e, r, err)
 
 	// English: garbage collector and deletes networks and images whose name contains the term 'delete'
 	// Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 'delete'
