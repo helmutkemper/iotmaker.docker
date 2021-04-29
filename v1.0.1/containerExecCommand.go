@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/docker/docker/api/types"
 	"io/ioutil"
-	"log"
 )
 
 type ExecResult struct {
@@ -19,11 +18,10 @@ func (el *DockerSystem) ContainerExecCommand(
 ) (
 	exitCode int,
 	runing bool,
-	stdout *bytes.Buffer,
+	stdOutput []byte,
+	stdError []byte,
 	err error,
 ) {
-
-	stdout = new(bytes.Buffer)
 
 	var idResponse types.IDResponse
 	idResponse, err = el.cli.ContainerExecCreate(
@@ -41,14 +39,6 @@ func (el *DockerSystem) ContainerExecCommand(
 		return
 	}
 
-	var written int64
-
-	//var e types.ExecStartCheck
-	//err = el.cli.ContainerExecStart(el.ctx, idResponse.ID, e)
-	//if err != nil {
-	//	return
-	//}
-
 	var resp types.HijackedResponse
 	resp, err = el.cli.ContainerExecAttach(el.ctx, idResponse.ID, types.ExecStartCheck{})
 	if err != nil {
@@ -57,9 +47,6 @@ func (el *DockerSystem) ContainerExecCommand(
 	defer resp.Close()
 
 	stderr := new(bytes.Buffer)
-	if err != nil {
-		return
-	}
 
 	var i types.ContainerExecInspect
 	i, err = el.cli.ContainerExecInspect(el.ctx, idResponse.ID)
@@ -67,14 +54,9 @@ func (el *DockerSystem) ContainerExecCommand(
 		return
 	}
 
-	//written, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)
-	log.Printf("------------------------written: %v", written)
-	var out []byte
-	out, err = ioutil.ReadAll(resp.Reader)
-	log.Printf("err: %v, resp.Reader: %s", err, out)
+	stdOutput, err = ioutil.ReadAll(resp.Reader)
 
-	out, err = ioutil.ReadAll(stderr)
-	log.Printf("err: %v, stderr: %s", err, out)
+	stdError, err = ioutil.ReadAll(stderr)
 
 	exitCode = i.ExitCode
 	runing = i.Running
