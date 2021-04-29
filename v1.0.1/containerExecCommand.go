@@ -68,11 +68,14 @@ func (el *DockerSystem) ContainerExecCommand(
 		return
 	}
 
-	written, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)
+	//written, err = stdcopy.StdCopy(stdout, stderr, resp.Reader)
 	log.Printf("------------------------written: %v", written)
 	var out []byte
-	out, err = ioutil.ReadAll(stdout)
-	log.Printf("%s", out)
+	out, err = ioutil.ReadAll(resp.Reader)
+	log.Printf("err: %v, resp.Reader: %s", err, out)
+
+	out, err = ioutil.ReadAll(stderr)
+	log.Printf("err: %v, stderr: %s", err, out)
 
 	exitCode = i.ExitCode
 	runing = i.Running
