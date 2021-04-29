@@ -8,7 +8,6 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	"github.com/helmutkemper/iotmaker.docker/util"
-	"log"
 	"os"
 )
 
@@ -43,14 +42,14 @@ func ExampleDockerSystem_ContainerExecCommand() {
 			case status := <-chStatus:
 				// English: remove this comment to see all build status
 				// Português: remova este comentário para vê todo o status da criação da imagem
-				log.Printf("image pull status: %+v\n", status)
+				// log.Printf("image pull status: %+v\n", status)
 
 				if status.Closed == true {
-					log.Println("image pull complete!")
+					// log.Println("image pull complete!")
 
 					// English: Eliminate this goroutine after process end
 					// Português: Elimina a goroutine após o fim do processo
-					return
+					// return
 				}
 			}
 		}
