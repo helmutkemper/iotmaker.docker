@@ -160,7 +160,7 @@ func (el *DockerSystem) ContainerInspectParsed(
 
 		parsed.Volumes.Mounts = make([]InspectVolumeMount, len(inspect.HostConfig.Mounts))
 		for k, mount := range inspect.HostConfig.Mounts {
-			parsed.Volumes.Mounts[k].Type = mount.Type
+			parsed.Volumes.Mounts[k].Type = Type(mount.Type)
 			parsed.Volumes.Mounts[k].Source = mount.Source
 			parsed.Volumes.Mounts[k].Target = mount.Target
 			parsed.Volumes.Mounts[k].ReadOnly = mount.ReadOnly
