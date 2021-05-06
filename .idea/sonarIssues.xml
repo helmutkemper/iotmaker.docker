@@ -8,6 +8,21 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../../../../../projetos/mysqlCDC/go.mod">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../../../../projetos/mysqlCDC/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../../../../projetos/mysqlCDC/script/my:latest.cnf">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Desktop/trabalho/cli/main.go">
           <value>
             <set />
@@ -129,6 +144,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/factoryDocker/newVolumeMount.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/go.mod">
           <value>
             <set />
           </value>
@@ -593,6 +613,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/v1.0.1/containerInspectParsed.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/v1.0.1/containerLogsWaitText.go">
           <value>
             <set />
@@ -623,17 +648,17 @@
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/../../../../../projetos/mysqlCDC/go.mod">
+        <entry key="$PROJECT_DIR$/../mysqlCDC/README.md">
           <value>
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/../../../../../projetos/mysqlCDC/main.go">
+        <entry key="$PROJECT_DIR$/../mysqlCDC/main.go">
           <value>
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/../../../../../projetos/mysqlCDC/script/my:latest.cnf">
+        <entry key="$PROJECT_DIR$/../tview/main.go">
           <value>
             <set />
           </value>
