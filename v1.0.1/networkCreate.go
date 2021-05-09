@@ -6,7 +6,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 )
 
-// create network
+// NetworkCreate create network
 //    name:    string       Ex.: "containerNetwork"
 //    drive:   NetworkDrive Ex.: KNetworkDriveBridge
 //    scope:   string       Ex.: local
@@ -31,6 +31,14 @@ func (el *DockerSystem) NetworkCreate(
 
 	networkGenerator = &NextNetworkAutoConfiguration{}
 
+	if len(el.networkId) == 0 {
+		el.networkId = make(map[string]string)
+	}
+
+	if len(el.networkGenerator) == 0 {
+		el.networkGenerator = make(map[string]*NextNetworkAutoConfiguration)
+	}
+
 	id, _ = el.NetworkFindIdByName(name)
 	if id != "" {
 
@@ -54,6 +62,41 @@ func (el *DockerSystem) NetworkCreate(
 		}
 
 		if pass == true {
+
+			var res types.NetworkResource
+			res, err = el.cli.NetworkInspect(el.ctx, name, types.NetworkInspectOptions{
+				Scope:   scope,
+				Verbose: false,
+			})
+
+			if err != nil {
+				return
+			}
+
+			var biggestIP = "0.0.0.0"
+			for _, containerNetwork := range res.Containers {
+				biggestIP, err = el.networkGetTheBiggestAddress(biggestIP, containerNetwork.IPv4Address)
+			}
+
+			gatewayFieldA, gatewayFieldB, gatewayFieldC, gatewayFieldD, err = el.testGatewayValues(biggestIP)
+			// todo: tem que tomar cuidado com valor máximo
+			gatewayFieldD += 1
+
+			networkGenerator.Init(
+				res.ID,
+				name,
+				gateway,
+				byte(gatewayFieldA),
+				byte(gatewayFieldB),
+				byte(gatewayFieldC),
+				byte(gatewayFieldD),
+			)
+
+			el.networkId[name] = res.ID
+			id = res.ID
+
+			el.networkGenerator[name] = networkGenerator
+
 			return
 		}
 
@@ -103,16 +146,8 @@ func (el *DockerSystem) NetworkCreate(
 		byte(gatewayFieldD),
 	)
 
-	if len(el.networkId) == 0 {
-		el.networkId = make(map[string]string)
-	}
-
 	el.networkId[name] = resp.ID
 	id = resp.ID
-
-	if len(el.networkGenerator) == 0 {
-		el.networkGenerator = make(map[string]*NextNetworkAutoConfiguration)
-	}
 
 	el.networkGenerator[name] = networkGenerator
 
