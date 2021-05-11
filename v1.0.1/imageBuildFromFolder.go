@@ -6,6 +6,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"io"
+	"path/filepath"
 )
 
 // FindDockerFile (English): Find dockerfile in folder tree.
@@ -74,6 +75,7 @@ func (el *DockerSystem) ImageBuildFromFolder(
 	var imageBuildOptions types.ImageBuildOptions
 	var reader io.Reader
 	var dockerFilePath string
+	var dockerFileName string
 
 	tarFileReader, err = el.ImageBuildPrepareFolderContext(folderPath)
 	if err != err {
@@ -85,11 +87,13 @@ func (el *DockerSystem) ImageBuildFromFolder(
 		return
 	}
 
+	dockerFileName = filepath.Base(dockerFilePath)
+
 	_ = dockerFilePath
 	imageBuildOptions = types.ImageBuildOptions{
 		Tags:       tags,
 		Remove:     true,
-		Dockerfile: "dockerfile",
+		Dockerfile: dockerFileName,
 	}
 
 	reader, err = el.ImageBuild(tarFileReader, imageBuildOptions)

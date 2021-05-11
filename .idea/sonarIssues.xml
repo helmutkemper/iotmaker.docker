@@ -28,6 +28,26 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../../Libraries/pkg/mod/github.com/helmutkemper/iotmaker.docker@v1.0.7/v1.0.1/containerInspectParsed.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.builder/go.mod">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.builder/typeContainerBuilder.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../iotmaker.docker.builder/typeContainerBuilder_test.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../iotmaker.docker.util.whaleAquarium/README.md">
           <value>
             <set />
@@ -629,6 +649,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/v1.0.1/containerStart.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/v1.0.1/imageBuildFromFolder.go">
           <value>
             <set />
           </value>
