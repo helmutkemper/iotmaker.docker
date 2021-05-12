@@ -10,14 +10,20 @@ import (
 )
 
 // FindDockerFile (English): Find dockerfile in folder tree.
-//   Priority order: './Dockerfile', './dockerfile', 'Dockerfile.*', 'dockerfile.*',
+//   Priority order: './Dockerfile-iotmaker', './Dockerfile', './dockerfile', 'Dockerfile.*', 'dockerfile.*',
 //   '.*Dockerfile.*', '.*dockerfile.*'
 //
 // FindDockerFile (Português): Procura pelo arquivo dockerfile na árvore de diretórios.
-//   Ordem de prioridade: './Dockerfile', './dockerfile', 'Dockerfile.*', 'dockerfile.*',
+//   Ordem de prioridade: './Dockerfile-iotmaker', './Dockerfile', './dockerfile', 'Dockerfile.*', 'dockerfile.*',
 //   '.*Dockerfile.*', '.*dockerfile.*'
 func (el *DockerSystem) FindDockerFile(folderPath string) (fullPathInsideTarFile string, err error) {
 	var fileExists bool
+
+	fileExists = util.VerifyFileExists(folderPath + "/Dockerfile-oitmaker")
+	if fileExists == true {
+		fullPathInsideTarFile = "/Dockerfile-iotmaker"
+		return
+	}
 
 	fileExists = util.VerifyFileExists(folderPath + "/Dockerfile")
 	if fileExists == true {
@@ -55,13 +61,18 @@ func (el *DockerSystem) FindDockerFile(folderPath string) (fullPathInsideTarFile
 //   folderPath: string absolute folder path
 //   tags: []string image tags
 //   channel: *chan channel of pull/build data
-// Note: dockerfile name must be "Dockerfile" inside root folder
+//
+//     Note: dockerfile priority order: './Dockerfile-iotmaker', './Dockerfile', './dockerfile', 'Dockerfile.*',
+//     'dockerfile.*', '.*Dockerfile.*', '.*dockerfile.*'
 //
 // ImageBuildFromFolder (Português): Monta uma imagem a partir de um diretório
 //   folderPath: string caminho absoluto do diretório
 //   tags: []string tags da imagem
 //   channel: *chan channel com dados do pull/build da imagem
-// Nota: O nome do arquivo dockerfile dentro da raiz do diretório deve ser "Dockerfile"
+//
+//     Nota: ordem de prioridade do dockerfile: './Dockerfile-iotmaker', './Dockerfile', './dockerfile', 'Dockerfile.*',
+//     'dockerfile.*', '.*Dockerfile.*', '.*dockerfile.*'
+//
 func (el *DockerSystem) ImageBuildFromFolder(
 	folderPath string,
 	tags []string,
