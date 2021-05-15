@@ -4,6 +4,11 @@ import (
 	"context"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
+	"time"
+)
+
+const (
+	kWaitTextLoopSleep = 500 * time.Millisecond
 )
 
 type DockerSystem struct {

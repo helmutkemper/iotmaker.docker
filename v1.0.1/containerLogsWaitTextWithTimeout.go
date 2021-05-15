@@ -2,6 +2,7 @@ package iotmakerdocker
 
 import (
 	"bytes"
+	"errors"
 	"github.com/docker/docker/api/types"
 	"io"
 	"io/ioutil"
@@ -11,12 +12,13 @@ import (
 	"time"
 )
 
-// ContainerLogsWaitText (English):
+// ContainerLogsWaitTextWithTimeout (English):
 //
-// ContainerLogsWaitText (Português):
-func (el *DockerSystem) ContainerLogsWaitText(
+// ContainerLogsWaitTextWithTimeout (Português):
+func (el *DockerSystem) ContainerLogsWaitTextWithTimeout(
 	id string,
 	text string,
+	timeout time.Duration,
 	out io.Writer,
 ) (
 	logContainer []byte,
@@ -27,14 +29,27 @@ func (el *DockerSystem) ContainerLogsWaitText(
 	var reader io.ReadCloser
 	var previousLog = make([]byte, 0)
 	var cleanLog = make([]byte, 0)
+	var ticker *time.Ticker
+	var done = make(chan bool)
 
 	if out != nil {
 		log.New(out, "", 0)
 	}
 
 	wg.Add(1)
+	go func(err *error) {
+		select {
+		case <-done:
+		case <-ticker.C:
+			*err = errors.New("timeout")
+			wg.Done()
+		}
+	}(&err)
+
 	go func(el *DockerSystem, err *error, reader *io.ReadCloser, previousLog, cleanLog, logContainer *[]byte, text *string, id string) {
-		defer wg.Done()
+		defer func() {
+			done <- true
+		}()
 
 		for {
 			*reader, *err = el.cli.ContainerLogs(el.ctx, id, types.ContainerLogsOptions{
@@ -63,12 +78,15 @@ func (el *DockerSystem) ContainerLogsWaitText(
 			}
 
 			if strings.Contains(string(*logContainer), *text) == true {
+				wg.Done()
 				return
 			}
 
 			time.Sleep(kWaitTextLoopSleep)
 		}
 	}(el, &err, &reader, &previousLog, &cleanLog, &logContainer, &text, id)
+
+	ticker = time.NewTicker(timeout)
 	wg.Wait()
 
 	return
