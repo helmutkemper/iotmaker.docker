@@ -7,6 +7,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	"github.com/helmutkemper/iotmaker.docker/util"
+	"log"
 	"os"
 	"reflect"
 )
@@ -234,6 +235,7 @@ func ExampleDockerSystem_ContainerInspectByNameContains() {
 
 	if inspectList[0].NetworkSettings.Networks["network_delete_before_test"].IPAddress != "10.0.0.2" {
 		err = errors.New("IPv4 address error")
+		log.Printf("current ip %v", inspectList[0].NetworkSettings.Networks["network_delete_before_test"].IPAddress)
 		panic(err)
 	}
 

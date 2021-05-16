@@ -4,105 +4,103 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"regexp"
 	"strconv"
 	"strings"
 )
 
-const (
-	kGatewayExpressionRegular = `^(?P<fieldA>[0-9]{0,3})\.(?P<fieldB>[0-9]{0,3})\.(?P<fieldC>[0-9]{0,3})\.(?P<fieldD>[0-9]{0,3})$`
-	kSubnetExpressionRegular  = `^(?P<fieldA>[0-9]{0,3})\.(?P<fieldB>[0-9]{0,3})\.(?P<fieldC>[0-9]{0,3})\.(?P<fieldD>[0-9]{0,3})/(?P<range>[0-9]{0,3})$`
-)
-
-type calcBase256 struct {
-	M int
-	D int
-}
-
 type IPv4Generator struct {
-	a          byte
-	b          byte
-	c          byte
-	d          byte
-	cidrPrefix byte
+	ipA        byte
+	ipB        byte
+	ipC        byte
+	ipD        byte
+	gatewayA   byte
+	gatewayB   byte
+	gatewayC   byte
+	gatewayD   byte
+	subnetA    byte
+	subnetB    byte
+	subnetC    byte
+	subnetD    byte
+	subnetCidr byte
+	maxA       byte
+	maxB       byte
+	maxC       byte
+	maxD       byte
+	ipMinAddr  int64
+	ipMaxAddr  int64
+	reserved   [][4]byte
 }
 
-func (el *IPv4Generator) InitWithString(
-	IP string,
-) (
-	err error,
-) {
+func (el *IPv4Generator) GetCuttentIP() (digitA, digitB, digitC, digitD byte) {
+	return el.ipA, el.ipB, el.ipC, el.ipD
+}
 
-	var re1 = regexp.MustCompile(`^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$`)
-	var re2 = regexp.MustCompile(`^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,3}$`)
-	var a, b, c, d, cidrPrefix int
+func (el *IPv4Generator) GetCuttentIPAsString() (ip string) {
+	return el.String()
+}
 
-	if re1.MatchString(IP) == true || re2.MatchString(IP) == true {
-		a, b, c, d, cidrPrefix, err = el.split(IP)
-		err = el.verify(a, b, c, d, cidrPrefix)
-		if err != nil {
-			return
-		}
+func (el *IPv4Generator) int64ToIP(ipInt64 int64) (a, b, c, d byte) {
+	d = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	c = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	b = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	a = byte(ipInt64 % 256)
 
-		el.a = byte(a)
-		el.b = byte(b)
-		el.c = byte(c)
-		el.d = byte(d)
-		el.cidrPrefix = byte(cidrPrefix)
-
-		return
-	}
-
-	err = errors.New("IP parser error")
 	return
 }
 
-// english: simplifies the initialization of the network function when you have an ip
-// list, continuing from the highest value found
-//
-// português: simplifica a inicialização da função de rede quando você tem uma lista de
-// ip, continuando a partir do valor mais alto encontrado
-//
-//   Example:
-//     ipGen := IPv4Generator{}
-//     for _, v := rage []string{"10.0.0.1/16", "10.0.0.2/16", "10.0.0.3/16"} {
-//       ipGen.InitWithStringAndAllowMaxValue( v )
-//     }
-func (el *IPv4Generator) InitWithStringAndAllowMaxValue(
-	IP string,
-) (
-	err error,
-) {
+func (el *IPv4Generator) stringIPtoByte(ip string) (a, b, c, d, cidr byte, err error) {
+	var tmpInt64 int64
+	var ipElementsList = strings.Split(ip, "/")
+	var ipOnly = ipElementsList[0]
 
-	var re1 = regexp.MustCompile(`^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$`)
-	var re2 = regexp.MustCompile(`^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,3}$`)
-	var a, b, c, d, cidrPrefix int
-
-	if re1.MatchString(IP) == true || re2.MatchString(IP) == true {
-		a, b, c, d, cidrPrefix, err = el.split(IP)
-		err = el.verify(a, b, c, d, cidrPrefix)
+	if len(ipElementsList) > 1 {
+		tmpInt64, err = strconv.ParseInt(ipElementsList[1], 10, 64)
 		if err != nil {
+			err = errors.New("IP format must be 'int.int.int.int' or 'int.int.int.int/int'")
 			return
 		}
+		cidr = byte(tmpInt64)
+	} else {
+		cidr = 0
+	}
 
-		ruleA := byte(a) > el.a
-		ruleB := byte(a) == el.a && byte(b) > el.b
-		ruleC := byte(a) == el.a && byte(b) == el.b && byte(c) > el.c
-		ruleD := byte(a) == el.a && byte(b) == el.b && byte(c) == el.c && byte(d) > el.d
-
-		if ruleA == true || ruleB == true || ruleC == true || ruleD == true {
-			el.a = byte(a)
-			el.b = byte(b)
-			el.c = byte(c)
-			el.d = byte(d)
-			el.cidrPrefix = byte(cidrPrefix)
-		}
-
-		err = el.Inc()
+	ipElementsList = strings.Split(ipOnly, ".")
+	if len(ipElementsList) != 4 {
+		err = errors.New("IP format must be 'int.int.int.int' or 'int.int.int.int/int'")
 		return
 	}
 
-	err = errors.New("IP parser error")
+	tmpInt64, err = strconv.ParseInt(ipElementsList[0], 10, 64)
+	if err != nil {
+		err = errors.New("IP format must be 'int.int.int.int' or 'int.int.int.int/int'")
+		return
+	}
+	a = byte(tmpInt64)
+
+	tmpInt64, err = strconv.ParseInt(ipElementsList[1], 10, 64)
+	if err != nil {
+		err = errors.New("IP format must be 'int.int.int.int' or 'int.int.int.int/int'")
+		return
+	}
+	b = byte(tmpInt64)
+
+	tmpInt64, err = strconv.ParseInt(ipElementsList[2], 10, 64)
+	if err != nil {
+		err = errors.New("IP format must be 'int.int.int.int' or 'int.int.int.int/int'")
+		return
+	}
+	c = byte(tmpInt64)
+
+	tmpInt64, err = strconv.ParseInt(ipElementsList[3], 10, 64)
+	if err != nil {
+		err = errors.New("IP format must be 'int.int.int.int' or 'int.int.int.int/int'")
+		return
+	}
+	d = byte(tmpInt64)
+
 	return
 }
 
@@ -170,168 +168,274 @@ func (el IPv4Generator) split(
 	return
 }
 
-func (el IPv4Generator) toHumanNotation(
-	resp *[]calcBase256,
-) string {
-
-	var toOut = make([]string, 0)
-	toOut = append(toOut, fmt.Sprintf("%03d", (*resp)[len(*resp)-1].D))
-	for i := len(*resp) - 1; i != -1; i -= 1 {
-		toOut = append(toOut, fmt.Sprintf("%03d", (*resp)[i].M))
-	}
-
-	if len(toOut) > 3 {
-		toOut = toOut[len(toOut)-3:]
-	}
-
-	for i := len(toOut); i <= 2; i += 1 {
-		toOut = append([]string{fmt.Sprintf("%03d", 0)}, toOut...)
-	}
-
-	return strings.Join(toOut, ".")
-}
-
-func (el IPv4Generator) cidrToHumanNotation(
-	cidr int,
-) (
-	humanNotation string,
-) {
-
-	resp := make([]calcBase256, 0)
-	value := el.cidrPrefixToDecimal(cidr)
-	el.calcMaxValueSupport(value, &resp)
-
-	return el.toHumanNotation(&resp)
-}
-
-func (el IPv4Generator) calcMaxValueSupport(
-	value int,
-	resp *[]calcBase256,
-) {
-
-	if len(*resp) == 0 {
-		*resp = make([]calcBase256, 0)
-	}
-
-	m := value % 256
-	d := value / 256
-
-	*resp = append(*resp, calcBase256{M: m, D: d})
-
-	if m != 0 {
-		el.calcMaxValueSupport(d, resp)
-	}
-}
-
 func (el IPv4Generator) cidrPrefixToDecimal(
-	cidr int,
+	cidr byte,
 ) (
-	cidrDecimal int,
+	cidrDecimal byte,
 ) {
 
-	return int(math.Pow(2.0, float64(cidr)) - 1)
+	return byte(int(math.Pow(2.0, float64(int(cidr))) - 1))
 }
 
 func (el IPv4Generator) verify(
-	a,
-	b,
-	c,
-	d,
-	CIDRPrefix int,
+	ipA,
+	ipB,
+	ipC,
+	ipD byte,
 ) (
 	err error,
 ) {
 
-	return nil
-	if a > 255 || b > 255 || c > 255 || d > 255 || CIDRPrefix > 128 {
-		err = errors.New("max theoretical allowed value is 255.255.255.255/128")
+	var ipAsInt int64
+
+	if el.subnetA == 0 || el.gatewayA == 0 {
+		err = errors.New("initialize IPv4Generator{} first")
+		return
 	}
 
-	if CIDRPrefix != 0 {
-		tmpB := float64(b) * math.Pow(256.0, 2.0)
-		tmpC := float64(c) * math.Pow(256.0, 1.0)
-		tmpD := float64(d) * math.Pow(256.0, 0.0)
+	var caseA, caseB, caseC, caseD bool
+	for _, ipReserved := range el.reserved {
+		caseA = ipReserved[0] == ipA
+		caseB = ipReserved[1] == ipB
+		caseC = ipReserved[2] == ipC
+		caseD = ipReserved[3] == ipD
 
-		if int(tmpB+tmpC+tmpD) > el.cidrPrefixToDecimal(CIDRPrefix) {
-			max := el.cidrToHumanNotation(CIDRPrefix)
-			err = errors.New(fmt.Sprintf("max allowed ip is %03d.%v", a, max))
+		if caseA && caseB && caseC && caseD == true {
+			err = errors.New("ip reserved")
+			return
 		}
+	}
+
+	tmpA := int64(float64(ipA) * math.Pow(256.0, 3.0))
+	tmpB := int64(float64(ipB) * math.Pow(256.0, 2.0))
+	tmpC := int64(float64(ipC) * math.Pow(256.0, 1.0))
+	tmpD := int64(float64(ipD) * math.Pow(256.0, 0.0))
+
+	ipAsInt = tmpA + tmpB + tmpC + tmpD
+
+	if ipAsInt < el.ipMinAddr {
+		err = errors.New(fmt.Sprintf("min allowed ip is %v", el.ipAsStringForError(el.gatewayA, el.gatewayB, el.gatewayC, el.gatewayD, 1)))
+		return
+	}
+
+	if ipAsInt > el.ipMaxAddr {
+		err = errors.New(fmt.Sprintf("max allowed ip is %v", el.ipAsStringForError(el.maxA, el.maxB, el.maxC, el.maxD, 0)))
+		return
 	}
 
 	return
 }
 
-func (el *IPv4Generator) InitWithCIDRPrefix(
-	a,
-	b,
-	c,
-	d,
-	cidr byte,
+// ipAsStringForError (português): esta função só deve ser usada para transformar IP em mensagem de erro
+//   a, b, c, d: são os elementos do ip
+//   inc: incrementa o ip (ip = ip + inc)
+func (el *IPv4Generator) ipAsStringForError(a, b, c, d, inc byte) (
+	ipAsString string,
 ) {
 
-	el.a = a
-	el.b = b
-	el.c = c
-	el.d = d
-	el.cidrPrefix = cidr
+	var nextDecimalPlace byte
+
+	d += inc
+	if d > 255 {
+		nextDecimalPlace = 1
+	} else {
+		nextDecimalPlace = 0
+	}
+
+	c += nextDecimalPlace
+	if c > 255 {
+		nextDecimalPlace = 1
+	} else {
+		nextDecimalPlace = 0
+	}
+
+	b += nextDecimalPlace
+	if b > 255 {
+		nextDecimalPlace = 1
+	} else {
+		nextDecimalPlace = 0
+	}
+
+	a += nextDecimalPlace
+
+	ipAsString = strconv.Itoa(int(a)) + "." + strconv.Itoa(int(b)) + "." + strconv.Itoa(int(c)) + "." + strconv.Itoa(int(d))
+	return
 }
 
-func (el *IPv4Generator) Inc() (
+func (el *IPv4Generator) incIP(a, b, c, d, inc byte) (
+	elementA, elementB, elementC, elementD, overflow byte,
+) {
+
+	var nextDecimalPlace int
+	var aInt, bInt, cInt, dInt int
+
+	aInt = int(a)
+	bInt = int(b)
+	cInt = int(c)
+	dInt = int(d)
+
+	dInt += int(inc)
+	if dInt > 255 {
+		nextDecimalPlace = 1
+	} else {
+		nextDecimalPlace = 0
+	}
+
+	cInt += nextDecimalPlace
+	if cInt > 255 {
+		nextDecimalPlace = 1
+	} else {
+		nextDecimalPlace = 0
+	}
+
+	bInt += nextDecimalPlace
+	if bInt > 255 {
+		nextDecimalPlace = 1
+	} else {
+		nextDecimalPlace = 0
+	}
+
+	aInt += nextDecimalPlace
+	if aInt > 255 {
+		overflow = 1
+	}
+
+	elementA = byte(aInt)
+	elementB = byte(bInt)
+	elementC = byte(cInt)
+	elementD = byte(dInt)
+
+	return
+}
+
+func (el *IPv4Generator) IncCuttentIP() (
 	err error,
 ) {
 
-	if el.a == 0 && el.b == 0 && el.c == 0 && el.d == 0 {
-		el.a = 10
-		el.b = 0
-		el.c = 0
-		el.d = 0
-		el.cidrPrefix = 16
+	var a, b, c, d, overflow byte
+	var inc = byte(1)
+
+	// (português): ip não foi inicializado
+	if el.gatewayA != el.ipA {
+		d = el.gatewayD
+		c = el.gatewayC
+		b = el.gatewayB
+		a = el.gatewayA
+	} else {
+		d = el.ipD
+		c = el.ipC
+		b = el.ipB
+		a = el.ipA
 	}
 
-	if el.d < 255 {
-		el.d += 1
-		return el.verify(int(el.a), int(el.b), int(el.c), int(el.d), int(el.cidrPrefix))
+	a, b, c, d, overflow = el.incIP(a, b, c, d, inc)
+	if overflow != 0 {
+		err = errors.New("the ip address is greater than the theoretical maximum allowed")
+		return
 	}
-	el.d = 0
 
-	if el.c < 255 {
-		el.c += 1
-		return el.verify(int(el.a), int(el.b), int(el.c), int(el.d), int(el.cidrPrefix))
+	err = el.verify(a, b, c, d)
+	if err != nil {
+		return
 	}
-	el.c = 0
 
-	if el.b < 255 {
-		el.b += 1
-		return el.verify(int(el.a), int(el.b), int(el.c), int(el.d), int(el.cidrPrefix))
-	}
-	el.b = 0
+	el.ipD = d
+	el.ipC = c
+	el.ipB = b
+	el.ipA = a
 
-	if el.a < 255 {
-		el.a += 1
-		return el.verify(int(el.a), int(el.b), int(el.c), int(el.d), int(el.cidrPrefix))
-	}
-	el.a = 0
-
-	return el.verify(int(el.a), int(el.b), int(el.c), int(el.d), int(el.cidrPrefix))
+	return
 }
 
 func (el *IPv4Generator) Init(
-	a,
-	b,
-	c,
-	d byte,
+	gatewayA,
+	gatewayB,
+	gatewayC,
+	gatewayD,
+	subnetA,
+	subnetB,
+	subnetC,
+	subnetD,
+	subnetCidr byte,
+) (
+	err error,
 ) {
+	el.reserved = make([][4]byte, 0)
 
-	el.a = a
-	el.b = b
-	el.c = c
-	el.d = d
-}
+	var overflow byte
 
-func (el IPv4Generator) String() string {
-	if el.cidrPrefix == 0 {
-		return fmt.Sprintf("%v.%v.%v.%v", el.a, el.b, el.c, el.d)
+	el.gatewayA = gatewayA
+	el.gatewayB = gatewayB
+	el.gatewayC = gatewayC
+	el.gatewayD = gatewayD
+
+	el.subnetA = subnetA
+	el.subnetB = subnetB
+	el.subnetC = subnetC
+	el.subnetD = subnetD
+
+	el.subnetCidr = subnetCidr
+
+	if el.subnetA == 0 || el.gatewayA == 0 {
+		err = errors.New("initialize IPv4Generator{} first")
+		return
 	}
 
-	return fmt.Sprintf("%v.%v.%v.%v/%v", el.a, el.b, el.c, el.d, el.cidrPrefix)
+	tmpA := int64(float64(el.gatewayA) * math.Pow(256.0, 3.0))
+	tmpB := int64(float64(el.gatewayB) * math.Pow(256.0, 2.0))
+	tmpC := int64(float64(el.gatewayC) * math.Pow(256.0, 1.0))
+	tmpD := int64(float64(el.gatewayD) * math.Pow(256.0, 0.0))
+
+	el.ipMinAddr = tmpA + tmpB + tmpC + tmpD
+
+	subnetA, subnetB, subnetC, subnetD, overflow = el.incIP(subnetA, subnetB, subnetC, subnetD, el.cidrPrefixToDecimal(subnetCidr))
+	if overflow != 0 {
+		err = errors.New("the ip address is greater than the maximum theoretical ip allowed")
+		return
+	}
+
+	tmpA = int64(float64(subnetA) * math.Pow(256.0, 3.0))
+	tmpB = int64(float64(subnetB) * math.Pow(256.0, 2.0))
+	tmpC = int64(float64(subnetC) * math.Pow(256.0, 1.0))
+	tmpD = int64(float64(subnetD) * math.Pow(256.0, 0.0))
+
+	el.cidrPrefixToDecimal(el.subnetCidr)
+	el.ipMaxAddr = tmpA + tmpB + tmpC + tmpD
+
+	el.maxA, el.maxB, el.maxC, el.maxD = el.int64ToIP(el.ipMaxAddr)
+	el.ipA, el.ipB, el.ipC, el.ipD, overflow = el.incIP(el.gatewayA, el.gatewayB, el.gatewayC, el.gatewayD, 1)
+
+	if overflow != 0 {
+		err = errors.New("the ip address is greater than the maximum theoretical ip allowed")
+		return
+	}
+
+	return
+}
+
+func (el *IPv4Generator) InitWithString(
+	gateway string,
+	subnet string,
+) (
+	err error,
+) {
+	var gatewayA, gatewayB, gatewayC, gatewayD byte
+	var subnetA, subnetB, subnetC, subnetD, subnetCidr byte
+
+	gatewayA, gatewayB, gatewayC, gatewayD, _, err = el.stringIPtoByte(gateway)
+	if err != nil {
+		return
+	}
+
+	subnetA, subnetB, subnetC, subnetD, subnetCidr, err = el.stringIPtoByte(subnet)
+	if err != nil {
+		return
+	}
+
+	err = el.Init(gatewayA, gatewayB, gatewayC, gatewayD, subnetA, subnetB, subnetC, subnetD, subnetCidr)
+	return
+}
+
+func (el IPv4Generator) String() (currentIP string) {
+	return strconv.FormatInt(int64(el.ipA), 10) + "." + strconv.FormatInt(int64(el.ipB), 10) + "." + strconv.FormatInt(int64(el.ipC), 10) + "." + strconv.FormatInt(int64(el.ipD), 10)
 }

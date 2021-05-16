@@ -1,263 +1,441 @@
 package iotmakerdocker
 
 import (
+	"errors"
+	"github.com/helmutkemper/util"
+	"log"
+	"math"
 	"testing"
 )
 
-func TestIPv4Generator_InitWithStringAndAllowMaxValue(t *testing.T) {
-	var err error
-
+func TestIPv4Generator_int64ToIP(t *testing.T) {
 	ipGenerator := IPv4Generator{}
-	err = ipGenerator.InitWithStringAndAllowMaxValue("10.0.0.2/4")
-	if err != nil {
-		t.Fail()
-		return
-	}
-	ip := ipGenerator.String()
-	if ip != "10.0.0.2/4" {
-		t.Fail()
-		return
-	}
+	var a, b, c, d byte
+	var dA, dB, dC, dD byte
+	var tmpA, tmpB, tmpC, tmpD int64
+	var dSignificativePlace int
+	var cSignificativePlace int
+	var bSignificativePlace int
+	var aSignificativePlace int
+	var overflow int
 
-	err = ipGenerator.InitWithStringAndAllowMaxValue("10.0.0.1/4")
-	if err != nil {
-		t.Fail()
-		return
-	}
-	ip = ipGenerator.String()
-	if ip != "10.0.0.2/4" {
-		t.Fail()
-		return
-	}
+	// 10.0.0.1
+	dA = 10
+	dB = 0
+	dC = 0
+	dD = 1
 
-	err = ipGenerator.InitWithStringAndAllowMaxValue("10.0.0.3/4")
-	if err != nil {
-		t.Fail()
-		return
-	}
-	ip = ipGenerator.String()
-	if ip != "10.0.0.3/4" {
-		t.Fail()
-		return
-	}
+	tmpA = int64(float64(dA) * math.Pow(256.0, 3.0))
+	tmpB = int64(float64(dB) * math.Pow(256.0, 2.0))
+	tmpC = int64(float64(dC) * math.Pow(256.0, 1.0))
+	tmpD = int64(float64(dD) * math.Pow(256.0, 0.0))
+	startIPAsDecimal := tmpA + tmpB + tmpC + tmpD
+	aSignificativePlace = int(dA)
+	bSignificativePlace = int(dB)
+	cSignificativePlace = int(dC)
+	dSignificativePlace = int(dD)
 
-	err = ipGenerator.InitWithStringAndAllowMaxValue("10.0.1.0/16")
-	if err != nil {
-		t.Fail()
-		return
-	}
-	ip = ipGenerator.String()
-	if ip != "10.0.1.0/16" {
-		t.Fail()
-		return
-	}
+	// 10.0.0.255
+	dA = 10
+	dB = 255
+	dC = 255
+	dD = 255
 
-	err = ipGenerator.InitWithStringAndAllowMaxValue("10.1.0.0/16")
-	if err != nil && err.Error() != "max allowed ip is 010.000.255.255" {
-		t.Fail()
-		return
-	}
+	tmpA = int64(float64(dA) * math.Pow(256.0, 3.0))
+	tmpB = int64(float64(dB) * math.Pow(256.0, 2.0))
+	tmpC = int64(float64(dC) * math.Pow(256.0, 1.0))
+	tmpD = int64(float64(dD) * math.Pow(256.0, 0.0))
+	endIPAsDecimal := tmpA + tmpB + tmpC + tmpD
 
-	err = ipGenerator.InitWithStringAndAllowMaxValue("10.1.0.0/32")
-	if err != nil {
-		t.Fail()
-		return
-	}
-	ip = ipGenerator.String()
-	if ip != "10.1.0.0/32" {
-		t.Fail()
-		return
+	for ipAsInt := startIPAsDecimal; ipAsInt != endIPAsDecimal; ipAsInt += 1 {
+		a, b, c, d = ipGenerator.int64ToIP(ipAsInt)
+		if int(a) != aSignificativePlace {
+			util.TraceToLog()
+			t.FailNow()
+		}
+
+		if int(b) != bSignificativePlace {
+			util.TraceToLog()
+			t.FailNow()
+		}
+
+		if int(c) != cSignificativePlace {
+			util.TraceToLog()
+			t.FailNow()
+		}
+
+		if int(d) != dSignificativePlace {
+			util.TraceToLog()
+			t.FailNow()
+		}
+
+		dSignificativePlace += 1
+		if dSignificativePlace > 255 {
+			overflow = 1
+			dSignificativePlace = 0
+		} else {
+			overflow = 0
+		}
+
+		cSignificativePlace += overflow
+		if cSignificativePlace > 255 {
+			overflow = 1
+			cSignificativePlace = 0
+		} else {
+			overflow = 0
+		}
+
+		bSignificativePlace += overflow
+		if bSignificativePlace > 255 {
+			overflow = 1
+			bSignificativePlace = 0
+		} else {
+			overflow = 0
+		}
+
+		aSignificativePlace += overflow
+		if aSignificativePlace > 255 {
+			overflow = 1
+			aSignificativePlace = 0
+		} else {
+			overflow = 0
+		}
 	}
 }
 
-func TestIPv4Generator_Inc(t *testing.T) {
+func TestIPv4Generator_Init(t *testing.T) {
 	var err error
 
-	ipGenerator := IPv4Generator{}
-	err = ipGenerator.InitWithString("10.0.0.0/4")
+	g := IPv4Generator{}
+	err = g.Init(
+		//10.0.0.1
+		10, 0, 0, 1,
+		//10.0.0.0/4
+		10, 0, 0, 0, 4,
+	)
 	if err != nil {
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
 		t.Fail()
 		return
 	}
 
-	err = ipGenerator.Inc()
-	if err != nil {
-		t.Fail()
-		return
-	}
-	ip := ipGenerator.String()
-	if ip != "10.0.0.1/4" {
+	caseA := g.gatewayA == 10
+	caseB := g.gatewayB == 0
+	caseC := g.gatewayC == 0
+	caseD := g.gatewayD == 1
+
+	if caseA && caseB && caseC && caseD == false {
+		err = errors.New("gateway initialization error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
 		t.Fail()
 		return
 	}
 
-	for i := 0; i != 14; i += 1 {
-		err = ipGenerator.Inc()
+	caseA = g.subnetA == 10
+	caseB = g.subnetB == 0
+	caseC = g.subnetC == 0
+	caseD = g.subnetD == 0
+	caseE := g.subnetCidr == 4
+
+	if caseA && caseB && caseC && caseD && caseE == false {
+		err = errors.New("subnet initialization error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	caseA = g.ipA == 10
+	caseB = g.ipB == 0
+	caseC = g.ipC == 0
+	caseD = g.ipD == 2
+	if caseA && caseB && caseC && caseD == false {
+		err = errors.New("current ip initialization error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	tmpA := int64(float64(g.gatewayA) * math.Pow(256.0, 3.0))
+	tmpB := int64(float64(g.gatewayB) * math.Pow(256.0, 2.0))
+	tmpC := int64(float64(g.gatewayC) * math.Pow(256.0, 1.0))
+	tmpD := int64(float64(g.gatewayD) * math.Pow(256.0, 0.0))
+
+	if g.ipMinAddr != tmpA+tmpB+tmpC+tmpD {
+		err = errors.New("min ip error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	tmpA = int64(float64(g.subnetA) * math.Pow(256.0, 3.0))
+	tmpB = int64(float64(g.subnetB) * math.Pow(256.0, 2.0))
+	tmpC = int64(float64(g.subnetC) * math.Pow(256.0, 1.0))
+	tmpD = int64(float64(g.subnetD) * math.Pow(256.0, 0.0))
+
+	tmpE := int64(math.Pow(2.0, float64(int(g.subnetCidr))) - 1)
+
+	if g.ipMaxAddr != tmpA+tmpB+tmpC+tmpD+tmpE {
+		err = errors.New("max ip error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	var ipInt64 = g.ipMaxAddr
+	var a, b, c, d byte
+	d = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	c = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	b = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	a = byte(ipInt64 % 256)
+
+	caseA = g.maxA == a
+	caseB = g.maxA == b
+	caseC = g.maxA == c
+	caseD = g.maxA == d
+
+	if caseA && caseB && caseC && caseD {
+		err = errors.New("max ip error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+}
+
+func TestIPv4Generator_InitWithString(t *testing.T) {
+	var err error
+
+	g := IPv4Generator{}
+	err = g.InitWithString(
+		"10.0.0.1",
+		"10.0.0.0/4",
+	)
+	if err != nil {
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	caseA := g.gatewayA == 10
+	caseB := g.gatewayB == 0
+	caseC := g.gatewayC == 0
+	caseD := g.gatewayD == 1
+
+	if caseA && caseB && caseC && caseD == false {
+		err = errors.New("gateway initialization error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	caseA = g.subnetA == 10
+	caseB = g.subnetB == 0
+	caseC = g.subnetC == 0
+	caseD = g.subnetD == 0
+	caseE := g.subnetCidr == 4
+
+	if caseA && caseB && caseC && caseD && caseE == false {
+		err = errors.New("subnet initialization error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	caseA = g.ipA == 10
+	caseB = g.ipB == 0
+	caseC = g.ipC == 0
+	caseD = g.ipD == 2
+	if caseA && caseB && caseC && caseD == false {
+		err = errors.New("current ip initialization error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	tmpA := int64(float64(g.gatewayA) * math.Pow(256.0, 3.0))
+	tmpB := int64(float64(g.gatewayB) * math.Pow(256.0, 2.0))
+	tmpC := int64(float64(g.gatewayC) * math.Pow(256.0, 1.0))
+	tmpD := int64(float64(g.gatewayD) * math.Pow(256.0, 0.0))
+
+	if g.ipMinAddr != tmpA+tmpB+tmpC+tmpD {
+		err = errors.New("min ip error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	tmpA = int64(float64(g.subnetA) * math.Pow(256.0, 3.0))
+	tmpB = int64(float64(g.subnetB) * math.Pow(256.0, 2.0))
+	tmpC = int64(float64(g.subnetC) * math.Pow(256.0, 1.0))
+	tmpD = int64(float64(g.subnetD) * math.Pow(256.0, 0.0))
+
+	tmpE := int64(math.Pow(2.0, float64(int(g.subnetCidr))) - 1)
+
+	if g.ipMaxAddr != tmpA+tmpB+tmpC+tmpD+tmpE {
+		err = errors.New("max ip error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	var ipInt64 = g.ipMaxAddr
+	var a, b, c, d byte
+	d = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	c = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	b = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	a = byte(ipInt64 % 256)
+
+	caseA = g.maxA == a
+	caseB = g.maxA == b
+	caseC = g.maxA == c
+	caseD = g.maxA == d
+
+	if caseA && caseB && caseC && caseD {
+		err = errors.New("max ip error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+}
+
+func TestIPv4Generator_IncCuttentIP(t *testing.T) {
+	var err error
+
+	g := IPv4Generator{}
+	err = g.InitWithString(
+		"10.0.0.1",
+		"10.0.0.0/4",
+	)
+	if err != nil {
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	for i := 0; i != 13; i += 1 {
+		err = g.IncCuttentIP()
 		if err != nil {
+			util.TraceToLog()
+			log.Printf("error: %v", err.Error())
+			t.Fail()
+			return
+		}
+		caseA := g.ipA == 10
+		caseB := g.ipB == 0
+		caseC := g.ipC == 0
+		caseD := g.ipD == byte(3+i)
+
+		if caseA && caseB && caseC && caseD == false {
+			err = errors.New("current ip increment error")
+			util.TraceToLog()
+			log.Printf("error: %v", err.Error())
 			t.Fail()
 			return
 		}
 	}
 
-	ip = ipGenerator.String()
-	if ip != "10.0.0.15/4" {
-		t.Fail()
-		return
-	}
-
-	err = ipGenerator.Inc()
-	if err != nil && err.Error() != "max allowed ip is 010.000.000.015" {
+	err = g.IncCuttentIP()
+	if err == nil || err.Error() != "max allowed ip is 10.0.0.15" {
+		err = errors.New("current ip increment error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
 		t.Fail()
 		return
 	}
 }
 
-func TestCalcMaxValue(t *testing.T) {
-	ipGenerator := IPv4Generator{}
-
-	expectedResponse := []string{
-		"000.000.001",
-		"000.000.003",
-		"000.000.007",
-		"000.000.015",
-		"000.000.031",
-		"000.000.063",
-		"000.000.127",
-		"000.000.255",
-		"000.001.255",
-		"000.003.255",
-		"000.007.255",
-		"000.015.255",
-		"000.031.255",
-		"000.063.255",
-		"000.127.255",
-		"000.255.255",
-		"001.255.255",
-		"003.255.255",
-		"007.255.255",
-		"015.255.255",
-		"031.255.255",
-		"063.255.255",
-		"127.255.255",
-		"255.255.255",
-	}
-	calculeResponse := make([]string, 0)
-	for i := 1; i != 25; i += 1 {
-		calculeResponse = append(calculeResponse, ipGenerator.cidrToHumanNotation(i))
-	}
-
-	for i := 0; i != len(expectedResponse); i += 1 {
-		if expectedResponse[i] != calculeResponse[i] {
-			t.Fail()
-		}
-	}
-}
-
-func TestIPv4Generator_ParserIP(t *testing.T) {
+func TestIPv4Generator_incIP(t *testing.T) {
 	var err error
-	ipGenerator := IPv4Generator{}
+	var rA, rB, rC, rD, rOverflow byte
 
-	err = ipGenerator.InitWithString("10.0.0.1")
-	if err != nil {
-		t.Fail()
-		return
-	}
+	var dSignificativePlace byte
+	var cSignificativePlace byte
+	var bSignificativePlace byte
+	var aSignificativePlace byte
+	var overflow byte
 
-	ip := ipGenerator.String()
-	if ip != "10.0.0.1" {
-		t.Fail()
-		return
-	}
+	g := IPv4Generator{}
 
-	err = ipGenerator.InitWithString("010.000.000.001")
-	if err != nil {
-		t.Fail()
-		return
-	}
-	ip = ipGenerator.String()
-	if ip != "10.0.0.1" {
-		t.Fail()
-		return
-	}
+	for a := 0; a != 256; a += 1 {
+		for b := 0; b != 256; b += 1 {
+			for c := 0; c != 256; c += 1 {
+				for d := 0; d != 256; d += 1 {
+					rA, rB, rC, rD, rOverflow = g.incIP(byte(a), byte(b), byte(c), byte(d), 1)
 
-	err = ipGenerator.InitWithString("10.0.0.1/16")
-	if err != nil {
-		t.Fail()
-		return
-	}
+					dSignificativePlace = byte(d)
+					cSignificativePlace = byte(c)
+					bSignificativePlace = byte(b)
+					aSignificativePlace = byte(a)
 
-	ip = ipGenerator.String()
-	if ip != "10.0.0.1/16" {
-		t.Fail()
-		return
-	}
+					dSignificativePlace += 1
+					if dSignificativePlace > 255 {
+						overflow = 1
+						dSignificativePlace = 0
+					} else {
+						overflow = 0
+					}
 
-	err = ipGenerator.InitWithString("010.000.000.001/16")
-	if err != nil {
-		t.Fail()
-		return
-	}
-	ip = ipGenerator.String()
-	if ip != "10.0.0.1/16" {
-		t.Fail()
-		return
-	}
+					cSignificativePlace += overflow
+					if cSignificativePlace > 255 {
+						overflow = 1
+						cSignificativePlace = 0
+					} else {
+						overflow = 0
+					}
 
-	err = ipGenerator.InitWithString("010.000.000.256/16")
-	if err != nil && err.Error() != "max theoretical allowed value is 255.255.255.255/128" {
-		t.Fail()
-		return
-	}
+					bSignificativePlace += overflow
+					if bSignificativePlace > 255 {
+						overflow = 1
+						bSignificativePlace = 0
+					} else {
+						overflow = 0
+					}
 
-	err = ipGenerator.InitWithString("10.0.0.128/4")
-	if err != nil && err.Error() != "max allowed ip is 010.000.000.015" {
-		t.Fail()
-		return
-	}
+					aSignificativePlace += overflow
+					if aSignificativePlace > 255 {
+						overflow = 1
+						aSignificativePlace = 0
+					} else {
+						overflow = 0
+					}
 
-}
+					caseA := aSignificativePlace == rA
+					caseB := bSignificativePlace == rB
+					caseC := cSignificativePlace == rC
+					caseD := dSignificativePlace == rD
+					caseE := overflow == rOverflow
 
-func TestVerify(t *testing.T) {
-	ipGenerator := IPv4Generator{}
-
-	expectedResponse := []string{
-		"max allowed ip is 010.000.000.001",
-		"max allowed ip is 010.000.000.003",
-		"max allowed ip is 010.000.000.007",
-		"max allowed ip is 010.000.000.015",
-		"max allowed ip is 010.000.000.031",
-		"max allowed ip is 010.000.000.063",
-		"max allowed ip is 010.000.000.127",
-		"max allowed ip is 010.000.000.255",
-		"max allowed ip is 010.000.001.255",
-		"max allowed ip is 010.000.003.255",
-		"max allowed ip is 010.000.007.255",
-		"max allowed ip is 010.000.015.255",
-		"max allowed ip is 010.000.031.255",
-		"max allowed ip is 010.000.063.255",
-		"max allowed ip is 010.000.127.255",
-		"max allowed ip is 010.000.255.255",
-		"max allowed ip is 010.001.255.255",
-		"max allowed ip is 010.003.255.255",
-		"max allowed ip is 010.007.255.255",
-		"max allowed ip is 010.015.255.255",
-		"max allowed ip is 010.031.255.255",
-		"max allowed ip is 010.063.255.255",
-		"max allowed ip is 010.127.255.255",
-	}
-	calculeResponse := make([]string, 0)
-	for i := 1; i != 24; i += 1 {
-		err := ipGenerator.verify(10, 255, 255, 255, i)
-		if err == nil {
-			t.Fail()
-			return
-		}
-		calculeResponse = append(calculeResponse, err.Error())
-	}
-
-	for i := 0; i != len(expectedResponse); i += 1 {
-		if expectedResponse[i] != calculeResponse[i] {
-			t.Fail()
+					if caseA && caseB && caseC && caseD && caseE == false {
+						err = errors.New("ip increment error")
+						util.TraceToLog()
+						log.Printf("error: %v", err.Error())
+						t.Fail()
+						return
+					}
+				}
+			}
 		}
 	}
 }

@@ -7,7 +7,7 @@ import (
 )
 
 // NetworkCreate create network
-//    name:    string       Ex.: "containerNetwork"
+//    name:    string       Ex.: containerNetwork
 //    drive:   NetworkDrive Ex.: KNetworkDriveBridge
 //    scope:   string       Ex.: local
 //    subnet:  string       Ex.: 10.0.0.0/16 (note: use base 10)
@@ -27,7 +27,6 @@ func (el *DockerSystem) NetworkCreate(
 	//todo: se já tem uma rede, ajustar o ip automático para o próximo endereço
 	var resp types.NetworkCreateResponse
 	var insp types.NetworkResource
-	var gatewayFieldA, gatewayFieldB, gatewayFieldC, gatewayFieldD int
 
 	networkGenerator = &NextNetworkAutoConfiguration{}
 
@@ -78,18 +77,11 @@ func (el *DockerSystem) NetworkCreate(
 				biggestIP, err = el.networkGetTheBiggestAddress(biggestIP, containerNetwork.IPv4Address)
 			}
 
-			gatewayFieldA, gatewayFieldB, gatewayFieldC, gatewayFieldD, err = el.testGatewayValues(biggestIP)
-			// todo: tem que tomar cuidado com valor máximo
-			gatewayFieldD += 1
-
 			networkGenerator.Init(
 				res.ID,
 				name,
 				gateway,
-				byte(gatewayFieldA),
-				byte(gatewayFieldB),
-				byte(gatewayFieldC),
-				byte(gatewayFieldD),
+				subnet,
 			)
 
 			el.networkId[name] = res.ID
@@ -101,16 +93,6 @@ func (el *DockerSystem) NetworkCreate(
 		}
 
 		err = errors.New("there is a network with this name")
-		return
-	}
-
-	gatewayFieldA, gatewayFieldB, gatewayFieldC, gatewayFieldD, err = el.testGatewayValues(gateway)
-	if err != nil {
-		return
-	}
-
-	err = el.testSubnetValues(subnet)
-	if err != nil {
 		return
 	}
 
@@ -140,10 +122,7 @@ func (el *DockerSystem) NetworkCreate(
 		resp.ID,
 		name,
 		gateway,
-		byte(gatewayFieldA),
-		byte(gatewayFieldB),
-		byte(gatewayFieldC),
-		byte(gatewayFieldD),
+		subnet,
 	)
 
 	el.networkId[name] = resp.ID
