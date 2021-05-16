@@ -212,6 +212,114 @@ func TestIPv4Generator_Init(t *testing.T) {
 
 }
 
+func TestIPv4Generator_Init_2(t *testing.T) {
+	var err error
+
+	g := IPv4Generator{}
+	err = g.Init(
+		//10.0.0.1
+		10, 0, 10, 6,
+		//10.0.0.0/4
+		10, 0, 10, 5, 4,
+	)
+	if err != nil {
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	caseA := g.gatewayA == 10
+	caseB := g.gatewayB == 0
+	caseC := g.gatewayC == 10
+	caseD := g.gatewayD == 6
+
+	if caseA && caseB && caseC && caseD == false {
+		err = errors.New("gateway initialization error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	caseA = g.subnetA == 10
+	caseB = g.subnetB == 0
+	caseC = g.subnetC == 10
+	caseD = g.subnetD == 5
+	caseE := g.subnetCidr == 4
+
+	if caseA && caseB && caseC && caseD && caseE == false {
+		err = errors.New("subnet initialization error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	caseA = g.ipA == 10
+	caseB = g.ipB == 0
+	caseC = g.ipC == 10
+	caseD = g.ipD == 7
+	if caseA && caseB && caseC && caseD == false {
+		err = errors.New("current ip initialization error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	tmpA := int64(float64(g.gatewayA) * math.Pow(256.0, 3.0))
+	tmpB := int64(float64(g.gatewayB) * math.Pow(256.0, 2.0))
+	tmpC := int64(float64(g.gatewayC) * math.Pow(256.0, 1.0))
+	tmpD := int64(float64(g.gatewayD) * math.Pow(256.0, 0.0))
+
+	if g.ipMinAddr != tmpA+tmpB+tmpC+tmpD {
+		err = errors.New("min ip error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	tmpA = int64(float64(g.subnetA) * math.Pow(256.0, 3.0))
+	tmpB = int64(float64(g.subnetB) * math.Pow(256.0, 2.0))
+	tmpC = int64(float64(g.subnetC) * math.Pow(256.0, 1.0))
+	tmpD = int64(float64(g.subnetD) * math.Pow(256.0, 0.0))
+
+	tmpE := int64(math.Pow(2.0, float64(int(g.subnetCidr))) - 1)
+
+	if g.ipMaxAddr != tmpA+tmpB+tmpC+tmpD+tmpE {
+		err = errors.New("max ip error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+
+	var ipInt64 = g.ipMaxAddr
+	var a, b, c, d byte
+	d = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	c = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	b = byte(ipInt64 % 256)
+	ipInt64 = ipInt64 / 256
+	a = byte(ipInt64 % 256)
+
+	caseA = g.maxA == a
+	caseB = g.maxA == b
+	caseC = g.maxA == c
+	caseD = g.maxA == d
+
+	if caseA && caseB && caseC && caseD {
+		err = errors.New("max ip error")
+		util.TraceToLog()
+		log.Printf("error: %v", err.Error())
+		t.Fail()
+		return
+	}
+}
+
 func TestIPv4Generator_InitWithString(t *testing.T) {
 	var err error
 
