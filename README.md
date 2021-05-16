@@ -7,10 +7,22 @@
   <a href="https://goreportcard.com/report/github.com/helmutkemper/iotmaker.docker">
     <img src="https://goreportcard.com/badge/github.com/helmutkemper/iotmaker.docker">
   </a>
-  <a href="https://pkg.go.dev/github.com/helmutkemper/iotmaker.docker/v1.0.0?tab=doc">
+  <a href="https://pkg.go.dev/github.com/helmutkemper/iotmaker.docker/v1.0.1?tab=doc">
     <img src="https://github.com/helmutkemper/iotmaker.docker/blob/master/image/godoc.svg">
   </a>
 </p>
+
+> Português:
+> 
+> Nota: todos os testes estão processando com sucesso, porém, os testes geram containers e ferramentas on-line de testes 
+> não deixam containers gerarem containers, por isto, rode os testes na mão em máquina local (um a um, não rode todos ao 
+> mesmo tempo), caso queira.
+
+> Emglish:
+> 
+> Note: all tests are processing successfully, however, the tests generate containers and online testing tools do not 
+> let containers generate containers, so run the tests by hand on a local machine (one by one, do not run them all at 
+> the same time), if you want.
 
 ### Português
 

@@ -24,18 +24,19 @@ func (el *NextNetworkAutoConfiguration) Init(id, name, gateway, subnet string) {
 	el.err = el.ip.InitWithString(gateway, subnet)
 }
 
-func (el *NextNetworkAutoConfiguration) GetNext() (*network.NetworkingConfig, error) {
-	newIp := el.ip.String()
+func (el *NextNetworkAutoConfiguration) GetNext() (IP string, networkConfig *network.NetworkingConfig, err error) {
+	IP = el.ip.String()
 	el.err = el.ip.IncCuttentIP()
-	return &network.NetworkingConfig{
+	return IP,
+		&network.NetworkingConfig{
 			EndpointsConfig: map[string]*network.EndpointSettings{
 				el.name: {
 					NetworkID: el.id,
 					Gateway:   el.gateway,
 					IPAMConfig: &network.EndpointIPAMConfig{
-						IPv4Address: newIp,
+						IPv4Address: IP,
 					},
-					IPAddress: newIp,
+					IPAddress: IP,
 				},
 			},
 		},

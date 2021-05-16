@@ -40,6 +40,21 @@ func (el *IPv4Generator) GetCuttentIPAsString() (ip string) {
 }
 
 func (el *IPv4Generator) int64ToIP(ipInt64 int64) (a, b, c, d byte) {
+
+	// 10.0.0.1 = ipA.ipB.ipC.ipD
+	// = ipA*256^3 + ipB*256^2 + ipC*256^1 + ipD*256^0
+	// = 10*256^3 + 0*256^2 + 0*256^1 + 1*256^0
+	// = 167772161
+	// = 10.0.0.1 = integer 167772161
+	//
+	// interger = 167772161
+	// ipD = integer % 256
+	// integer = integer / 256
+	// ipC = integer % 256
+	// integer = integer / 256
+	// ipB = integer % 256
+	// integer = integer / 256
+	// ipA = integer % 256
 	d = byte(ipInt64 % 256)
 	ipInt64 = ipInt64 / 256
 	c = byte(ipInt64 % 256)
@@ -206,6 +221,11 @@ func (el IPv4Generator) verify(
 		}
 	}
 
+	// 10.0.0.1 = ipA.ipB.ipC.ipD
+	// = ipA*256^3 + ipB*256^2 + ipC*256^1 + ipD*256^0
+	// = 10*256^3 + 0*256^2 + 0*256^1 + 1*256^0
+	// = 167772161
+	// = 10.0.0.1 As integer
 	tmpA := int64(float64(ipA) * math.Pow(256.0, 3.0))
 	tmpB := int64(float64(ipB) * math.Pow(256.0, 2.0))
 	tmpC := int64(float64(ipC) * math.Pow(256.0, 1.0))
@@ -381,6 +401,11 @@ func (el *IPv4Generator) Init(
 		return
 	}
 
+	// 10.0.0.1 = ipA.ipB.ipC.ipD
+	// = ipA*256^3 + ipB*256^2 + ipC*256^1 + ipD*256^0
+	// = 10*256^3 + 0*256^2 + 0*256^1 + 1*256^0
+	// = 167772161
+	// = 10.0.0.1 As integer
 	tmpA := int64(float64(el.gatewayA) * math.Pow(256.0, 3.0))
 	tmpB := int64(float64(el.gatewayB) * math.Pow(256.0, 2.0))
 	tmpC := int64(float64(el.gatewayC) * math.Pow(256.0, 1.0))
@@ -394,6 +419,11 @@ func (el *IPv4Generator) Init(
 		return
 	}
 
+	// 10.0.0.1 = ipA.ipB.ipC.ipD
+	// = ipA*256^3 + ipB*256^2 + ipC*256^1 + ipD*256^0
+	// = 10*256^3 + 0*256^2 + 0*256^1 + 1*256^0
+	// = 167772161
+	// = 10.0.0.1 As integer
 	tmpA = int64(float64(subnetA) * math.Pow(256.0, 3.0))
 	tmpB = int64(float64(subnetB) * math.Pow(256.0, 2.0))
 	tmpC = int64(float64(subnetC) * math.Pow(256.0, 1.0))
