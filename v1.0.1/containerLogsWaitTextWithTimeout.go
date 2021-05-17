@@ -40,7 +40,14 @@ func (el *DockerSystem) ContainerLogsWaitTextWithTimeout(
 	go func(err *error) {
 		select {
 		case <-done:
+			ticker = nil
+			return
+
 		case <-ticker.C:
+			if err == nil {
+				return
+			}
+
 			*err = errors.New("timeout")
 			wg.Done()
 		}
