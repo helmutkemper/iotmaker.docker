@@ -40,18 +40,19 @@ func (el *DockerSystem) ContainerLogsWaitTextWithTimeout(
 	go func(err *error, ticker *time.Ticker) {
 		select {
 		case <-done:
+			ticker.Stop()
 			return
 
 		case <-ticker.C:
 			ticker.Stop()
 			*err = errors.New("timeout")
 			wg.Done()
+			return
 		}
 	}(&err, ticker)
 
 	go func(el *DockerSystem, err *error, ticker *time.Ticker, reader *io.ReadCloser, previousLog, cleanLog, logContainer *[]byte, text *string, id string) {
 		defer func() {
-			ticker.Stop()
 			done <- true
 		}()
 
