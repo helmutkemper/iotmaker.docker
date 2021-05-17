@@ -36,6 +36,7 @@ func (el *DockerSystem) ContainerLogsWaitTextWithTimeout(
 		log.New(out, "", 0)
 	}
 
+	ticker = time.NewTicker(timeout)
 	wg.Add(1)
 	go func(err *error, ticker *time.Ticker) {
 		select {
@@ -97,7 +98,6 @@ func (el *DockerSystem) ContainerLogsWaitTextWithTimeout(
 		}
 	}(el, &err, ticker, &reader, &previousLog, &cleanLog, &logContainer, &text, id)
 
-	ticker = time.NewTicker(timeout)
 	wg.Wait()
 
 	return
