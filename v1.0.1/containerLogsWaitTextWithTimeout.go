@@ -40,7 +40,6 @@ func (el *DockerSystem) ContainerLogsWaitTextWithTimeout(
 	go func(err *error, ticker *time.Ticker) {
 		select {
 		case <-done:
-			ticker.Stop()
 			return
 
 		case <-ticker.C:
@@ -50,8 +49,9 @@ func (el *DockerSystem) ContainerLogsWaitTextWithTimeout(
 		}
 	}(&err, ticker)
 
-	go func(el *DockerSystem, err *error, reader *io.ReadCloser, previousLog, cleanLog, logContainer *[]byte, text *string, id string) {
+	go func(el *DockerSystem, err *error, ticker *time.Ticker, reader *io.ReadCloser, previousLog, cleanLog, logContainer *[]byte, text *string, id string) {
 		defer func() {
+			ticker.Stop()
 			done <- true
 		}()
 
@@ -88,7 +88,7 @@ func (el *DockerSystem) ContainerLogsWaitTextWithTimeout(
 
 			time.Sleep(kWaitTextLoopSleep)
 		}
-	}(el, &err, &reader, &previousLog, &cleanLog, &logContainer, &text, id)
+	}(el, &err, ticker, &reader, &previousLog, &cleanLog, &logContainer, &text, id)
 
 	ticker = time.NewTicker(timeout)
 	wg.Wait()
