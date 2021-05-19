@@ -21,7 +21,7 @@ func NewVolumeMount(
 	for _, v := range list {
 		found = util.VerifyFileExists(v.Source)
 		if found == false {
-			err = errors.New("source file not found")
+			err = errors.New(v.Source + ": source file not found")
 			return
 		}
 

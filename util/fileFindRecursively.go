@@ -29,7 +29,7 @@ func FileFindRecursively(fileName string) (filePath string, err error) {
 	)
 
 	if filePath == "" {
-		err = errors.New("file not found")
+		err = errors.New(fileName + ": file not found")
 	}
 
 	return
@@ -57,7 +57,7 @@ func FileFindContainsRecursively(fileName string) (filePath string, err error) {
 	)
 
 	if filePath == "" {
-		err = errors.New("file not found")
+		err = errors.New(fileName + ": file not found")
 	}
 
 	return
@@ -85,7 +85,7 @@ func FileFindHasPrefixRecursively(fileName string) (filePath string, err error) 
 	)
 
 	if filePath == "" {
-		err = errors.New("file not found")
+		err = errors.New(fileName + ": file not found")
 	}
 
 	return
