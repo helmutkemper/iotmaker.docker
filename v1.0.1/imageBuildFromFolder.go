@@ -6,6 +6,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"io"
+	"log"
 	"path/filepath"
 )
 
@@ -19,21 +20,41 @@ import (
 func (el *DockerSystem) FindDockerFile(folderPath string) (fullPathInsideTarFile string, err error) {
 	var fileExists bool
 
+	folderPath, err = filepath.Abs(folderPath)
+	if err != nil {
+		return
+	}
+
+	log.Printf("busca por: %v", folderPath+"/Dockerfile-oitmaker")
 	fileExists = util.VerifyFileExists(folderPath + "/Dockerfile-oitmaker")
 	if fileExists == true {
 		fullPathInsideTarFile = "/Dockerfile-iotmaker"
 		return
 	}
 
+	log.Printf("busca por: %v", folderPath+"/Dockerfile")
 	fileExists = util.VerifyFileExists(folderPath + "/Dockerfile")
 	if fileExists == true {
 		fullPathInsideTarFile = "/Dockerfile"
 		return
 	}
 
+	log.Printf("busca por: %v", folderPath+"/dockerfile")
 	fileExists = util.VerifyFileExists(folderPath + "/dockerfile")
 	if fileExists == true {
 		fullPathInsideTarFile = "/dockerfile"
+		return
+	}
+
+	log.Print("passou para a busca por Dockerfile-iotmaker")
+	fullPathInsideTarFile, err = util.FileFindHasPrefixRecursively("Dockerfile-iotmaker")
+	if err == nil {
+		return
+	}
+
+	log.Print("passou para a busca por dockerfile-iotmaker")
+	fullPathInsideTarFile, err = util.FileFindHasPrefixRecursively("dockerfile-iotmaker")
+	if err == nil {
 		return
 	}
 
