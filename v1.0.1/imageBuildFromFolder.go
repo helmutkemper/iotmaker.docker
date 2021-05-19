@@ -25,8 +25,8 @@ func (el *DockerSystem) FindDockerFile(folderPath string) (fullPathInsideTarFile
 		return
 	}
 
-	log.Printf("busca por: %v", folderPath+"/Dockerfile-oitmaker")
-	fileExists = util.VerifyFileExists(folderPath + "/Dockerfile-oitmaker")
+	log.Printf("busca por: %v", folderPath+"/Dockerfile-iotmaker")
+	fileExists = util.VerifyFileExists(folderPath + "/Dockerfile-iotmaker")
 	if fileExists == true {
 		fullPathInsideTarFile = "/Dockerfile-iotmaker"
 		return
