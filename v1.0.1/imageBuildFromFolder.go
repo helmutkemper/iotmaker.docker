@@ -6,6 +6,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"io"
+	"log"
 	"path/filepath"
 )
 
@@ -24,7 +25,9 @@ func (el *DockerSystem) FindDockerFile(folderPath string) (fullPathInsideTarFile
 		return
 	}
 
+	log.Printf("procutando por: %v", folderPath+"/Dockerfile-iotmaker")
 	fileExists = util.VerifyFileExists(folderPath + "/Dockerfile-iotmaker")
+	log.Printf("fileExists: %v", fileExists)
 	if fileExists == true {
 		fullPathInsideTarFile = "/Dockerfile-iotmaker"
 		return
