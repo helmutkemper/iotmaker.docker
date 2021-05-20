@@ -31,13 +31,13 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(
 	server,
 	imageName string,
 	tags []string,
+	imageBuildOptions types.ImageBuildOptions,
 	channel *chan ContainerPullStatusSendToChannel,
 ) (
 	imageID string,
 	err error,
 ) {
 
-	var imageBuildOptions types.ImageBuildOptions
 	var reader io.Reader
 
 	if len(tags) == 0 {

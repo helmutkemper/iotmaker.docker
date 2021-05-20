@@ -6,7 +6,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/helmutkemper/iotmaker.docker/util"
 	"io"
-	"log"
+	"io/ioutil"
 	"path/filepath"
 )
 
@@ -25,9 +25,12 @@ func (el *DockerSystem) FindDockerFile(folderPath string) (fullPathInsideTarFile
 		return
 	}
 
-	log.Printf("procutando por: %v", folderPath+"/Dockerfile-iotmaker")
+	_, err = ioutil.ReadDir(folderPath)
+	if err != nil {
+		return
+	}
+
 	fileExists = util.VerifyFileExists(folderPath + "/Dockerfile-iotmaker")
-	log.Printf("fileExists: %v", fileExists)
 	if fileExists == true {
 		fullPathInsideTarFile = "/Dockerfile-iotmaker"
 		return
@@ -93,7 +96,9 @@ func (el *DockerSystem) FindDockerFile(folderPath string) (fullPathInsideTarFile
 //
 func (el *DockerSystem) ImageBuildFromFolder(
 	folderPath string,
+	imageName string,
 	tags []string,
+	imageBuildOptions types.ImageBuildOptions,
 	channel *chan ContainerPullStatusSendToChannel,
 ) (
 	imageID string,
@@ -101,10 +106,17 @@ func (el *DockerSystem) ImageBuildFromFolder(
 ) {
 
 	var tarFileReader *bytes.Reader
-	var imageBuildOptions types.ImageBuildOptions
 	var reader io.Reader
 	var dockerFilePath string
 	var dockerFileName string
+
+	if len(tags) == 0 {
+		tags = []string{
+			imageName,
+		}
+	} else {
+		tags = append(tags, imageName)
+	}
 
 	tarFileReader, err = el.ImageBuildPrepareFolderContext(folderPath)
 	if err != err {
