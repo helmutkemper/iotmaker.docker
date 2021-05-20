@@ -48,11 +48,14 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(
 		tags = append(tags, imageName)
 	}
 
-	imageBuildOptions = types.ImageBuildOptions{
-		Tags:          tags,
-		Remove:        true,
-		RemoteContext: server,
+	if len(imageBuildOptions.Tags) == 0 {
+		imageBuildOptions.Tags = tags
+	} else {
+		imageBuildOptions.Tags = append(imageBuildOptions.Tags, tags...)
 	}
+
+	imageBuildOptions.Remove = true
+	imageBuildOptions.RemoteContext = server
 
 	reader, err = el.ImageBuild(nil, imageBuildOptions)
 	if err != nil {
