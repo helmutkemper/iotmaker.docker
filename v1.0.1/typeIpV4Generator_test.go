@@ -547,3 +547,39 @@ func TestIPv4Generator_incIP(t *testing.T) {
 		}
 	}
 }
+
+/*
+package main
+
+import (
+  "errors"
+  "fmt"
+  "net"
+)
+
+func main() {
+  ip, err := incrementIP("10.0.0.6", "10.0.0.0/29")
+  fmt.Printf("%v - %v\n", err, ip)
+  ip, err = incrementIP("10.0.0.7", "10.0.0.0/29")
+  fmt.Printf("%v - %v\n", err, ip)
+}
+
+func incrementIP(origIP, cidr string) (string, error) {
+  ip := net.ParseIP(origIP)
+  _, ipNet, err := net.ParseCIDR(cidr)
+  if err != nil {
+    return origIP, err
+  }
+  fmt.Printf("%+v", ipNet)
+  for i := len(ip) - 1; i >= 0; i-- {
+    ip[i]++
+    if ip[i] != 0 {
+      break
+    }
+  }
+  if !ipNet.Contains(ip) {
+    return origIP, errors.New("overflowed CIDR while incrementing IP")
+  }
+  return ip.String(), nil
+}
+*/
