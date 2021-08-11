@@ -2,6 +2,7 @@ package iotmakerdocker
 
 import (
 	"errors"
+	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
@@ -114,6 +115,7 @@ func ExampleDockerSystem_ImageBuildFromRemoteServer() {
 		"https://github.com/helmutkemper/iotmaker.docker.util.whaleAquarium.sample.git",
 		"image_server_delete_before_test:latest", // image name
 		[]string{},
+		types.ImageBuildOptions{},
 		&chStatus, // [channel|nil]
 	)
 	if err != nil {

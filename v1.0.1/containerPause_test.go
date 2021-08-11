@@ -3,7 +3,6 @@ package iotmakerdocker
 import (
 	"errors"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
@@ -11,7 +10,7 @@ import (
 	"os"
 )
 
-func ExampleDockerSystem_ContainerExecCommand() {
+func ExampleDockerSystem_ContainerPause() {
 
 	var err error
 	var containerId string
@@ -42,10 +41,10 @@ func ExampleDockerSystem_ContainerExecCommand() {
 			case status := <-chStatus:
 				// English: remove this comment to see all build status
 				// Português: remova este comentário para vê todo o status da criação da imagem
-				// log.Printf("image pull status: %+v\n", status)
+				//fmt.Printf("image pull status: %+v\n", status)
 
 				if status.Closed == true {
-					// log.Println("image pull complete!")
+					// fmt.Println("image pull complete!")
 
 					// English: Eliminate this goroutine after process end
 					// Português: Elimina a goroutine após o fim do processo
@@ -137,39 +136,28 @@ func ExampleDockerSystem_ContainerExecCommand() {
 
 	// English: mount and start a container
 	// Português: monta i inicializa o container
-	containerId, err = dockerSys.ContainerCreateWithConfig(
-		// image name
-		&container.Config{
-			Image: "image_server_delete_before_test:latest",
-		},
-		// container name
-		"container_delete_before_test",
-		// restart policy
-		KRestartPolicyUnlessStopped,
-		// portMap
+	containerId, err = dockerSys.ContainerCreate(
+		"image_server_delete_before_test:latest", // image name
+		"container_delete_before_test",           // container name
+		KRestartPolicyUnlessStopped,              // restart policy
 		nat.PortMap{
-			// container port number/protocol [tpc/udp]
 			"3000/tcp": []nat.PortBinding{ // server original port
 				{
-					// server output port number
-					HostPort: "9002",
+					HostPort: "9002", // new output port
 				},
 			},
 		},
-		// mount volumes
-		[]mount.Mount{
+		[]mount.Mount{ // mount volumes
 			{
-				// bind - is the type for mounting host dir (real folder inside computer where
-				// this code work)
-				Type: KVolumeMountTypeBindString,
-				// path inside host machine
-				Source: smallServerPathStatic,
-				// path inside image
-				Target: "/static",
+				Type: KVolumeMountTypeBindString, // bind - is the type for mounting host dir
+				// (real folder inside computer where this
+				// code work)
+
+				Source: smallServerPathStatic, // path inside host machine
+				Target: "/static",             // path inside image
 			},
 		},
-		// nil or container network configuration
-		networkNextAddress,
+		networkNextAddress, // [optional] container network
 	)
 	if err != nil {
 		panic(err)
@@ -179,21 +167,11 @@ func ExampleDockerSystem_ContainerExecCommand() {
 		err = errors.New("container id was not generated")
 		panic(err)
 	}
+
+	// English: container start
+	// Português: inicia o container
 	err = dockerSys.ContainerStart(containerId)
 	if err != nil {
-		panic(err)
-	}
-
-	// English: find a container ID by name
-	// Português: procura o ID do container por nome
-	var containerFoundId string
-	containerFoundId, err = dockerSys.ContainerFindIdByName("container_delete_before_test")
-	if err != nil {
-		panic(err)
-	}
-
-	if containerId != containerFoundId {
-		err = errors.New("wrong container id")
 		panic(err)
 	}
 
@@ -201,7 +179,22 @@ func ExampleDockerSystem_ContainerExecCommand() {
 	// Português: termina a goroutine
 	chProcessEnd <- true
 
-	_, _, _, _, err = dockerSys.ContainerExecCommand(containerId, []string{`/test.sh`})
+	err = dockerSys.ContainerPause(containerId)
+	if err != nil {
+		panic(err)
+	}
+
+	err = dockerSys.ContainerRestart(containerId)
+	if err != nil {
+		panic(err)
+	}
+
+	err = dockerSys.ContainerStop(containerId)
+	if err != nil {
+		panic(err)
+	}
+
+	err = dockerSys.ContainerRemove(containerId, true, false, false)
 	if err != nil {
 		panic(err)
 	}

@@ -77,9 +77,9 @@ func ExampleDockerSystem_VolumeList() {
 	// Português: monta uma imagem a partir da pasta 'small_test_server_port_3000'
 	imageId, err = dockerSys.ImageBuildFromFolder(
 		smallServerPath,
-		[]string{
-			"image_server_delete_before_test:latest", // image name
-		},
+		"image_server_delete_before_test:latest",
+		[]string{},
+		types.ImageBuildOptions{},
 		&chStatus, // [channel|nil]
 	)
 	if err != nil {
