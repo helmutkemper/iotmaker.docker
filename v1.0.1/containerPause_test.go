@@ -184,7 +184,7 @@ func ExampleDockerSystem_ContainerPause() {
 		panic(err)
 	}
 
-	err = dockerSys.ContainerRestart(containerId)
+	err = dockerSys.ContainerUnpause(containerId)
 	if err != nil {
 		panic(err)
 	}

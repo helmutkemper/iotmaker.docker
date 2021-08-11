@@ -64,18 +64,6 @@ func (el *DockerSystem) ContainerLogsWaitTextWithTimeout(
 		}()
 
 		for {
-
-			var inspect types.ContainerExecInspect
-			inspect, *err = el.cli.ContainerExecInspect(el.ctx, id)
-			if *err != nil {
-				return
-			}
-
-			if inspect.Running == false {
-				*err = errors.New("container is not running")
-				return
-			}
-
 			*reader, *err = el.cli.ContainerLogs(el.ctx, id, types.ContainerLogsOptions{
 				ShowStdout: true,
 				ShowStderr: true,

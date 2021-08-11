@@ -176,6 +176,11 @@ func ExampleDockerSystem_ContainerLogsWaitTextWithTimeout() {
 		panic(err)
 	}
 
+	err = dockerSys.ContainerStop(containerId)
+	if err != nil {
+		panic(err)
+	}
+
 	_, err = dockerSys.ContainerLogsWaitTextWithTimeout(containerId, "wrong text", 15*time.Second, nil)
 	if err != nil && err.Error() != "timeout" {
 		panic(err)
