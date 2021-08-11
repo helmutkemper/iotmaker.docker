@@ -2,6 +2,7 @@ package iotmakerdocker
 
 import (
 	"bytes"
+	"errors"
 	"github.com/docker/docker/api/types"
 	"io"
 	"io/ioutil"
@@ -37,6 +38,17 @@ func (el *DockerSystem) ContainerLogsWaitText(
 		defer wg.Done()
 
 		for {
+			var inspect types.ContainerExecInspect
+			inspect, *err = el.cli.ContainerExecInspect(el.ctx, id)
+			if *err != nil {
+				return
+			}
+
+			if inspect.Running == false {
+				*err = errors.New("container is not running")
+				return
+			}
+
 			*reader, *err = el.cli.ContainerLogs(el.ctx, id, types.ContainerLogsOptions{
 				ShowStdout: true,
 				ShowStderr: true,
