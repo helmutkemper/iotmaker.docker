@@ -97,11 +97,15 @@ func (el *DockerSystem) ContainerCreate(
 		el.container = make(map[string]container.ContainerCreateCreatedBody)
 	}
 
+	var config = &container.Config{
+		Image:       imageName,
+		Healthcheck: el.healthcheck,
+		OnBuild:     el.onBuild,
+	}
+
 	resp, err = el.cli.ContainerCreate(
 		el.ctx,
-		&container.Config{
-			Image: imageName,
-		},
+		config,
 		&container.HostConfig{
 			PortBindings: portExposedList,
 			RestartPolicy: container.RestartPolicy{

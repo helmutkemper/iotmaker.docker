@@ -7,7 +7,7 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-// ContainerCreate (English): Creates a container
+// ContainerCreateWithConfig (English): Creates a container
 //   configuration: todo: fazer
 //   containerName: unique container name
 //   restartPolicy:
@@ -93,6 +93,14 @@ func (el *DockerSystem) ContainerCreateWithConfig(
 
 	if len(el.container) == 0 {
 		el.container = make(map[string]container.ContainerCreateCreatedBody)
+	}
+
+	if configuration != nil && configuration.Healthcheck == nil {
+		configuration.Healthcheck = el.healthcheck
+	}
+
+	if configuration != nil && configuration.OnBuild == nil {
+		configuration.OnBuild = el.onBuild
 	}
 
 	resp, err = el.cli.ContainerCreate(

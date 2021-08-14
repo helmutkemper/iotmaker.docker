@@ -12,6 +12,17 @@
   </a>
 </p>
 
+> Português: 
+> 
+> Por favor, não use este projeto diretamente. Caso você necessite gerar containers docker, controlados por 
+> código golang e gerar senários de caos, use o projeto [Docker Builder](https://github.com/helmutkemper/iotmaker.docker.builder).
+
+> English:
+> 
+> Please do not use this project directly. If you need to generate docker containers, controlled by golang 
+> code and generate chaos scenarios, use the [Docker Builder](https://github.com/helmutkemper/iotmaker.docker.builder)
+> project.
+
 > Português:
 > 
 > Nota: todos os testes estão processando com sucesso, porém, os testes geram containers e ferramentas on-line de testes 

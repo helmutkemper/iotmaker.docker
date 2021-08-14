@@ -18,4 +18,6 @@ type DockerSystem struct {
 	imageId          map[string]string
 	container        map[string]container.ContainerCreateCreatedBody
 	networkGenerator map[string]*NextNetworkAutoConfiguration
+	healthcheck      *container.HealthConfig
+	onBuild          []string
 }
