@@ -1,6 +1,9 @@
 package iotmakerdocker
 
-import "github.com/docker/docker/api/types"
+import (
+	"github.com/docker/docker/api/types"
+	"sync"
+)
 
 // RemoveAllByNameContains remove trash after test.
 // This function removes container, image and network by name, and unlinked volumes and
@@ -8,6 +11,7 @@ import "github.com/docker/docker/api/types"
 func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 	var nameAndId []NameAndId
 	var container types.ContainerJSON
+	var wg sync.WaitGroup
 
 	nameAndId, err = el.ContainerFindIdByNameContains(name)
 	if err != nil && err.Error() != "container name not found" {
@@ -15,25 +19,30 @@ func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 	}
 
 	for _, data := range nameAndId {
-		container, err = el.ContainerInspect(data.ID)
-		if err != nil {
-			return
-		}
-
-		if container.State != nil && container.State.Running == true {
-			err = el.ContainerStopAndRemove(data.ID, true, false, false)
+		wg.Add(1)
+		go func(data NameAndId) {
+			container, err = el.ContainerInspect(data.ID)
 			if err != nil {
 				return
 			}
-		}
 
-		if container.State != nil && container.State.Running == false {
-			err = el.ContainerRemove(data.ID, true, false, false)
-			if err != nil {
-				return
+			if container.State != nil && container.State.Running == true {
+				err = el.ContainerStopAndRemove(data.ID, true, false, false)
+				if err != nil {
+					return
+				}
 			}
-		}
+
+			if container.State != nil && container.State.Running == false {
+				err = el.ContainerRemove(data.ID, true, false, false)
+				if err != nil {
+					return
+				}
+			}
+			wg.Done()
+		}(data)
 	}
+	wg.Wait()
 
 	nameAndId, err = el.ImageFindIdByNameContains(name)
 	if err != nil && err.Error() != "image name not found" {
