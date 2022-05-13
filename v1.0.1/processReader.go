@@ -19,9 +19,9 @@ func (el *DockerSystem) processBuildAndPullReaders(
 	channel *chan ContainerPullStatusSendToChannel,
 ) (
 	successfully bool,
+	err error,
 ) {
 
-	var err error
 	var imageName string
 	var imageId string
 	var bufferReader = make([]byte, 1)

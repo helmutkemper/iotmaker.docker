@@ -62,8 +62,13 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(
 		panic(err)
 	}
 
-	successfully := el.processBuildAndPullReaders(&reader, channel)
-	if successfully == false {
+	var successfully bool
+	successfully, err = el.processBuildAndPullReaders(&reader, channel)
+	if successfully == false || err != nil {
+		if err != nil {
+			return
+		}
+
 		err = errors.New("image build error")
 		return
 	}
