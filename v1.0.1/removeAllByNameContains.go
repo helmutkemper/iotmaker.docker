@@ -2,6 +2,7 @@ package iotmakerdocker
 
 import (
 	"github.com/docker/docker/api/types"
+	"runtime"
 	"sync"
 )
 
@@ -11,6 +12,8 @@ import (
 func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 	var nameAndId []NameAndId
 	var container types.ContainerJSON
+
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	nameAndId, err = el.ContainerFindIdByNameContains(name)
 	if err != nil && err.Error() != "container name not found" {
@@ -22,6 +25,8 @@ func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 		wg.Add(1)
 
 		go func(data NameAndId) {
+			defer wg.Done()
+
 			container, err = el.ContainerInspect(data.ID)
 			if err != nil {
 				return
@@ -40,8 +45,6 @@ func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 					return
 				}
 			}
-
-			wg.Done()
 		}(data)
 	}
 
