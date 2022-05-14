@@ -38,7 +38,6 @@ func (el *DockerSystem) ImagePull(
 		}
 
 		err = errors.New("image pull error")
-		return
 	}
 
 	imageId, err = el.ImageFindIdByName(name)
