@@ -31,11 +31,11 @@ type IPv4Generator struct {
 	reserved   [][4]byte
 }
 
-func (el *IPv4Generator) GetCuttentIP() (digitA, digitB, digitC, digitD byte) {
+func (el *IPv4Generator) GetCurrentIP() (digitA, digitB, digitC, digitD byte) {
 	return el.ipA, el.ipB, el.ipC, el.ipD
 }
 
-func (el *IPv4Generator) GetCuttentIPAsString() (ip string) {
+func (el *IPv4Generator) GetCurrentIPAsString() (ip string) {
 	return el.String()
 }
 
@@ -328,7 +328,7 @@ func (el *IPv4Generator) incIP(a, b, c, d, inc byte) (
 	return
 }
 
-func (el *IPv4Generator) IncCuttentIP() (
+func (el *IPv4Generator) IncCurrentIP() (
 	err error,
 ) {
 
