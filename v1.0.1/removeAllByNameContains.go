@@ -2,6 +2,7 @@ package iotmakerdocker
 
 import (
 	"github.com/docker/docker/api/types"
+	"log"
 	"runtime"
 	"sync"
 )
@@ -49,6 +50,8 @@ func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 						return
 					}
 				}
+
+				log.Printf("remove: %v", data.Name)
 			}(data)
 		}
 
