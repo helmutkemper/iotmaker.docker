@@ -4,7 +4,6 @@ import (
 	"github.com/docker/docker/api/types"
 	"runtime"
 	"sync"
-	"time"
 )
 
 // RemoveAllByNameContains remove trash after test.
@@ -13,44 +12,11 @@ import (
 func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 	var nameAndId []NameAndId
 	var container types.ContainerJSON
+	var wg sync.WaitGroup
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	nameAndId, err = el.ContainerFindIdByNameContains(name)
-	if err != nil && err.Error() != "container name not found" {
-		return err
-	}
-
-	var wg sync.WaitGroup
-	for _, data := range nameAndId {
-		wg.Add(1)
-
-		go func(data NameAndId) {
-			defer wg.Done()
-
-			container, err = el.ContainerInspect(data.ID)
-			if err != nil {
-				return
-			}
-
-			if container.State != nil && container.State.Running == true {
-				err = el.ContainerStopAndRemove(data.ID, true, false, true)
-				if err != nil {
-					return
-				}
-			}
-
-			if container.State != nil && container.State.Running == false {
-				err = el.ContainerRemove(data.ID, true, false, true)
-				if err != nil {
-					return
-				}
-			}
-		}(data)
-	}
-
-	wg.Wait()
-
+	// quando tem algo em torno de 255 containers, este código falha, por isto, o laço
 	for {
 		nameAndId, err = el.ContainerFindIdByNameContains(name)
 		if err != nil && err.Error() != "container name not found" {
@@ -61,7 +27,32 @@ func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 			break
 		}
 
-		time.Sleep(time.Second)
+		for _, data := range nameAndId {
+			wg.Add(1)
+
+			go func(data NameAndId) {
+				defer wg.Done()
+
+				container, err = el.ContainerInspect(data.ID)
+				if err != nil {
+					return
+				}
+
+				if container.State != nil && container.State.Running == true {
+					err = el.ContainerStopAndRemove(data.ID, true, false, true)
+					if err != nil {
+						return
+					}
+				} else if container.State != nil && container.State.Running == false {
+					err = el.ContainerRemove(data.ID, true, false, true)
+					if err != nil {
+						return
+					}
+				}
+			}(data)
+		}
+
+		wg.Wait()
 	}
 
 	nameAndId, err = el.ImageFindIdByNameContains(name)
