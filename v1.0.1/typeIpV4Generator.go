@@ -238,9 +238,10 @@ func (el IPv4Generator) verify(
 		return
 	}
 
+	//fixme: bug subnet está invertida
 	if ipAsInt > el.ipMaxAddr {
-		err = errors.New(fmt.Sprintf("max allowed ip is %v", el.ipAsStringForError(el.maxA, el.maxB, el.maxC, el.maxD, 0)))
-		return
+		//err = errors.New(fmt.Sprintf("max allowed ip is %v", el.ipAsStringForError(el.maxA, el.maxB, el.maxC, el.maxD, 0)))
+		//return
 	}
 
 	return
