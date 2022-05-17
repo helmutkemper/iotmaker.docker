@@ -15,7 +15,7 @@ func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 	var container types.ContainerJSON
 	var wg sync.WaitGroup
 
-	runtime.GOMAXPROCS(runtime.NumCPU())
+	runtime.GOMAXPROCS(runtime.NumCPU() * 2)
 
 	// quando tem algo em torno de 255 containers, este código falha, por isto, o laço
 	for {
@@ -27,6 +27,27 @@ func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 		if len(nameAndId) == 0 {
 			break
 		}
+
+		for _, data := range nameAndId {
+			wg.Add(1)
+
+			go func(id string) {
+				defer wg.Done()
+
+				container, err = el.ContainerInspect(id)
+				if err != nil {
+					return
+				}
+
+				if container.State != nil && container.State.Running == true {
+					err = el.ContainerStop(id)
+					if err != nil {
+						return
+					}
+				}
+			}(data.ID)
+		}
+		wg.Wait()
 
 		for _, data := range nameAndId {
 			wg.Add(1)
@@ -54,7 +75,6 @@ func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 				log.Printf("remove: %v", data.Name)
 			}(data)
 		}
-
 		wg.Wait()
 	}
 
