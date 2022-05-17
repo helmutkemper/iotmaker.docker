@@ -4,6 +4,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"runtime"
 	"sync"
+	"time"
 )
 
 // RemoveAllByNameContains remove trash after test.
@@ -49,6 +50,19 @@ func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 	}
 
 	wg.Wait()
+
+	for {
+		nameAndId, err = el.ContainerFindIdByNameContains(name)
+		if err != nil && err.Error() != "container name not found" {
+			return err
+		}
+
+		if len(nameAndId) == 0 {
+			break
+		}
+
+		time.Sleep(time.Second)
+	}
 
 	nameAndId, err = el.ImageFindIdByNameContains(name)
 	if err != nil && err.Error() != "image name not found" {
