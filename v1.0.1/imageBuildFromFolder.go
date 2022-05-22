@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"path/filepath"
+	"time"
 )
 
 // FindDockerFile (English): Find dockerfile in folder tree.
@@ -145,20 +146,33 @@ func (el *DockerSystem) ImageBuildFromFolder(
 	}
 
 	var successfully bool
-	successfully, err = el.processBuildAndPullReaders(&reader, channel)
-	if successfully == false || err != nil {
-		if err != nil {
+	var abort = make(chan struct{}, 1)
+	var tk = time.NewTicker(1 * time.Second)
+	go func() {
+		successfully, err = el.processBuildAndPullReaders(&reader, channel, abort)
+		if successfully == false || err != nil {
+			if err != nil {
+				return
+			}
+
+			err = errors.New("image build error")
 			return
 		}
+	}()
 
-		err = errors.New("image build error")
-		return
+	for {
+		select {
+		case <-tk.C:
+			imageID, err = el.ImageFindIdByName(imageBuildOptions.Tags[0])
+			if err != nil && err.Error() != "image name not found" {
+				abort <- struct{}{}
+				return
+			}
+
+			if imageID != "" {
+				abort <- struct{}{}
+				return
+			}
+		}
 	}
-
-	imageID, err = el.ImageFindIdByName(imageBuildOptions.Tags[0])
-	if err != nil {
-		return
-	}
-
-	return
 }

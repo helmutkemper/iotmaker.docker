@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+//fixme: erro no teste
+
 func ExampleDockerSystem_ContainerLogsWaitTextWithTimeout() {
 
 	var err error

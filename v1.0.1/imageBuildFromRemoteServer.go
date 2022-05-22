@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/docker/docker/api/types"
 	"io"
+	"time"
 )
 
 // ImageBuildFromRemoteServer (English): Make a image from server content
@@ -59,24 +60,37 @@ func (el *DockerSystem) ImageBuildFromRemoteServer(
 
 	reader, err = el.ImageBuild(nil, imageBuildOptions)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	var successfully bool
-	successfully, err = el.processBuildAndPullReaders(&reader, channel)
-	if successfully == false || err != nil {
-		if err != nil {
+	var abort = make(chan struct{}, 1)
+	var tk = time.NewTicker(1 * time.Second)
+	go func() {
+		successfully, err = el.processBuildAndPullReaders(&reader, channel, abort)
+		if successfully == false || err != nil {
+			if err != nil {
+				return
+			}
+
+			err = errors.New("image build error")
 			return
 		}
+	}()
 
-		err = errors.New("image build error")
-		return
+	for {
+		select {
+		case <-tk.C:
+			imageID, err = el.ImageFindIdByName(imageBuildOptions.Tags[0])
+			if err != nil && err.Error() != "image name not found" {
+				abort <- struct{}{}
+				return
+			}
+
+			if imageID != "" {
+				abort <- struct{}{}
+				return
+			}
+		}
 	}
-
-	imageID, err = el.ImageFindIdByName(imageBuildOptions.Tags[0])
-	if err != nil {
-		return
-	}
-
-	return
 }

@@ -17,6 +17,7 @@ type aux struct {
 func (el *DockerSystem) processBuildAndPullReaders(
 	reader *io.Reader,
 	channel *chan ContainerPullStatusSendToChannel,
+	abort chan struct{},
 ) (
 	successfully bool,
 	err error,
@@ -40,6 +41,10 @@ func (el *DockerSystem) processBuildAndPullReaders(
 	}
 
 	for {
+		if cap(abort) != 1 {
+			return
+		}
+
 		_, err = (*reader).Read(bufferReader)
 		if err != nil {
 			if err.Error() == "EOF" {
