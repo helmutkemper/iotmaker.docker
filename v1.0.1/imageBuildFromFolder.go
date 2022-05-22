@@ -145,24 +145,33 @@ func (el *DockerSystem) ImageBuildFromFolder(
 		return
 	}
 
-	var successfully bool
+	var successfully, processEnd bool
 	var abort = make(chan struct{}, 1)
 	var tk = time.NewTicker(1 * time.Second)
-	go func() {
-		successfully, err = el.processBuildAndPullReaders(&reader, channel, abort)
-		if successfully == false || err != nil {
-			if err != nil {
+	go func(processEnd *bool, err *error) {
+		successfully, *err = el.processBuildAndPullReaders(&reader, channel, abort)
+		if successfully == false || *err != nil {
+			if *err != nil {
+				*processEnd = true
 				return
 			}
 
-			err = errors.New("image build error")
+			*err = errors.New("image build error")
+			*processEnd = true
 			return
 		}
-	}()
+
+		*processEnd = true
+	}(&processEnd, &err)
 
 	for {
 		select {
 		case <-tk.C:
+
+			if err != nil {
+				return
+			}
+
 			imageID, err = el.ImageFindIdByName(imageBuildOptions.Tags[0])
 			if err != nil && err.Error() != "image name not found" {
 				abort <- struct{}{}
@@ -171,6 +180,11 @@ func (el *DockerSystem) ImageBuildFromFolder(
 
 			if imageID != "" {
 				abort <- struct{}{}
+				return
+			}
+
+			if processEnd == true && imageID == "" {
+				imageID, err = el.ImageFindIdByName(imageBuildOptions.Tags[0])
 				return
 			}
 		}
