@@ -2,7 +2,9 @@ package iotmakerdocker
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
+	"regexp"
 	"strings"
 )
 
@@ -17,7 +19,6 @@ type aux struct {
 func (el *DockerSystem) processBuildAndPullReaders(
 	reader *io.Reader,
 	channel *chan ContainerPullStatusSendToChannel,
-	abort chan struct{},
 ) (
 	successfully bool,
 	err error,
@@ -41,10 +42,6 @@ func (el *DockerSystem) processBuildAndPullReaders(
 	}
 
 	for {
-		if cap(abort) != 1 {
-			return
-		}
-
 		_, err = (*reader).Read(bufferReader)
 		if err != nil {
 			if err.Error() == "EOF" {
@@ -90,6 +87,11 @@ func (el *DockerSystem) processBuildAndPullReaders(
 
 		if bufferReader[0] == byte(0x0A) {
 			err = json.Unmarshal(bufferDataInput, &channelOut)
+			r := regexp.MustCompile("successful")
+			if r.Match(bufferDataInput) == true {
+				fmt.Printf("-- %v --", bufferDataInput)
+			}
+
 			bufferDataInput = make([]byte, 0)
 
 			if strings.Contains(channelOut.Stream, kContainerBuildImageStatusSuccessContainer) {
