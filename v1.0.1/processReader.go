@@ -34,10 +34,12 @@ func (el *DockerSystem) processBuildAndPullReaders(
 	var auxIdList = make([]string, 0)
 
 	if reader == nil {
+		el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 		return
 	}
 
 	if *reader == nil {
+		el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 		return
 	}
 
@@ -59,6 +61,7 @@ func (el *DockerSystem) processBuildAndPullReaders(
 				} else if imageName != "" {
 					toChannel.ImageID, err = el.ImageFindIdByName(imageName)
 					if err != nil {
+						el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 						return
 					}
 
@@ -80,6 +83,8 @@ func (el *DockerSystem) processBuildAndPullReaders(
 
 				return
 			}
+
+			el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 			return
 		}
 
@@ -126,6 +131,7 @@ func (el *DockerSystem) processBuildAndPullReaders(
 				var aux aux
 				err = json.Unmarshal([]byte(channelOut.Status), &aux)
 				if err != nil {
+					el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 					return
 				}
 
