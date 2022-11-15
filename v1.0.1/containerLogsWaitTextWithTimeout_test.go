@@ -176,24 +176,6 @@ func ExampleDockerSystem_ContainerLogsWaitTextWithTimeout() {
 		panic(err)
 	}
 
-	err = dockerSys.ContainerStop(containerId)
-	if err != nil {
-		panic(err)
-	}
-
-	_, err = dockerSys.ContainerLogsWaitTextWithTimeout(containerId, "wrong text", 15*time.Second, nil)
-	if err != nil && err.Error() != "timeout" {
-		panic(err)
-	}
-	if err == nil {
-		err = errors.New("this test must be a timeout error")
-		panic(err)
-	}
-
-	// English: ends a goroutine
-	// Português: termina a goroutine
-	chProcessEnd <- true
-
 	var networkData ContainerNetworkDataList
 	networkData, err = dockerSys.ContainerNetworkInspect(containerId)
 	if err != nil {
@@ -214,6 +196,24 @@ func ExampleDockerSystem_ContainerLogsWaitTextWithTimeout() {
 		err = errors.New("network IP address error")
 		panic(err)
 	}
+
+	err = dockerSys.ContainerStop(containerId)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = dockerSys.ContainerLogsWaitTextWithTimeout(containerId, "wrong text", 15*time.Second, nil)
+	if err != nil && err.Error() != "timeout" {
+		panic(err)
+	}
+	if err == nil {
+		err = errors.New("this test must be a timeout error")
+		panic(err)
+	}
+
+	// English: ends a goroutine
+	// Português: termina a goroutine
+	chProcessEnd <- true
 
 	// English: garbage collector and deletes networks and images whose name contains the term 'delete'
 	// Português: coletor de lixo e apaga redes e imagens cujo o nome contém o temo 'delete'

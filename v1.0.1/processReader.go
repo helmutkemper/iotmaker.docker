@@ -2,7 +2,9 @@ package iotmakerdocker
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
+	"regexp"
 	"strings"
 )
 
@@ -19,9 +21,9 @@ func (el *DockerSystem) processBuildAndPullReaders(
 	channel *chan ContainerPullStatusSendToChannel,
 ) (
 	successfully bool,
+	err error,
 ) {
 
-	var err error
 	var imageName string
 	var imageId string
 	var bufferReader = make([]byte, 1)
@@ -32,10 +34,12 @@ func (el *DockerSystem) processBuildAndPullReaders(
 	var auxIdList = make([]string, 0)
 
 	if reader == nil {
+		el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 		return
 	}
 
 	if *reader == nil {
+		el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 		return
 	}
 
@@ -57,6 +61,7 @@ func (el *DockerSystem) processBuildAndPullReaders(
 				} else if imageName != "" {
 					toChannel.ImageID, err = el.ImageFindIdByName(imageName)
 					if err != nil {
+						el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 						return
 					}
 
@@ -78,6 +83,8 @@ func (el *DockerSystem) processBuildAndPullReaders(
 
 				return
 			}
+
+			el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 			return
 		}
 
@@ -85,6 +92,11 @@ func (el *DockerSystem) processBuildAndPullReaders(
 
 		if bufferReader[0] == byte(0x0A) {
 			err = json.Unmarshal(bufferDataInput, &channelOut)
+			r := regexp.MustCompile("successful")
+			if r.Match(bufferDataInput) == true {
+				fmt.Printf("-- %v --", bufferDataInput)
+			}
+
 			bufferDataInput = make([]byte, 0)
 
 			if strings.Contains(channelOut.Stream, kContainerBuildImageStatusSuccessContainer) {
@@ -119,6 +131,7 @@ func (el *DockerSystem) processBuildAndPullReaders(
 				var aux aux
 				err = json.Unmarshal([]byte(channelOut.Status), &aux)
 				if err != nil {
+					el.imagePullWriteChannel(channel, ContainerPullStatusSendToChannel{Closed: true})
 					return
 				}
 

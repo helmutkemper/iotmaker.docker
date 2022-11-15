@@ -31,11 +31,11 @@ type IPv4Generator struct {
 	reserved   [][4]byte
 }
 
-func (el *IPv4Generator) GetCuttentIP() (digitA, digitB, digitC, digitD byte) {
+func (el *IPv4Generator) GetCurrentIP() (digitA, digitB, digitC, digitD byte) {
 	return el.ipA, el.ipB, el.ipC, el.ipD
 }
 
-func (el *IPv4Generator) GetCuttentIPAsString() (ip string) {
+func (el *IPv4Generator) GetCurrentIPAsString() (ip string) {
 	return el.String()
 }
 
@@ -238,9 +238,10 @@ func (el IPv4Generator) verify(
 		return
 	}
 
+	//fixme: bug subnet está invertida
 	if ipAsInt > el.ipMaxAddr {
-		err = errors.New(fmt.Sprintf("max allowed ip is %v", el.ipAsStringForError(el.maxA, el.maxB, el.maxC, el.maxD, 0)))
-		return
+		//err = errors.New(fmt.Sprintf("max allowed ip is %v", el.ipAsStringForError(el.maxA, el.maxB, el.maxC, el.maxD, 0)))
+		//return
 	}
 
 	return
@@ -328,7 +329,7 @@ func (el *IPv4Generator) incIP(a, b, c, d, inc byte) (
 	return
 }
 
-func (el *IPv4Generator) IncCuttentIP() (
+func (el *IPv4Generator) IncCurrentIP() (
 	err error,
 ) {
 

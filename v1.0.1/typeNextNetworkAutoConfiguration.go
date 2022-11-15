@@ -26,7 +26,7 @@ func (el *NextNetworkAutoConfiguration) Init(id, name, gateway, subnet string) {
 
 func (el *NextNetworkAutoConfiguration) GetNext() (IP string, networkConfig *network.NetworkingConfig, err error) {
 	IP = el.ip.String()
-	el.err = el.ip.IncCuttentIP()
+	el.err = el.ip.IncCurrentIP()
 	return IP,
 		&network.NetworkingConfig{
 			EndpointsConfig: map[string]*network.EndpointSettings{

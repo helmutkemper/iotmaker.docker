@@ -112,7 +112,7 @@ func ExampleDockerSystem_ImageBuildFromRemoteServer() {
 	// English: build a new image from folder 'small_test_server_port_3000'
 	// Português: monta uma imagem a partir da pasta 'small_test_server_port_3000'
 	imageId, err = dockerSys.ImageBuildFromRemoteServer(
-		"https://github.com/helmutkemper/iotmaker.docker.util.whaleAquarium.sample.git",
+		"https://github.com/helmutkemper/iotmaker.docker.builder.public.example.git",
 		"image_server_delete_before_test:latest", // image name
 		[]string{},
 		types.ImageBuildOptions{},

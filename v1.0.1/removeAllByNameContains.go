@@ -2,6 +2,8 @@ package iotmakerdocker
 
 import (
 	"github.com/docker/docker/api/types"
+	"log"
+	"runtime"
 	"sync"
 )
 
@@ -11,41 +13,70 @@ import (
 func (el DockerSystem) RemoveAllByNameContains(name string) (err error) {
 	var nameAndId []NameAndId
 	var container types.ContainerJSON
-
-	nameAndId, err = el.ContainerFindIdByNameContains(name)
-	if err != nil && err.Error() != "container name not found" {
-		return err
-	}
-
 	var wg sync.WaitGroup
-	for _, data := range nameAndId {
-		wg.Add(1)
 
-		go func(data NameAndId) {
-			container, err = el.ContainerInspect(data.ID)
-			if err != nil {
-				return
-			}
+	runtime.GOMAXPROCS(runtime.NumCPU() * 2)
 
-			if container.State != nil && container.State.Running == true {
-				err = el.ContainerStopAndRemove(data.ID, true, false, true)
+	// quando tem algo em torno de 255 containers, este código falha, por isto, o laço
+	for {
+		nameAndId, err = el.ContainerFindIdByNameContains(name)
+		if err != nil && err.Error() != "container name not found" {
+			return err
+		}
+
+		if len(nameAndId) == 0 {
+			break
+		}
+
+		for _, data := range nameAndId {
+			wg.Add(1)
+
+			go func(id string) {
+				defer wg.Done()
+
+				container, err = el.ContainerInspect(id)
 				if err != nil {
 					return
 				}
-			}
 
-			if container.State != nil && container.State.Running == false {
-				err = el.ContainerRemove(data.ID, true, false, true)
+				if container.State != nil && container.State.Running == true {
+					err = el.ContainerStop(id)
+					if err != nil {
+						return
+					}
+				}
+			}(data.ID)
+		}
+		wg.Wait()
+
+		for _, data := range nameAndId {
+			wg.Add(1)
+
+			go func(data NameAndId) {
+				defer wg.Done()
+
+				container, err = el.ContainerInspect(data.ID)
 				if err != nil {
 					return
 				}
-			}
 
-			wg.Done()
-		}(data)
+				if container.State != nil && container.State.Running == true {
+					err = el.ContainerStopAndRemove(data.ID, true, false, true)
+					if err != nil {
+						return
+					}
+				} else if container.State != nil && container.State.Running == false {
+					err = el.ContainerRemove(data.ID, true, false, true)
+					if err != nil {
+						return
+					}
+				}
+
+				log.Printf("remove: %v", data.Name)
+			}(data)
+		}
+		wg.Wait()
 	}
-
-	wg.Wait()
 
 	nameAndId, err = el.ImageFindIdByNameContains(name)
 	if err != nil && err.Error() != "image name not found" {

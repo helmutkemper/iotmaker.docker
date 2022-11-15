@@ -32,5 +32,9 @@ func (el *DockerSystem) ImageListExposedPorts(
 		portList = append(portList, port)
 	}
 
+	for port := range imageData.Config.ExposedPorts {
+		portList = append(portList, port)
+	}
+
 	return
 }

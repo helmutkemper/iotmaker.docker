@@ -427,7 +427,7 @@ func TestIPv4Generator_InitWithString(t *testing.T) {
 
 }
 
-func TestIPv4Generator_IncCuttentIP(t *testing.T) {
+func TestIPv4Generator_IncCurrentIP(t *testing.T) {
 	var err error
 
 	g := IPv4Generator{}
@@ -443,7 +443,7 @@ func TestIPv4Generator_IncCuttentIP(t *testing.T) {
 	}
 
 	for i := 0; i != 13; i += 1 {
-		err = g.IncCuttentIP()
+		err = g.IncCurrentIP()
 		if err != nil {
 			util.TraceToLog()
 			log.Printf("error: %v", err.Error())
@@ -464,7 +464,7 @@ func TestIPv4Generator_IncCuttentIP(t *testing.T) {
 		}
 	}
 
-	err = g.IncCuttentIP()
+	err = g.IncCurrentIP()
 	if err == nil || err.Error() != "max allowed ip is 10.0.0.15" {
 		err = errors.New("current ip increment error")
 		util.TraceToLog()
