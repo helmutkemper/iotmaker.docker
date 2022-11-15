@@ -123,13 +123,6 @@ func (el *DockerSystem) ImageBuildFromFolder(
 		return
 	}
 
-	dockerFilePath, err = el.FindDockerFile(folderPath)
-	if err != nil {
-		return
-	}
-
-	dockerFileName = filepath.Base(dockerFilePath)
-
 	if len(imageBuildOptions.Tags) == 0 {
 		imageBuildOptions.Tags = tags
 	} else {
@@ -137,7 +130,15 @@ func (el *DockerSystem) ImageBuildFromFolder(
 	}
 
 	imageBuildOptions.Remove = true
-	imageBuildOptions.Dockerfile = dockerFileName
+	if imageBuildOptions.Dockerfile == "" {
+		dockerFilePath, err = el.FindDockerFile(folderPath)
+		if err != nil {
+			return
+		}
+
+		dockerFileName = filepath.Base(dockerFilePath)
+		imageBuildOptions.Dockerfile = dockerFileName
+	}
 
 	reader, err = el.ImageBuild(tarFileReader, imageBuildOptions)
 	if err != nil {
